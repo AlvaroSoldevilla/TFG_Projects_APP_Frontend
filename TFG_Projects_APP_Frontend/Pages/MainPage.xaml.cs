@@ -1,4 +1,4 @@
-﻿namespace TFG_Projects_APP_Frontend
+﻿namespace TFG_Projects_APP_Frontend.Pages
 {
     public partial class MainPage : ContentPage
     {
