@@ -60,29 +60,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="9.0.60" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.4" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <Folder Include="Components\" />
-	  <Folder Include="Entities\Dtos\Components\" />
-	  <Folder Include="Entities\Dtos\ConceptBoards\" />
-	  <Folder Include="Entities\Dtos\Concepts\" />
-	  <Folder Include="Entities\Dtos\Users\" />
-	  <Folder Include="Entities\Dtos\UserProjectPermissions\" />
-	  <Folder Include="Entities\Dtos\Types\" />
-	  <Folder Include="Entities\Dtos\TaskSections\" />
-	  <Folder Include="Entities\Dtos\Tasks\" />
-	  <Folder Include="Entities\Dtos\TaskProgress\" />
-	  <Folder Include="Entities\Dtos\TaskDependecies\" />
-	  <Folder Include="Entities\Dtos\TaskBoards\" />
-	  <Folder Include="Entities\Dtos\Roles\" />
-	  <Folder Include="Entities\Dtos\ProjectUsers\" />
-	  <Folder Include="Entities\Dtos\Projects\" />
-	  <Folder Include="Entities\Dtos\Priorities\" />
-	  <Folder Include="Entities\Dtos\Permissions\" />
-	  <Folder Include="Rest\" />
 	  <Folder Include="PageModels\" />
 	</ItemGroup>
 
