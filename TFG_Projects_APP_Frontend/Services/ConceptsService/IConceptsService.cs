@@ -5,5 +5,5 @@ namespace TFG_Projects_APP_Frontend.Services.ConceptsService;
 
 internal interface IConceptsService : IService<Concept>
 {
-    Task<ObservableCollection<Concept>> GetAllConceptsByProject(string query, int id);
+    Task<ObservableCollection<Concept>> GetAllConceptsByProject(int id);
 }

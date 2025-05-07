@@ -6,32 +6,32 @@ namespace TFG_Projects_APP_Frontend.Services.ConceptBoardsService;
 
 internal class ConceptBoardsService(RestClient restClient) : IConceptBoardsService
 {
-    public async Task<string> Delete(string query, int id)
+    public async Task<string> Delete(int id)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<ObservableCollection<ConceptBoard>> GetAll(string query)
+    public async Task<ObservableCollection<ConceptBoard>> GetAll()
     {
         throw new NotImplementedException();
     }
 
-    public async Task<ObservableCollection<ConceptBoard>> GetAllConceptBoardsByConcept(string query, int id)
+    public async Task<ObservableCollection<ConceptBoard>> GetAllConceptBoardsByConcept(int id)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<ConceptBoard> GetById(string query, int id)
+    public async Task<ConceptBoard> GetById(int id)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<string> Patch(string query, object data)
+    public async Task<string> Patch(int id, object data)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<string> Post(string query, object data)
+    public async Task<string> Post(object data)
     {
         throw new NotImplementedException();
     }

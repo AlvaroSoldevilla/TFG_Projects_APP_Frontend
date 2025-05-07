@@ -6,7 +6,7 @@ internal class RestClient
 {
     HttpClient _client = new HttpClient();
     private readonly string baseURL = Preferences.Get("APIurl", "http://localhost:8000");
-    private JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower };
+    public JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower };
 
     public async Task<HttpResponseMessage> GetAllAsync(string query)
     {
@@ -49,11 +49,11 @@ internal class RestClient
         }
     }
 
-    public async Task<HttpResponseMessage> PatchAsync(string query, object data)
+    public async Task<HttpResponseMessage> PatchAsync(string query, int id, object data)
     {
         var json = JsonSerializer.Serialize(data, _options);
         var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-        var response = await _client.PatchAsync($"{baseURL}/{query}", content);
+        var response = await _client.PatchAsync($"{baseURL}/{query}/{id}", content);
         if (response.IsSuccessStatusCode)
         {
             return response;

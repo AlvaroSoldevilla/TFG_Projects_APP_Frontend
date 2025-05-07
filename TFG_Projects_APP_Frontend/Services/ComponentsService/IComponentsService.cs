@@ -5,5 +5,5 @@ namespace TFG_Projects_APP_Frontend.Services.ComponentsService;
 
 interface IComponentsService : IService<Component>
 {
-    Task<ObservableCollection<Component>> GetAllComponentsByBoard(string query, int id);
+    Task<ObservableCollection<Component>> GetAllComponentsByBoard(int id);
 }

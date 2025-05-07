@@ -6,27 +6,27 @@ namespace TFG_Projects_APP_Frontend.Services.PrioritiesService;
 
 internal class PrioritiesService(RestClient restClient) : IPrioritiesService
 {
-    public async Task<string> Delete(string query, int id)
+    public async Task<string> Delete(int id)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<ObservableCollection<Priority>> GetAll(string query)
+    public async Task<ObservableCollection<Priority>> GetAll()
     {
         throw new NotImplementedException();
     }
 
-    public async Task<Priority> GetById(string query, int id)
+    public async Task<Priority> GetById(int id)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<string> Patch(string query, object data)
+    public async Task<string> Patch(int id, object data)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<string> Post(string query, object data)
+    public async Task<string> Post(object data)
     {
         throw new NotImplementedException();
     }

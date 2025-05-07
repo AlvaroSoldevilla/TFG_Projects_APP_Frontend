@@ -6,47 +6,47 @@ namespace TFG_Projects_APP_Frontend.Services.UserProjectPermissionsService
 {
     internal class UserProjectPermissionsService(RestClient restClient) : IUserProjectPermissionsService
     {
-        public Task<string> Delete(string query, int id)
+        public Task<string> Delete(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<ObservableCollection<UserProjectPermission>> GetAll(string query)
+        public Task<ObservableCollection<UserProjectPermission>> GetAll()
         {
             throw new NotImplementedException();
         }
 
-        public Task<ObservableCollection<UserProjectPermission>> getAllUserProjectPermissionsByPermission(string query, int id)
+        public Task<ObservableCollection<UserProjectPermission>> getAllUserProjectPermissionsByPermission(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<ObservableCollection<UserProjectPermission>> getAllUserProjectPermissionsByProject(string query, int id)
+        public Task<ObservableCollection<UserProjectPermission>> getAllUserProjectPermissionsByProject(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<ObservableCollection<UserProjectPermission>> getAllUserProjectPermissionsByUser(string query, int id)
+        public Task<ObservableCollection<UserProjectPermission>> getAllUserProjectPermissionsByUser(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<ObservableCollection<UserProjectPermission>> getAllUserProjectPermissionsByUserAndProject(string query, int userId, int projectId)
+        public Task<ObservableCollection<UserProjectPermission>> getAllUserProjectPermissionsByUserAndProject(int userId, int projectId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<UserProjectPermission> GetById(string query, int id)
+        public Task<UserProjectPermission> GetById(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<string> Patch(string query, object data)
+        public Task<string> Patch(int id, object data)
         {
             throw new NotImplementedException();
         }
 
-        public Task<string> Post(string query, object data)
+        public Task<string> Post(object data)
         {
             throw new NotImplementedException();
         }

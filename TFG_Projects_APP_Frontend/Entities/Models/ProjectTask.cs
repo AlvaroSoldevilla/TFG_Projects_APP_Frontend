@@ -14,6 +14,7 @@ class ProjectTask
     public int Progress { get; set; }
     public DateTime CreationDate { get; set; }
     public DateTime? LimitDate { get; set; }
+    public DateTime? CompletionDate { get; set; }
     public bool Finished { get; set; }
 
     public TaskSection? TaskSection { get; set; }

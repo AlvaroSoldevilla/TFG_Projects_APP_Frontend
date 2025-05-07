@@ -11,7 +11,7 @@ internal class TaskUpdate
     public int? IdPriority { get; set; }
     public string? Description { get; set; }
     public int? Progress { get; set; } = 0;
-    public DateTime? CreationDate { get; set; }
     public DateTime? LimitDate { get; set; }
+    public DateTime? CompletionDate { get; set; }
     public bool? Finished { get; set; }
 }

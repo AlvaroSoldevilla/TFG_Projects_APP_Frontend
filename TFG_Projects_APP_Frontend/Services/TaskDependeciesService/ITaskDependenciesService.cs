@@ -5,5 +5,5 @@ namespace TFG_Projects_APP_Frontend.Services.TaskDependeciesService;
 
 internal interface ITaskDependenciesService : IService<TaskDependency>
 {
-    Task<ObservableCollection<TaskDependency>> GetAllTaskDependenciesByTask(string query, int id);
+    Task<ObservableCollection<TaskDependency>> GetAllTaskDependenciesByTask(int id);
 }

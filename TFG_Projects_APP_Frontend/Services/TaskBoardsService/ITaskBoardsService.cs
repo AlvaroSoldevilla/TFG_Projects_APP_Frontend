@@ -5,5 +5,5 @@ namespace TFG_Projects_APP_Frontend.Services.TaskBoardsService;
 
 internal interface ITaskBoardsService : IService<TaskBoard>
 {
-    Task<ObservableCollection<TaskBoard>> GetAllTaskBoardsByProject(string query, int id);
+    Task<ObservableCollection<TaskBoard>> GetAllTaskBoardsByProject(int id);
 }

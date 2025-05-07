@@ -6,37 +6,37 @@ namespace TFG_Projects_APP_Frontend.Services.UsersService;
 
 internal class UsersService(RestClient restClient) : IUsersService
 {
-    public Task<string> AuthenticateUser(string query, string email)
+    public Task<string> AuthenticateUser(string email)
     {
         throw new NotImplementedException();
     }
 
-    public Task<string> Delete(string query, int id)
+    public Task<string> Delete(int id)
     {
         throw new NotImplementedException();
     }
 
-    public Task<ObservableCollection<AppUser>> GetAll(string query)
+    public Task<ObservableCollection<AppUser>> GetAll()
     {
         throw new NotImplementedException();
     }
 
-    public Task<AppUser> GetById(string query, int id)
+    public Task<AppUser> GetById(int id)
     {
         throw new NotImplementedException();
     }
 
-    public Task<AppUser> GetUserByProject(string query, int id)
+    public Task<AppUser> GetUserByProject(int id)
     {
         throw new NotImplementedException();
     }
 
-    public Task<string> Patch(string query, object data)
+    public Task<string> Patch(int id, object data)
     {
         throw new NotImplementedException();
     }
 
-    public Task<string> Post(string query, object data)
+    public Task<string> Post(object data)
     {
         throw new NotImplementedException();
     }

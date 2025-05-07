@@ -10,6 +10,6 @@ namespace TFG_Projects_APP_Frontend.Services.TaskSectionsService
 {
     internal interface ITaskSectionsService : IService<TaskSection>
     {
-        Task<ObservableCollection<TaskSection>> getAllTaskSectionsByTaskBoard(string query, int id);
+        Task<ObservableCollection<TaskSection>> getAllTaskSectionsByTaskBoard(int id);
     }
 }

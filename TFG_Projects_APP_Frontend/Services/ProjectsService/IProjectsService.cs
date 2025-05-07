@@ -5,5 +5,5 @@ namespace TFG_Projects_APP_Frontend.Services.ProjectsService;
 
 internal interface IProjectsService : IService<Project>
 {
-    Task<ObservableCollection<Project>> GetAllProjectsByUser(string query, int id);
+    Task<ObservableCollection<Project>> GetAllProjectsByUser(int id);
 }

@@ -6,32 +6,32 @@ namespace TFG_Projects_APP_Frontend.Services.TaskDependeciesService;
 
 internal class TaskDependenciesService(RestClient restClient) : ITaskDependenciesService
 {
-    public Task<string> Delete(string query, int id)
+    public Task<string> Delete(int id)
     {
         throw new NotImplementedException();
     }
 
-    public Task<ObservableCollection<TaskDependency>> GetAll(string query)
+    public Task<ObservableCollection<TaskDependency>> GetAll()
     {
         throw new NotImplementedException();
     }
 
-    public Task<ObservableCollection<TaskDependency>> GetAllTaskDependenciesByTask(string query, int id)
+    public Task<ObservableCollection<TaskDependency>> GetAllTaskDependenciesByTask( int id)
     {
         throw new NotImplementedException();
     }
 
-    public Task<TaskDependency> GetById(string query, int id)
+    public Task<TaskDependency> GetById(int id)
     {
         throw new NotImplementedException();
     }
 
-    public Task<string> Patch(string query, object data)
+    public Task<string> Patch(int id, object data)
     {
         throw new NotImplementedException();
     }
 
-    public Task<string> Post(string query, object data)
+    public Task<string> Post(object data)
     {
         throw new NotImplementedException();
     }

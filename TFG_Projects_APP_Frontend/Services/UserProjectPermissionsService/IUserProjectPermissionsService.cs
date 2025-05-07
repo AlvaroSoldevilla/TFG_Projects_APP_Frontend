@@ -5,9 +5,9 @@ namespace TFG_Projects_APP_Frontend.Services.UserProjectPermissionsService
 {
     internal interface IUserProjectPermissionsService : IService<UserProjectPermission>
     {
-        Task<ObservableCollection<UserProjectPermission>> getAllUserProjectPermissionsByUser(string query, int id);
-        Task<ObservableCollection<UserProjectPermission>> getAllUserProjectPermissionsByProject(string query, int id);
-        Task<ObservableCollection<UserProjectPermission>> getAllUserProjectPermissionsByPermission(string query, int id);
-        Task<ObservableCollection<UserProjectPermission>> getAllUserProjectPermissionsByUserAndProject(string query, int userId, int projectId);
+        Task<ObservableCollection<UserProjectPermission>> getAllUserProjectPermissionsByUser(int id);
+        Task<ObservableCollection<UserProjectPermission>> getAllUserProjectPermissionsByProject(int id);
+        Task<ObservableCollection<UserProjectPermission>> getAllUserProjectPermissionsByPermission(int id);
+        Task<ObservableCollection<UserProjectPermission>> getAllUserProjectPermissionsByUserAndProject(int userId, int projectId);
     }
 }

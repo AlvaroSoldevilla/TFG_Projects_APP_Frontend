@@ -6,37 +6,37 @@ namespace TFG_Projects_APP_Frontend.Services.ProjectUsersService;
 
 internal class ProjectUsersService(RestClient restClient) : IProjectUsersService
 {
-    public async Task<string> Delete(string query, int id)
+    public async Task<string> Delete(int id)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<ObservableCollection<ProjectUser>> GetAll(string query)
+    public async Task<ObservableCollection<ProjectUser>> GetAll()
     {
         throw new NotImplementedException();
     }
 
-    public async Task<ObservableCollection<ProjectUser>> GetAllProjectUsersByProject(string query, int id)
+    public async Task<ObservableCollection<ProjectUser>> GetAllProjectUsersByProject(int id)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<ObservableCollection<ProjectUser>> GetAllProjectUsersByUser(string query, int id)
+    public async Task<ObservableCollection<ProjectUser>> GetAllProjectUsersByUser(int id)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<ProjectUser> GetById(string query, int id)
+    public async Task<ProjectUser> GetById(int id)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<string> Patch(string query, object data)
+    public async Task<string> Patch(int id, object data)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<string> Post(string query, object data)
+    public async Task<string> Post(object data)
     {
         throw new NotImplementedException();
     }
