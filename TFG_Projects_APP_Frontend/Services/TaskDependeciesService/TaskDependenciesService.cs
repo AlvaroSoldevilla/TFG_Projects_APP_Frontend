@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Net.Http.Json;
 using TFG_Projects_APP_Frontend.Entities.Models;
 using TFG_Projects_APP_Frontend.Rest;
 
@@ -6,33 +7,46 @@ namespace TFG_Projects_APP_Frontend.Services.TaskDependeciesService;
 
 internal class TaskDependenciesService(RestClient restClient) : ITaskDependenciesService
 {
-    public Task<string> Delete(int id)
+    private readonly string route = "task_dependencies";
+    public async Task<string> Delete(int id)
     {
-        throw new NotImplementedException();
+        HttpResponseMessage response = await restClient.DeleteAsync(route, id);
+        var result = await response.Content.ReadAsStringAsync();
+        return result;
     }
 
-    public Task<ObservableCollection<TaskDependency>> GetAll()
+    public async Task<ObservableCollection<TaskDependency>> GetAll()
     {
-        throw new NotImplementedException();
+        HttpResponseMessage response = await restClient.GetAllAsync(route);
+        var taskDependencies = await response.Content.ReadFromJsonAsync<ObservableCollection<TaskDependency>>(restClient._options);
+        return taskDependencies;
     }
 
-    public Task<ObservableCollection<TaskDependency>> GetAllTaskDependenciesByTask( int id)
+    public async Task<ObservableCollection<TaskDependency>> GetAllTaskDependenciesByTask( int id)
     {
-        throw new NotImplementedException();
+        HttpResponseMessage response = await restClient.GetAllAsync($"{route}/task/{id}");
+        var taskDependencies = await response.Content.ReadFromJsonAsync<ObservableCollection<TaskDependency>>(restClient._options);
+        return taskDependencies;
     }
 
-    public Task<TaskDependency> GetById(int id)
+    public async Task<TaskDependency> GetById(int id)
     {
-        throw new NotImplementedException();
+        HttpResponseMessage response = await restClient.GetByIdAsync(route, id);
+        var taskDependency = await response.Content.ReadFromJsonAsync<TaskDependency>(restClient._options);
+        return taskDependency;
     }
 
-    public Task<string> Patch(int id, object data)
+    public async Task<string> Patch(int id, object data)
     {
-        throw new NotImplementedException();
+        HttpResponseMessage response = await restClient.PatchAsync(route, id, data);
+        var result = await response.Content.ReadAsStringAsync();
+        return result;
     }
 
-    public Task<string> Post(object data)
+    public async Task<string> Post(object data)
     {
-        throw new NotImplementedException();
+        HttpResponseMessage response = await restClient.PostAsync(route, data);
+        var result = await response.Content.ReadAsStringAsync();
+        return result;
     }
 }

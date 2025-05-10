@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using System.Net.Http.Json;
-using TFG_Projects_APP_Frontend.Entities.Dtos.Components;
 using TFG_Projects_APP_Frontend.Entities.Models;
 using TFG_Projects_APP_Frontend.Rest;
 
@@ -25,32 +24,28 @@ internal class ComponentsService(RestClient restClient) : IComponentsService
 
     public async Task<ObservableCollection<Component>> GetAllComponentsByBoard(int id)
     {
-        string query = $"{route}/board/{id}";
-        HttpResponseMessage response = await restClient.GetAllAsync(route);
+        HttpResponseMessage response = await restClient.GetAllAsync($"{route}/board/{id}");
         var components = await response.Content.ReadFromJsonAsync<ObservableCollection<Component>>(restClient._options);
         return components;
     }
 
     public async Task<Component> GetById(int id)
     {
-        string query = $"{route}";
-        HttpResponseMessage response = await restClient.GetByIdAsync(query,id);
+        HttpResponseMessage response = await restClient.GetByIdAsync($"{route}", id);
         var component = await response.Content.ReadFromJsonAsync<Component>(restClient._options);
         return component;
     }
 
     public async Task<string> Patch(int id, object data)
     {
-        string query = $"{route}";
-        HttpResponseMessage response = await restClient.PatchAsync(query, id, data);
+        HttpResponseMessage response = await restClient.PatchAsync($"{route}", id, data);
         var result = await response.Content.ReadAsStringAsync();
         return result;
     }
 
     public async Task<string> Post(object data)
     {
-        string query = $"{route}";
-        HttpResponseMessage response = await restClient.PostAsync(query, data);
+        HttpResponseMessage response = await restClient.PostAsync($"{route}", data);
         var result = await response.Content.ReadAsStringAsync();
         return result;
     }

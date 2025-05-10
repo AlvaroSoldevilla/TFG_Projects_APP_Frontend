@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Net.Http.Json;
 using TFG_Projects_APP_Frontend.Entities.Models;
 using TFG_Projects_APP_Frontend.Rest;
 
@@ -6,33 +7,46 @@ namespace TFG_Projects_APP_Frontend.Services.ConceptBoardsService;
 
 internal class ConceptBoardsService(RestClient restClient) : IConceptBoardsService
 {
+    private readonly string route = "concept_boards";
     public async Task<string> Delete(int id)
     {
-        throw new NotImplementedException();
+        HttpResponseMessage response = await restClient.DeleteAsync(route, id);
+        var result = await response.Content.ReadAsStringAsync();
+        return result;
     }
 
     public async Task<ObservableCollection<ConceptBoard>> GetAll()
     {
-        throw new NotImplementedException();
+        HttpResponseMessage response = await restClient.GetAllAsync(route);
+        var conceptBoards = await response.Content.ReadFromJsonAsync<ObservableCollection<ConceptBoard>>(restClient._options);
+        return conceptBoards;
     }
 
     public async Task<ObservableCollection<ConceptBoard>> GetAllConceptBoardsByConcept(int id)
     {
-        throw new NotImplementedException();
+        HttpResponseMessage response = await restClient.GetAllAsync($"{route}/concept/{id}");
+        var conceptBoards = await response.Content.ReadFromJsonAsync<ObservableCollection<ConceptBoard>>(restClient._options);
+        return conceptBoards;
     }
 
     public async Task<ConceptBoard> GetById(int id)
     {
-        throw new NotImplementedException();
+        HttpResponseMessage response = await restClient.GetByIdAsync(route, id);
+        var conceptBoard = await response.Content.ReadFromJsonAsync<ConceptBoard>(restClient._options);
+        return conceptBoard;
     }
 
     public async Task<string> Patch(int id, object data)
     {
-        throw new NotImplementedException();
+        HttpResponseMessage response = await restClient.PatchAsync(route, id, data);
+        var result = await response.Content.ReadAsStringAsync();
+        return result;
     }
 
     public async Task<string> Post(object data)
     {
-        throw new NotImplementedException();
+        HttpResponseMessage response = await restClient.PostAsync(route, data);
+        var result = await response.Content.ReadAsStringAsync();
+        return result;
     }
 }

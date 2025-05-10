@@ -1,49 +1,52 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
+using System.Net.Http.Json;
 using TFG_Projects_APP_Frontend.Entities.Models;
 using TFG_Projects_APP_Frontend.Rest;
 
-namespace TFG_Projects_APP_Frontend.Services.TaskSectionsService
+namespace TFG_Projects_APP_Frontend.Services.TaskSectionsService;
+
+internal class TaskSectionsService(RestClient restClient) : ITaskSectionsService
 {
-    internal class TaskSectionsService(RestClient restClient) : ITaskSectionsService
+    private readonly string route = "task_sections";
+    public async Task<string> Delete(int id)
     {
-        public Task<string> Delete(int id)
-        {
-            throw new NotImplementedException();
-        }
+        HttpResponseMessage response = await restClient.DeleteAsync(route, id);
+        var result = await response.Content.ReadAsStringAsync();
+        return result;
+    }
 
-        public Task<ObservableCollection<TaskSection>> GetAll()
-        {
-            throw new NotImplementedException();
-        }
+    public async Task<ObservableCollection<TaskSection>> GetAll()
+    {
+        HttpResponseMessage response = await restClient.GetAllAsync(route);
+        var taskSections = await response.Content.ReadFromJsonAsync<ObservableCollection<TaskSection>>(restClient._options);
+        return taskSections;
+    }
 
-        public Task<ObservableCollection<TaskSection>> GetAllTaskSectionsByTaskBoard(int id)
-        {
-            throw new NotImplementedException();
-        }
+    public async Task<ObservableCollection<TaskSection>> getAllTaskSectionsByTaskBoard(int id)
+    {
+        HttpResponseMessage response = await restClient.GetAllAsync($"{route}/board/{id}");
+        var taskSections = await response.Content.ReadFromJsonAsync<ObservableCollection<TaskSection>>(restClient._options);
+        return taskSections;
+    }
 
-        public Task<ObservableCollection<TaskSection>> getAllTaskSectionsByTaskBoard(int id)
-        {
-            throw new NotImplementedException();
-        }
+    public async Task<TaskSection> GetById(int id)
+    {
+        HttpResponseMessage response = await restClient.GetByIdAsync(route, id);
+        var taskSection = await response.Content.ReadFromJsonAsync<TaskSection>(restClient._options);
+        return taskSection;
+    }
 
-        public Task<TaskSection> GetById(int id)
-        {
-            throw new NotImplementedException();
-        }
+    public async Task<string> Patch(int id, object data)
+    {
+        HttpResponseMessage response = await restClient.PatchAsync(route, id, data);
+        var result = await response.Content.ReadAsStringAsync();
+        return result;
+    }
 
-        public Task<string> Patch(int id, object data)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<string> Post(object data)
-        {
-            throw new NotImplementedException();
-        }
+    public async Task<string> Post(object data)
+    {
+        HttpResponseMessage response = await restClient.PostAsync(route, data);
+        var result = await response.Content.ReadAsStringAsync();
+        return result;
     }
 }
