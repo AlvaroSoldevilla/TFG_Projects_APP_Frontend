@@ -4,7 +4,7 @@ using TFG_Projects_APP_Frontend.Rest;
 
 namespace TFG_Projects_APP_Frontend.Services.TypesService;
 
-internal class TypesService(RestClient restClient) : ITypesService
+public class TypesService(RestClient restClient) : ITypesService
 {
     private readonly string route = "types";
     public async Task<string> Delete(int id)

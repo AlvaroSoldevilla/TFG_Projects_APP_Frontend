@@ -1,6 +1,6 @@
 ﻿namespace TFG_Projects_APP_Frontend.Entities.Models;
 
-class Concept
+public class Concept
 {
     public int Id { get; set; }
     public int IdProject { get; set; }

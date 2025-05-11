@@ -5,7 +5,7 @@ using TFG_Projects_APP_Frontend.Rest;
 
 namespace TFG_Projects_APP_Frontend.Services.ProjectUsersService;
 
-internal class ProjectUsersService(RestClient restClient) : IProjectUsersService
+public class ProjectUsersService(RestClient restClient) : IProjectUsersService
 {
     private readonly string route = "project_users";
     public async Task<string> Delete(int id)

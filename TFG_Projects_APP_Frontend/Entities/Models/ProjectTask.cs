@@ -1,6 +1,6 @@
 ﻿namespace TFG_Projects_APP_Frontend.Entities.Models;
 
-class ProjectTask
+public class ProjectTask
 {
     public int Id { get; set; }
     public int IdSection { get; set; }

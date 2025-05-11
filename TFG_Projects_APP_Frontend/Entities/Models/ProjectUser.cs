@@ -1,6 +1,6 @@
 ﻿namespace TFG_Projects_APP_Frontend.Entities.Models;
 
-class ProjectUser
+public class ProjectUser
 {
     public int Id { get; set; }
     public int IdUser { get; set; }

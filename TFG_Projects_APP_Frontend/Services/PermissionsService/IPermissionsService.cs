@@ -2,6 +2,6 @@
 
 namespace TFG_Projects_APP_Frontend.Services.PermissionsService;
 
-internal interface IPermissionsService : IService<Permission>
+public interface IPermissionsService : IService<Permission>
 {
 }

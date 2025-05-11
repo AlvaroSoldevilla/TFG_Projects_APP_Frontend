@@ -1,6 +1,6 @@
 ﻿namespace TFG_Projects_APP_Frontend.Entities.Models;
 
-class Priority
+public class Priority
 {
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;

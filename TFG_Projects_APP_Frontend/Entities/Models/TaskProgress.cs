@@ -1,6 +1,6 @@
 ﻿namespace TFG_Projects_APP_Frontend.Entities.Models;
 
-class TaskProgress
+public class TaskProgress
 {
     public int Id { get; set; }
     public int IdSection { get; set; }

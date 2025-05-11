@@ -5,7 +5,7 @@ using TFG_Projects_APP_Frontend.Rest;
 
 namespace TFG_Projects_APP_Frontend.Services.ConceptsService;
 
-internal class ConceptsService(RestClient restClient) : IConceptsService
+public class ConceptsService(RestClient restClient) : IConceptsService
 {
     private readonly string route = "concepts";
     public async Task<string> Delete(int id)

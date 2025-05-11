@@ -1,6 +1,6 @@
 ﻿namespace TFG_Projects_APP_Frontend.Entities.Models;
 
-class AppUser
+public class AppUser
 {
     public int Id { get; set; }
     public string Username { get; set; } = string.Empty;

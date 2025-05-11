@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:TFG_Projects_APP_Frontend"
     xmlns:pages="clr-namespace:TFG_Projects_APP_Frontend.Pages"
     Shell.FlyoutBehavior="Flyout"
-    Title="TFG_Projects_APP_Frontend">
+    Title="Project Design APP">
 
     <ShellContent
         Title="Home"

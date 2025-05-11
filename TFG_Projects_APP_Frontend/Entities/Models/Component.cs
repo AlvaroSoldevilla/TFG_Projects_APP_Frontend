@@ -1,6 +1,6 @@
 ﻿namespace TFG_Projects_APP_Frontend.Entities.Models;
 
-class Component
+public class Component
 {
     public int Id { get; set; }
     public int IdBoard { get; set; }

@@ -3,7 +3,7 @@ using TFG_Projects_APP_Frontend.Entities.Models;
 
 namespace TFG_Projects_APP_Frontend.Services.ConceptsService;
 
-internal interface IConceptsService : IService<Concept>
+public interface IConceptsService : IService<Concept>
 {
     Task<ObservableCollection<Concept>> GetAllConceptsByProject(int id);
 }

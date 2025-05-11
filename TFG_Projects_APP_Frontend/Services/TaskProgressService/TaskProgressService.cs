@@ -5,7 +5,7 @@ using TFG_Projects_APP_Frontend.Rest;
 
 namespace TFG_Projects_APP_Frontend.Services.TaskProgressService;
 
-internal class TaskProgressService(RestClient restClient) : ITaskProgressService
+public class TaskProgressService(RestClient restClient) : ITaskProgressService
 {
     private readonly string route = "task_progress";
     public async Task<string> Delete(int id)

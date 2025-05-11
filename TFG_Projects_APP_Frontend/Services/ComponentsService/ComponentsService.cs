@@ -5,7 +5,7 @@ using TFG_Projects_APP_Frontend.Rest;
 
 namespace TFG_Projects_APP_Frontend.Services.ComponentsService;
 
-internal class ComponentsService(RestClient restClient) : IComponentsService
+public class ComponentsService(RestClient restClient) : IComponentsService
 {
     private readonly string route = "components";
     public async Task<string> Delete(int id)

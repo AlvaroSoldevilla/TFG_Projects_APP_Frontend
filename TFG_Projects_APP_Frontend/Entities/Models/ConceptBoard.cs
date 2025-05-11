@@ -1,6 +1,6 @@
 ﻿namespace TFG_Projects_APP_Frontend.Entities.Models;
 
-class ConceptBoard
+public class ConceptBoard
 {
     public int Id { get; set; }
     public int IdConcept { get; set; }

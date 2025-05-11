@@ -5,7 +5,7 @@ using TFG_Projects_APP_Frontend.Rest;
 
 namespace TFG_Projects_APP_Frontend.Services.TaskSectionsService;
 
-internal class TaskSectionsService(RestClient restClient) : ITaskSectionsService
+public class TaskSectionsService(RestClient restClient) : ITaskSectionsService
 {
     private readonly string route = "task_sections";
     public async Task<string> Delete(int id)

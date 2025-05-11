@@ -5,7 +5,7 @@ using TFG_Projects_APP_Frontend.Rest;
 
 namespace TFG_Projects_APP_Frontend.Services.UsersService;
 
-internal class UsersService(RestClient restClient) : IUsersService
+public class UsersService(RestClient restClient) : IUsersService
 {
     private readonly string route = "users";
     public async Task<string> AuthenticateUser(string email, object data)

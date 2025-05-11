@@ -5,7 +5,7 @@ using TFG_Projects_APP_Frontend.Rest;
 
 namespace TFG_Projects_APP_Frontend.Services.UserProjectPermissionsService;
 
-internal class UserProjectPermissionsService(RestClient restClient) : IUserProjectPermissionsService
+public class UserProjectPermissionsService(RestClient restClient) : IUserProjectPermissionsService
 {
     private readonly string route = "user_project_permissions";
     public async Task<string> Delete(int id)

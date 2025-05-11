@@ -2,7 +2,7 @@
 
 namespace TFG_Projects_APP_Frontend.Rest;
 
-internal class RestClient
+public class RestClient
 {
     HttpClient _client = new HttpClient();
     private readonly string baseURL = Preferences.Get("APIurl", "http://localhost:8000");

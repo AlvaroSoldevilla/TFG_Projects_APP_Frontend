@@ -5,7 +5,7 @@ using TFG_Projects_APP_Frontend.Rest;
 
 namespace TFG_Projects_APP_Frontend.Services.ConceptBoardsService;
 
-internal class ConceptBoardsService(RestClient restClient) : IConceptBoardsService
+public class ConceptBoardsService(RestClient restClient) : IConceptBoardsService
 {
     private readonly string route = "concept_boards";
     public async Task<string> Delete(int id)

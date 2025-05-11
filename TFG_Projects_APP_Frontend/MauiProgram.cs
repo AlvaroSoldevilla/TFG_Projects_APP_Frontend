@@ -1,4 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
+using TFG_Projects_APP_Frontend.PageModels;
+using TFG_Projects_APP_Frontend.PageModels.Concepts;
+using TFG_Projects_APP_Frontend.PageModels.Tasks;
+using TFG_Projects_APP_Frontend.Pages;
+using TFG_Projects_APP_Frontend.Pages.Concepts;
+using TFG_Projects_APP_Frontend.Pages.Tasks;
 using TFG_Projects_APP_Frontend.Rest;
 using TFG_Projects_APP_Frontend.Services.ComponentsService;
 using TFG_Projects_APP_Frontend.Services.ConceptBoardsService;
@@ -54,6 +60,26 @@ public static class MauiProgram
         builder.Services.AddSingleton<ITypesService, TypesService>();
         builder.Services.AddSingleton<IUserProjectPermissionsService, UserProjectPermissionsService>();
         builder.Services.AddSingleton<IUsersService, UsersService>();
+
+        builder.Services.AddTransient<ConceptBoardPageModel>();
+        builder.Services.AddTransient<TaskBoardPageModel>();
+        builder.Services.AddTransient<TaskProgressPageModel>();
+        builder.Services.AddTransient<AppSettingsPageModel>();
+        builder.Services.AddScoped<MainPageModel>();
+        builder.Services.AddScoped<LoginPageModel>();
+        builder.Services.AddTransient<ProjectManagementPageModel>();
+        builder.Services.AddTransient<ProjectsPageModel>();
+        builder.Services.AddTransient<UserSettingsPageModel>();
+
+        builder.Services.AddTransient<ConceptBoardPage>();
+        builder.Services.AddTransient<TaskBoardPage>();
+        builder.Services.AddTransient<TaskProgressPage>();
+        builder.Services.AddTransient<AppSettingsPage>();
+        builder.Services.AddTransient<MainPage>();
+        builder.Services.AddTransient<LoginPage>();
+        builder.Services.AddTransient<ProjectManagementPage>();
+        builder.Services.AddTransient<ProjectsPage>();
+        builder.Services.AddTransient<UserSettingsPage>();
 
         return builder.Build();
 	}

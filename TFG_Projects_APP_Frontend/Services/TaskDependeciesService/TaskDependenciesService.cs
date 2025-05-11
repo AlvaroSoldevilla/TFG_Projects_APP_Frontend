@@ -5,7 +5,7 @@ using TFG_Projects_APP_Frontend.Rest;
 
 namespace TFG_Projects_APP_Frontend.Services.TaskDependeciesService;
 
-internal class TaskDependenciesService(RestClient restClient) : ITaskDependenciesService
+public class TaskDependenciesService(RestClient restClient) : ITaskDependenciesService
 {
     private readonly string route = "task_dependencies";
     public async Task<string> Delete(int id)

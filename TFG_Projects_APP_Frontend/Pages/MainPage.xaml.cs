@@ -1,25 +1,26 @@
-﻿namespace TFG_Projects_APP_Frontend.Pages
+﻿using TFG_Projects_APP_Frontend.PageModels;
+
+namespace TFG_Projects_APP_Frontend.Pages;
+
+public partial class MainPage : ContentPage
 {
-    public partial class MainPage : ContentPage
+    int count = 0;
+
+    public MainPage(MainPageModel mainPageModel)
     {
-        int count = 0;
-
-        public MainPage()
-        {
-            InitializeComponent();
-        }
-
-        private void OnCounterClicked(object sender, EventArgs e)
-        {
-            count++;
-
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
-            else
-                CounterBtn.Text = $"Clicked {count} times";
-
-            SemanticScreenReader.Announce(CounterBtn.Text);
-        }
+        InitializeComponent();
+        BindingContext = mainPageModel;
     }
 
+    private void OnCounterClicked(object sender, EventArgs e)
+    {
+        count++;
+
+        if (count == 1)
+            CounterBtn.Text = $"Clicked {count} time";
+        else
+            CounterBtn.Text = $"Clicked {count} times";
+
+        SemanticScreenReader.Announce(CounterBtn.Text);
+    }
 }

@@ -2,6 +2,6 @@
 
 namespace TFG_Projects_APP_Frontend.Services.PrioritiesService;
 
-internal interface IPrioritiesService : IService<Priority>
+public interface IPrioritiesService : IService<Priority>
 {
 }

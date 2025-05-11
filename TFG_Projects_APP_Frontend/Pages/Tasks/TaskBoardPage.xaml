@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TFG_Projects_APP_Frontend.Pages.Tasks.TaskBoardPage"
+             xmlns:models="clr-namespace:TFG_Projects_APP_Frontend.Entities.Models"
+             xmlns:dtos="clr-namespace:TFG_Projects_APP_Frontend.Entities.Dtos.Users"
+             xmlns:pageModels="clr-namespace:TFG_Projects_APP_Frontend.PageModels"
+             x:DataType="pageModels:Tasks.TaskBoardPageModel"
+             Title="TaskBoardPage">
+    <VerticalStackLayout>
+        <Label 
+            Text="Welcome to .NET MAUI!"
+            VerticalOptions="Center" 
+            HorizontalOptions="Center" />
+    </VerticalStackLayout>
+</ContentPage>

@@ -1,6 +1,6 @@
 ﻿namespace TFG_Projects_APP_Frontend.Entities.Models;
 
-class Permission
+public class Permission
 {
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;

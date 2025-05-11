@@ -1,6 +1,6 @@
 ﻿namespace TFG_Projects_APP_Frontend.Entities.Models;
 
-class TaskDependency
+public class TaskDependency
 {
     public int Id { get; set; }
     public int IdTask { get; set; }

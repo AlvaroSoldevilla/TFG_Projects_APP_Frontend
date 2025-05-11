@@ -2,6 +2,6 @@
 
 namespace TFG_Projects_APP_Frontend.Services.RolesService;
 
-internal interface IRolesService : IService<Role>
+public interface IRolesService : IService<Role>
 {
 }

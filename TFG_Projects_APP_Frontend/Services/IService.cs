@@ -2,7 +2,7 @@
 
 namespace TFG_Projects_APP_Frontend.Services;
 
-internal interface IService<T>
+public interface IService<T>
 {
     Task<ObservableCollection<T>> GetAll();
     Task<T> GetById(int id);

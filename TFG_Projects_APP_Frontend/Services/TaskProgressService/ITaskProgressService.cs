@@ -2,7 +2,7 @@
 
 namespace TFG_Projects_APP_Frontend.Services.TaskProgressService;
 
-internal interface ITaskProgressService : IService<TaskProgress>
+public interface ITaskProgressService : IService<TaskProgress>
 {
 
 }

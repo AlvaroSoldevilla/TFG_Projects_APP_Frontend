@@ -1,6 +1,6 @@
 ﻿namespace TFG_Projects_APP_Frontend.Entities.Models;
 
-class UserProjectPermission
+public class UserProjectPermission
 {
     public int Id { get; set; }
     public int IdPermission { get; set; }

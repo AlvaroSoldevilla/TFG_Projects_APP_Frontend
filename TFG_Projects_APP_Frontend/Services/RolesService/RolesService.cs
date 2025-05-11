@@ -5,7 +5,7 @@ using TFG_Projects_APP_Frontend.Rest;
 
 namespace TFG_Projects_APP_Frontend.Services.RolesService;
 
-internal class RolesService(RestClient restClient) : IRolesService
+public class RolesService(RestClient restClient) : IRolesService
 {
     private readonly string route = "roles";
     public async Task<string> Delete(int id)
