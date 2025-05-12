@@ -68,7 +68,6 @@ public static class MauiProgram
         builder.Services.AddScoped<MainPageModel>();
         builder.Services.AddScoped<LoginPageModel>();
         builder.Services.AddTransient<ProjectManagementPageModel>();
-        builder.Services.AddTransient<ProjectsPageModel>();
         builder.Services.AddTransient<UserSettingsPageModel>();
 
         builder.Services.AddTransient<ConceptBoardPage>();
@@ -78,7 +77,6 @@ public static class MauiProgram
         builder.Services.AddTransient<MainPage>();
         builder.Services.AddTransient<LoginPage>();
         builder.Services.AddTransient<ProjectManagementPage>();
-        builder.Services.AddTransient<ProjectsPage>();
         builder.Services.AddTransient<UserSettingsPage>();
 
         return builder.Build();
