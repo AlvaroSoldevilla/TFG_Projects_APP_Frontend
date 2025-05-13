@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Net.Http.Json;
+using TFG_Projects_APP_Frontend.Entities.Dtos.Users;
 using TFG_Projects_APP_Frontend.Entities.Models;
 using TFG_Projects_APP_Frontend.Rest;
 
@@ -25,22 +26,43 @@ public class UsersService(RestClient restClient) : IUsersService
     public async Task<ObservableCollection<AppUser>> GetAll()
     {
         HttpResponseMessage response = await restClient.GetAllAsync(route);
-        var users = await response.Content.ReadFromJsonAsync<ObservableCollection<AppUser>>(restClient._options);
-        return users;
-    }
-
-    public async Task<AppUser> GetById(int id)
-    {
-        HttpResponseMessage response = await restClient.GetByIdAsync(route, id);
-        var user = await response.Content.ReadFromJsonAsync<AppUser>(restClient._options);
-        return user;
+        var users = await response.Content.ReadFromJsonAsync<ObservableCollection<UserRead>>(restClient._options);
+        return new ObservableCollection<AppUser>(users.Select(user =>
+        {
+            return new AppUser
+            {
+                Id = user.Id,
+                Username = user.Username,
+                Email = user.Email,
+            };
+        }).ToList());
     }
 
     public async Task<ObservableCollection<AppUser>> GetUsersByProject(int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/project/{id}");
-        var users = await response.Content.ReadFromJsonAsync<ObservableCollection<AppUser>>(restClient._options);
-        return users;
+        var users = await response.Content.ReadFromJsonAsync<ObservableCollection<UserRead>>(restClient._options);
+        return new ObservableCollection<AppUser>(users.Select(user =>
+        {
+            return new AppUser
+            {
+                Id = user.Id,
+                Username = user.Username,
+                Email = user.Email,
+            };
+        }).ToList());
+    }
+
+    public async Task<AppUser> GetById(int id)
+    {
+        HttpResponseMessage response = await restClient.GetByIdAsync(route, id);
+        var user = await response.Content.ReadFromJsonAsync<UserRead>(restClient._options);
+        return new AppUser
+        {
+            Id = user.Id,
+            Username = user.Username,
+            Email = user.Email,
+        };
     }
 
     public async Task<string> Patch(int id, object data)

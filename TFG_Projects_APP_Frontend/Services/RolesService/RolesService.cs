@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Net.Http.Json;
+using TFG_Projects_APP_Frontend.Entities.Dtos.Roles;
 using TFG_Projects_APP_Frontend.Entities.Models;
 using TFG_Projects_APP_Frontend.Rest;
 
@@ -18,15 +19,28 @@ public class RolesService(RestClient restClient) : IRolesService
     public async Task<ObservableCollection<Role>> GetAll()
     {
         HttpResponseMessage response = await restClient.GetAllAsync(route);
-        var roles = await response.Content.ReadFromJsonAsync<ObservableCollection<Role>>(restClient._options);
-        return roles;
+        var roles = await response.Content.ReadFromJsonAsync<ObservableCollection<RoleRead>>(restClient._options);
+        return new ObservableCollection<Role>(roles.Select(role =>
+        {
+            return new Role
+            {
+                Id = role.Id,
+                Name = role.Name,
+                Description = role.Description
+            };
+        }).ToList());
     }
 
     public async Task<Role> GetById(int id)
     {
         HttpResponseMessage response = await restClient.GetByIdAsync(route, id);
-        var role = await response.Content.ReadFromJsonAsync<Role>(restClient._options);
-        return role;
+        var role = await response.Content.ReadFromJsonAsync<RoleRead>(restClient._options);
+        return new Role
+        {
+            Id = role.Id,
+            Name = role.Name,
+            Description = role.Description
+        };
     }
 
     public async Task<string> Patch(int id, object data)

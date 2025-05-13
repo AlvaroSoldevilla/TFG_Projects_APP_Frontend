@@ -5,7 +5,7 @@ public class TaskProgress
     public int Id { get; set; }
     public int IdSection { get; set; }
     public string Title { get; set; } = string.Empty;
-    public bool ModifiesProgrees { get; set; } = false;
+    public bool? ModifiesProgress { get; set; } = false;
     public int? ProgressValue { get; set; }
 
     public TaskSection? TaskSection { get; set; }

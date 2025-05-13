@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Net.Http.Json;
+using TFG_Projects_APP_Frontend.Entities.Dtos.Priorities;
 using TFG_Projects_APP_Frontend.Entities.Models;
 using TFG_Projects_APP_Frontend.Rest;
 
@@ -18,15 +19,30 @@ public class PrioritiesService(RestClient restClient) : IPrioritiesService
     public async Task<ObservableCollection<Priority>> GetAll()
     {
         HttpResponseMessage response = await restClient.GetAllAsync(route);
-        var priorities = await response.Content.ReadFromJsonAsync<ObservableCollection<Priority>>(restClient._options);
-        return priorities;
+        var priorities = await response.Content.ReadFromJsonAsync<ObservableCollection<PriorityRead>>(restClient._options);
+        return new ObservableCollection<Priority>(priorities.Select(priority =>
+        {
+            return new Priority
+            {
+                Id = priority.Id,
+                Name = priority.Name,
+                Color = priority.Color,
+                PriorityValue = priority.PriorityValue,
+            };
+        }).ToList());
     }
 
     public async Task<Priority> GetById(int id)
     {
         HttpResponseMessage response = await restClient.GetByIdAsync(route, id);
-        var priority = await response.Content.ReadFromJsonAsync<Priority>(restClient._options);
-        return priority;
+        var priority = await response.Content.ReadFromJsonAsync<PriorityRead>(restClient._options);
+        return new Priority
+        {
+            Id = priority.Id,
+            Name = priority.Name,
+            Color = priority.Color,
+            PriorityValue = priority.PriorityValue,
+        };
     }
 
     public async Task<string> Patch(int id, object data)

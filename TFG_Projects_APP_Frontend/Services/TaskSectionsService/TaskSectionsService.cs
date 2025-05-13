@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Net.Http.Json;
+using TFG_Projects_APP_Frontend.Entities.Dtos.TaskSections;
 using TFG_Projects_APP_Frontend.Entities.Models;
 using TFG_Projects_APP_Frontend.Rest;
 
@@ -18,22 +19,43 @@ public class TaskSectionsService(RestClient restClient) : ITaskSectionsService
     public async Task<ObservableCollection<TaskSection>> GetAll()
     {
         HttpResponseMessage response = await restClient.GetAllAsync(route);
-        var taskSections = await response.Content.ReadFromJsonAsync<ObservableCollection<TaskSection>>(restClient._options);
-        return taskSections;
+        var taskSections = await response.Content.ReadFromJsonAsync<ObservableCollection<TaskSectionRead>>(restClient._options);
+        return new ObservableCollection<TaskSection>(taskSections.Select(taskSection =>
+        {
+            return new TaskSection
+            {
+                Id = taskSection.Id,
+                Title = taskSection.Title,
+                IdBoard = taskSection.IdBoard
+            };
+        }).ToList());
     }
 
     public async Task<ObservableCollection<TaskSection>> getAllTaskSectionsByTaskBoard(int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/board/{id}");
-        var taskSections = await response.Content.ReadFromJsonAsync<ObservableCollection<TaskSection>>(restClient._options);
-        return taskSections;
+        var taskSections = await response.Content.ReadFromJsonAsync<ObservableCollection<TaskSectionRead>>(restClient._options);
+        return new ObservableCollection<TaskSection>(taskSections.Select(taskSection =>
+        {
+            return new TaskSection
+            {
+                Id = taskSection.Id,
+                Title = taskSection.Title,
+                IdBoard = taskSection.IdBoard
+            };
+        }).ToList());
     }
 
     public async Task<TaskSection> GetById(int id)
     {
         HttpResponseMessage response = await restClient.GetByIdAsync(route, id);
-        var taskSection = await response.Content.ReadFromJsonAsync<TaskSection>(restClient._options);
-        return taskSection;
+        var taskSection = await response.Content.ReadFromJsonAsync<TaskSectionRead>(restClient._options);
+        return new TaskSection
+        {
+            Id = taskSection.Id,
+            Title = taskSection.Title,
+            IdBoard = taskSection.IdBoard
+        };
     }
 
     public async Task<string> Patch(int id, object data)

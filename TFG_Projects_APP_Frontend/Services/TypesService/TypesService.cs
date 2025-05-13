@@ -1,5 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Net.Http.Json;
+using TFG_Projects_APP_Frontend.Entities.Dtos.Types;
+using TFG_Projects_APP_Frontend.Entities.Models;
 using TFG_Projects_APP_Frontend.Rest;
 
 namespace TFG_Projects_APP_Frontend.Services.TypesService;
@@ -14,18 +16,29 @@ public class TypesService(RestClient restClient) : ITypesService
         return result;
     }
 
-    public async Task<ObservableCollection<Type>> GetAll()
+    public async Task<ObservableCollection<ProjectType>> GetAll()
     {
         HttpResponseMessage response = await restClient.GetAllAsync(route);
-        var types = await response.Content.ReadFromJsonAsync<ObservableCollection<Type>>(restClient._options);
-        return types;
+        var types = await response.Content.ReadFromJsonAsync<ObservableCollection<TypeRead>>(restClient._options);
+        return new ObservableCollection<ProjectType>(types.Select(type =>
+        {
+            return new ProjectType
+            {
+                Id = type.Id,
+                Name = type.Name
+            };
+        }).ToList());
     }
 
-    public async Task<Type> GetById(int id)
+    public async Task<ProjectType> GetById(int id)
     {
         HttpResponseMessage response = await restClient.GetByIdAsync(route, id);
-        var type = await response.Content.ReadFromJsonAsync<Type>(restClient._options);
-        return type;
+        var type = await response.Content.ReadFromJsonAsync<TypeRead>(restClient._options);
+        return new ProjectType
+        {
+            Id = type.Id,
+            Name = type.Name
+        };
     }
 
     public async Task<string> Patch(int id, object data)

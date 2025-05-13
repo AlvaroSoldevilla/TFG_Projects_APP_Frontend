@@ -1,6 +1,6 @@
 ﻿namespace TFG_Projects_APP_Frontend.Entities.Dtos.Roles;
 
-internal class TypeRead : TypeCreate
+internal class RoleRead : RoleCreate
 {
     public int Id { get; set; }
 }

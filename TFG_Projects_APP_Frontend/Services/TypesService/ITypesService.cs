@@ -1,5 +1,7 @@
-﻿namespace TFG_Projects_APP_Frontend.Services.TypesService;
+﻿using TFG_Projects_APP_Frontend.Entities.Models;
 
-public interface ITypesService : IService<Type>
+namespace TFG_Projects_APP_Frontend.Services.TypesService;
+
+public interface ITypesService : IService<ProjectType>
 {
 }

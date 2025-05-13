@@ -1,5 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Net.Http.Json;
+using TFG_Projects_APP_Frontend.Entities.Dtos.Tasks;
+using TFG_Projects_APP_Frontend.Entities.Dtos.Users;
 using TFG_Projects_APP_Frontend.Entities.Models;
 using TFG_Projects_APP_Frontend.Rest;
 
@@ -18,43 +20,126 @@ public class TasksService(RestClient restClient) : ITasksService
     public async Task<ObservableCollection<ProjectTask>> GetAll()
     {
         HttpResponseMessage response = await restClient.GetAllAsync(route);
-        var tasks = await response.Content.ReadFromJsonAsync<ObservableCollection<ProjectTask>>(restClient._options);
-        return tasks;
+        var tasks = await response.Content.ReadFromJsonAsync<ObservableCollection<TaskRead>>(restClient._options);
+        return new ObservableCollection<ProjectTask>(tasks.Select(task =>
+        {
+            return new ProjectTask
+            {
+                Id = task.Id,
+                IdSection = task.IdSection,
+                IdProgressSection = task.IdProgressSection,
+                IdUserAssigned = task.IdUserAssigned,
+                IdParentTask = task.IdParentTask,
+                IdUserCreated = task.IdUserCreated,
+                IdPriority = task.IdPriority,
+                Title = task.Title,
+                Description = task.Description,
+                Progress = task.Progress,
+                CreationDate = task.CreationDate,
+                LimitDate = task.LimitDate,
+                CompletionDate = task.CompletionDate,
+                Finished = task.Finished
+            };
+        }).ToList());
     }
 
     public async Task<ObservableCollection<ProjectTask>> GetAllTasksByTaskProgress(int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/progress/{id}");
-        var tasks = await response.Content.ReadFromJsonAsync<ObservableCollection<ProjectTask>>(restClient._options);
-        return tasks;
+        var tasks = await response.Content.ReadFromJsonAsync<ObservableCollection<TaskRead>>(restClient._options);
+        return new ObservableCollection<ProjectTask>(tasks.Select(task =>
+        {
+            return new ProjectTask
+            {
+                Id = task.Id,
+                IdSection = task.IdSection,
+                IdProgressSection = task.IdProgressSection,
+                IdUserAssigned = task.IdUserAssigned,
+                IdParentTask = task.IdParentTask,
+                IdUserCreated = task.IdUserCreated,
+                IdPriority = task.IdPriority,
+                Title = task.Title,
+                Description = task.Description,
+                Progress = task.Progress,
+                CreationDate = task.CreationDate,
+                LimitDate = task.LimitDate,
+                CompletionDate = task.CompletionDate,
+                Finished = task.Finished
+            };
+        }).ToList());
     }
 
     public async Task<ObservableCollection<ProjectTask>> GetAllTasksByTaskSection(int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/section/{id}");
-        var tasks = await response.Content.ReadFromJsonAsync<ObservableCollection<ProjectTask>>(restClient._options);
-        return tasks;
+        var tasks = await response.Content.ReadFromJsonAsync<ObservableCollection<TaskRead>>(restClient._options);
+        return new ObservableCollection<ProjectTask>(tasks.Select(task =>
+        {
+            return new ProjectTask
+            {
+                Id = task.Id,
+                IdSection = task.IdSection,
+                IdProgressSection = task.IdProgressSection,
+                IdUserAssigned = task.IdUserAssigned,
+                IdParentTask = task.IdParentTask,
+                IdUserCreated = task.IdUserCreated,
+                IdPriority = task.IdPriority,
+                Title = task.Title,
+                Description = task.Description,
+                Progress = task.Progress,
+                CreationDate = task.CreationDate,
+                LimitDate = task.LimitDate,
+                CompletionDate = task.CompletionDate,
+                Finished = task.Finished
+            };
+        }).ToList());
     }
 
     public async Task<ProjectTask> GetById(int id)
     {
         HttpResponseMessage response = await restClient.GetByIdAsync(route, id);
-        var task = await response.Content.ReadFromJsonAsync<ProjectTask>(restClient._options);
-        return task;
+        var task = await response.Content.ReadFromJsonAsync<TaskRead>(restClient._options);
+        return new ProjectTask
+        {
+            Id = task.Id,
+            IdSection = task.IdSection,
+            IdProgressSection = task.IdProgressSection,
+            IdUserAssigned = task.IdUserAssigned,
+            IdParentTask = task.IdParentTask,
+            IdUserCreated = task.IdUserCreated,
+            IdPriority = task.IdPriority,
+            Title = task.Title,
+            Description = task.Description,
+            Progress = task.Progress,
+            CreationDate = task.CreationDate,
+            LimitDate = task.LimitDate,
+            CompletionDate = task.CompletionDate,
+            Finished = task.Finished
+        };
     }
 
     public async Task<AppUser> getUserAssigned(int id)
     {
         HttpResponseMessage response = await restClient.GetByIdAsync($"{route}/user/assigned", id);
-        var user = await response.Content.ReadFromJsonAsync<AppUser>(restClient._options);
-        return user;
+        var user = await response.Content.ReadFromJsonAsync<UserRead>(restClient._options);
+        return new AppUser 
+        {
+            Id = user.Id,
+            Username = user.Username,
+            Email = user.Email,
+        };
     }
 
     public async Task<AppUser> getUserCreated(int id)
     {
         HttpResponseMessage response = await restClient.GetByIdAsync($"{route}/user/created", id);
-        var user = await response.Content.ReadFromJsonAsync<AppUser>(restClient._options);
-        return user;
+        var user = await response.Content.ReadFromJsonAsync<UserRead>(restClient._options);
+        return new AppUser
+        {
+            Id = user.Id,
+            Username = user.Username,
+            Email = user.Email,
+        };
     }
 
     public async Task<string> Patch(int id, object data)

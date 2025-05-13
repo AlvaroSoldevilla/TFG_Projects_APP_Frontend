@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Net.Http.Json;
+using TFG_Projects_APP_Frontend.Entities.Dtos.Concepts;
 using TFG_Projects_APP_Frontend.Entities.Models;
 using TFG_Projects_APP_Frontend.Rest;
 
@@ -18,22 +19,40 @@ public class ConceptsService(RestClient restClient) : IConceptsService
     public async Task<ObservableCollection<Concept>> GetAll()
     {
         HttpResponseMessage response = await restClient.GetAllAsync(route);
-        var concepts = await response.Content.ReadFromJsonAsync<ObservableCollection<Concept>>(restClient._options);
-        return concepts;
+        var concepts = await response.Content.ReadFromJsonAsync<ObservableCollection<ConceptRead>>(restClient._options);
+        return new ObservableCollection<Concept>(concepts.Select(concept => new Concept
+        {
+            Id = concept.Id,
+            Title = concept.Title,
+            Description = concept.Description,
+            IdProject = concept.IdProject
+        }).ToList());
     }
 
     public async Task<ObservableCollection<Concept>> GetAllConceptsByProject(int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/project/{id}");
-        var concepts = await response.Content.ReadFromJsonAsync<ObservableCollection<Concept>>(restClient._options);
-        return concepts;
+        var concepts = await response.Content.ReadFromJsonAsync<ObservableCollection<ConceptRead>>(restClient._options);
+        return new ObservableCollection<Concept>(concepts.Select(concept => new Concept
+        {
+            Id = concept.Id,
+            Title = concept.Title,
+            Description = concept.Description,
+            IdProject = concept.IdProject
+        }).ToList());
     }
 
     public async Task<Concept> GetById(int id)
     {
         HttpResponseMessage response = await restClient.GetByIdAsync(route, id);
-        var concept = await response.Content.ReadFromJsonAsync<Concept>(restClient._options);
-        return concept;
+        var concept = await response.Content.ReadFromJsonAsync<ConceptRead>(restClient._options);
+        return new Concept
+        {
+            Id = concept.Id,
+            Title = concept.Title,
+            Description = concept.Description,
+            IdProject = concept.IdProject
+        };
     }
 
     public async Task<string> Patch(int id, object data)

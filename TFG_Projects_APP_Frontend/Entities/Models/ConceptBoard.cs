@@ -3,6 +3,7 @@
 public class ConceptBoard
 {
     public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
     public int IdConcept { get; set; }
     public int? IdParent { get; set; }
 

@@ -1,7 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using System.Net.Http.Json;
 using TFG_Projects_APP_Frontend.Entities.Models;
+using TFG_Projects_APP_Frontend.Entities.Dtos.Permissions;
 using TFG_Projects_APP_Frontend.Rest;
+using Microsoft.Maui.ApplicationModel;
 
 namespace TFG_Projects_APP_Frontend.Services.PermissionsService;
 
@@ -18,15 +20,26 @@ public class PermissionsService(RestClient restClient) : IPermissionsService
     public async Task<ObservableCollection<Permission>> GetAll()
     {
         HttpResponseMessage response = await restClient.GetAllAsync(route);
-        var permissions = await response.Content.ReadFromJsonAsync<ObservableCollection<Permission>>(restClient._options);
-        return permissions;
+        var permissions = await response.Content.ReadFromJsonAsync<ObservableCollection<PermissionRead>>(restClient._options);
+        return new ObservableCollection<Permission>(permissions.Select(permission =>
+        {
+            return new Permission
+            {
+                Id = permission.Id,
+                Name = permission.Name,
+            };
+        }).ToList());
     }
 
     public async Task<Permission> GetById(int id)
     {
         HttpResponseMessage response = await restClient.GetByIdAsync(route, id);
-        var permission = await response.Content.ReadFromJsonAsync<Permission>(restClient._options);
-        return permission;
+        var permission = await response.Content.ReadFromJsonAsync<PermissionRead>(restClient._options);
+        return new Permission
+        {
+            Id = permission.Id,
+            Name = permission.Name,
+        };
     }
 
     public async Task<string> Patch(int id, object data)

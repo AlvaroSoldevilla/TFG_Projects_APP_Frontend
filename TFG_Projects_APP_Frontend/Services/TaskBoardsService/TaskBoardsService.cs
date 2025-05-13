@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Net.Http.Json;
+using TFG_Projects_APP_Frontend.Entities.Dtos.TaskBoards;
 using TFG_Projects_APP_Frontend.Entities.Models;
 using TFG_Projects_APP_Frontend.Rest;
 
@@ -18,22 +19,46 @@ public class TaskBoardsService(RestClient restClient) : ITaskBoardsService
     public async Task<ObservableCollection<TaskBoard>> GetAll()
     {
         HttpResponseMessage response = await restClient.GetAllAsync(route);
-        var taskBoards = await response.Content.ReadFromJsonAsync<ObservableCollection<TaskBoard>>(restClient._options);
-        return taskBoards;
+        var taskBoards = await response.Content.ReadFromJsonAsync<ObservableCollection<TaskBoardRead>>(restClient._options);
+        return new ObservableCollection<TaskBoard>(taskBoards.Select(taskBoard =>
+        {
+            return new TaskBoard
+            {
+                Id = taskBoard.Id,
+                Title = taskBoard.Title,
+                Description = taskBoard.Description,
+                IdProject = taskBoard.IdProject
+            };
+        }).ToList());
     }
 
     public async Task<ObservableCollection<TaskBoard>> GetAllTaskBoardsByProject(int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/project/{id}");
-        var taskBoards = await response.Content.ReadFromJsonAsync<ObservableCollection<TaskBoard>>(restClient._options);
-        return taskBoards;
+        var taskBoards = await response.Content.ReadFromJsonAsync<ObservableCollection<TaskBoardRead>>(restClient._options);
+        return new ObservableCollection<TaskBoard>(taskBoards.Select(taskBoard =>
+        {
+            return new TaskBoard
+            {
+                Id = taskBoard.Id,
+                Title = taskBoard.Title,
+                Description = taskBoard.Description,
+                IdProject = taskBoard.IdProject
+            };
+        }).ToList());
     }
 
     public async Task<TaskBoard> GetById(int id)
     {
         HttpResponseMessage response = await restClient.GetByIdAsync(route, id);
-        var taskBoard = await response.Content.ReadFromJsonAsync<TaskBoard>(restClient._options);
-        return taskBoard;
+        var taskBoard = await response.Content.ReadFromJsonAsync<TaskBoardRead>(restClient._options);
+        return new TaskBoard
+        {
+            Id = taskBoard.Id,
+            Title = taskBoard.Title,
+            Description = taskBoard.Description,
+            IdProject = taskBoard.IdProject
+        };
     }
 
     public async Task<string> Patch(int id, object data)

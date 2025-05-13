@@ -4,4 +4,5 @@ internal class ConceptBoardCreate
 {
     public int IdConcept { get; set; }
     public int IdParent { get; set; }
+    public string Name { get; set; } = string.Empty;
 }

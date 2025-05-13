@@ -8,8 +8,8 @@ public class Component
     public int IdType { get; set; }
     public int? PosX { get; set; }
     public int? PosY { get; set; }
-    public int? Title { get; set; }
-    public int? Content { get; set; }
+    public string? Title { get; set; }
+    public string? Content { get; set; }
 
     public ConceptBoard Board { get; set; }
     public Component? Parent { get; set; }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Net.Http.Json;
+using TFG_Projects_APP_Frontend.Entities.Dtos.ProjectUsers;
 using TFG_Projects_APP_Frontend.Entities.Models;
 using TFG_Projects_APP_Frontend.Rest;
 
@@ -18,29 +19,62 @@ public class ProjectUsersService(RestClient restClient) : IProjectUsersService
     public async Task<ObservableCollection<ProjectUser>> GetAll()
     {
         HttpResponseMessage response = await restClient.GetAllAsync(route);
-        var projectUsers = await response.Content.ReadFromJsonAsync<ObservableCollection<ProjectUser>>(restClient._options);
-        return projectUsers;
+        var projectUsers = await response.Content.ReadFromJsonAsync<ObservableCollection<ProjectUserRead>>(restClient._options);
+        return new ObservableCollection<ProjectUser>(projectUsers.Select(projectUser =>
+        {
+            return new ProjectUser
+            {
+                Id = projectUser.Id,
+                IdUser = projectUser.IdUser,
+                IdProject = projectUser.IdProject,
+                IdRole = projectUser.IdRole
+            };
+        }).ToList());
     }
 
     public async Task<ObservableCollection<ProjectUser>> GetAllProjectUsersByProject(int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/project/{id}");
-        var projectUsers = await response.Content.ReadFromJsonAsync<ObservableCollection<ProjectUser>>(restClient._options);
-        return projectUsers;
+        var projectUsers = await response.Content.ReadFromJsonAsync<ObservableCollection<ProjectUserRead>>(restClient._options);
+        return new ObservableCollection<ProjectUser>(projectUsers.Select(projectUser =>
+        {
+            return new ProjectUser
+            {
+                Id = projectUser.Id,
+                IdUser = projectUser.IdUser,
+                IdProject = projectUser.IdProject,
+                IdRole = projectUser.IdRole
+            };
+        }).ToList());
     }
 
     public async Task<ObservableCollection<ProjectUser>> GetAllProjectUsersByUser(int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/user/{id}");
-        var projectUsers = await response.Content.ReadFromJsonAsync<ObservableCollection<ProjectUser>>(restClient._options);
-        return projectUsers;
+        var projectUsers = await response.Content.ReadFromJsonAsync<ObservableCollection<ProjectUserRead>>(restClient._options);
+        return new ObservableCollection<ProjectUser>(projectUsers.Select(projectUser =>
+        {
+            return new ProjectUser
+            {
+                Id = projectUser.Id,
+                IdUser = projectUser.IdUser,
+                IdProject = projectUser.IdProject,
+                IdRole = projectUser.IdRole
+            };
+        }).ToList());
     }
 
     public async Task<ProjectUser> GetById(int id)
     {
         HttpResponseMessage response = await restClient.GetByIdAsync(route, id);
-        var projectUser = await response.Content.ReadFromJsonAsync<ProjectUser>(restClient._options);
-        return projectUser;
+        var projectUser = await response.Content.ReadFromJsonAsync<ProjectUserRead>(restClient._options);
+        return new ProjectUser
+        {
+            Id = projectUser.Id,
+            IdUser = projectUser.IdUser,
+            IdProject = projectUser.IdProject,
+            IdRole = projectUser.IdRole
+        };
     }
 
     public async Task<string> Patch(int id, object data)

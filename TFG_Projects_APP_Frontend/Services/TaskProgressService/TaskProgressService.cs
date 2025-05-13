@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Net.Http.Json;
+using TFG_Projects_APP_Frontend.Entities.Dtos.TaskProgress;
 using TFG_Projects_APP_Frontend.Entities.Models;
 using TFG_Projects_APP_Frontend.Rest;
 
@@ -18,15 +19,32 @@ public class TaskProgressService(RestClient restClient) : ITaskProgressService
     public async Task<ObservableCollection<TaskProgress>> GetAll()
     {
         HttpResponseMessage response = await restClient.GetAllAsync(route);
-        var taskProgress = await response.Content.ReadFromJsonAsync<ObservableCollection<TaskProgress>>(restClient._options);
-        return taskProgress;
+        var taskProgress = await response.Content.ReadFromJsonAsync<ObservableCollection<TaskProgressRead>>(restClient._options);
+        return new ObservableCollection<TaskProgress>(taskProgress.Select(dto =>
+        {
+            return new TaskProgress
+            {
+                Id = dto.Id,
+                IdSection = dto.IdSection,
+                Title = dto.Title,
+                ModifiesProgress = dto.ModifiesProgress,
+                ProgressValue = dto.ProgressValue
+            };
+        }).ToList());
     }
 
     public async Task<TaskProgress> GetById(int id)
     {
         HttpResponseMessage response = await restClient.GetByIdAsync(route, id);
-        var taskProgress = await response.Content.ReadFromJsonAsync<TaskProgress>(restClient._options);
-        return taskProgress;
+        var taskProgress = await response.Content.ReadFromJsonAsync<TaskProgressRead>(restClient._options);
+        return new TaskProgress
+        {
+            Id = taskProgress.Id,
+            IdSection = taskProgress.IdSection,
+            Title = taskProgress.Title,
+            ModifiesProgress = taskProgress.ModifiesProgress,
+            ProgressValue = taskProgress.ProgressValue
+        };
     }
 
     public async Task<string> Patch(int id, object data)

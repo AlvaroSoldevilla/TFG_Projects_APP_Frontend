@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Net.Http.Json;
+using TFG_Projects_APP_Frontend.Entities.Dtos.TaskDependecies;
 using TFG_Projects_APP_Frontend.Entities.Models;
 using TFG_Projects_APP_Frontend.Rest;
 
@@ -18,22 +19,46 @@ public class TaskDependenciesService(RestClient restClient) : ITaskDependenciesS
     public async Task<ObservableCollection<TaskDependency>> GetAll()
     {
         HttpResponseMessage response = await restClient.GetAllAsync(route);
-        var taskDependencies = await response.Content.ReadFromJsonAsync<ObservableCollection<TaskDependency>>(restClient._options);
-        return taskDependencies;
+        var taskDependencies = await response.Content.ReadFromJsonAsync<ObservableCollection<TaskDependencyRead>>(restClient._options);
+        return new ObservableCollection<TaskDependency>(taskDependencies.Select(taskDependency =>
+        {
+            return new TaskDependency
+            {
+                Id = taskDependency.Id,
+                IdTask = taskDependency.IdTask,
+                IdDependsOn = taskDependency.IdDependsOn,
+                UnlockAt = taskDependency.UnlockAt
+            };
+        }).ToList());
     }
 
     public async Task<ObservableCollection<TaskDependency>> GetAllTaskDependenciesByTask( int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/task/{id}");
-        var taskDependencies = await response.Content.ReadFromJsonAsync<ObservableCollection<TaskDependency>>(restClient._options);
-        return taskDependencies;
+        var taskDependencies = await response.Content.ReadFromJsonAsync<ObservableCollection<TaskDependencyRead>>(restClient._options);
+        return new ObservableCollection<TaskDependency>(taskDependencies.Select(taskDependency =>
+        {
+            return new TaskDependency
+            {
+                Id = taskDependency.Id,
+                IdTask = taskDependency.IdTask,
+                IdDependsOn = taskDependency.IdDependsOn,
+                UnlockAt = taskDependency.UnlockAt
+            };
+        }).ToList());
     }
 
     public async Task<TaskDependency> GetById(int id)
     {
         HttpResponseMessage response = await restClient.GetByIdAsync(route, id);
-        var taskDependency = await response.Content.ReadFromJsonAsync<TaskDependency>(restClient._options);
-        return taskDependency;
+        var taskDependency = await response.Content.ReadFromJsonAsync<TaskDependencyRead>(restClient._options);
+        return new TaskDependency
+        {
+            Id = taskDependency.Id,
+            IdTask = taskDependency.IdTask,
+            IdDependsOn = taskDependency.IdDependsOn,
+            UnlockAt = taskDependency.UnlockAt
+        };
     }
 
     public async Task<string> Patch(int id, object data)

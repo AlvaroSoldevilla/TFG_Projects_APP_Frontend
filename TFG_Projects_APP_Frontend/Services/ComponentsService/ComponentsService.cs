@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Net.Http.Json;
+using TFG_Projects_APP_Frontend.Entities.Dtos.Components;
 using TFG_Projects_APP_Frontend.Entities.Models;
 using TFG_Projects_APP_Frontend.Rest;
 
@@ -18,22 +19,52 @@ public class ComponentsService(RestClient restClient) : IComponentsService
     public async Task<ObservableCollection<Component>> GetAll()
     {
         HttpResponseMessage response = await restClient.GetAllAsync(route);
-        var components = await response.Content.ReadFromJsonAsync<ObservableCollection<Component>>(restClient._options);
-        return components;
+        var components = await response.Content.ReadFromJsonAsync<ObservableCollection<ComponentRead>>(restClient._options);
+        return new ObservableCollection<Component>(components.Select(component => new Component
+        {
+            Id = component.Id,
+            Title = component.Title,
+            Content = component.Content,
+            IdType = component.IdType,
+            PosX = component.PosX,
+            PosY = component.PosY,
+            IdBoard = component.IdBoard,
+            IdParent = component.IdParent
+        }).ToList());
     }
 
     public async Task<ObservableCollection<Component>> GetAllComponentsByBoard(int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/board/{id}");
-        var components = await response.Content.ReadFromJsonAsync<ObservableCollection<Component>>(restClient._options);
-        return components;
+        var components = await response.Content.ReadFromJsonAsync<ObservableCollection<ComponentRead>>(restClient._options);
+        return new ObservableCollection<Component>(components.Select(component => new Component
+        {
+            Id = component.Id,
+            Title = component.Title,
+            Content = component.Content,
+            IdType = component.IdType,
+            PosX = component.PosX,
+            PosY = component.PosY,
+            IdBoard = component.IdBoard,
+            IdParent = component.IdParent
+        }).ToList());
     }
 
     public async Task<Component> GetById(int id)
     {
         HttpResponseMessage response = await restClient.GetByIdAsync($"{route}", id);
-        var component = await response.Content.ReadFromJsonAsync<Component>(restClient._options);
-        return component;
+        var component = await response.Content.ReadFromJsonAsync<ComponentRead>(restClient._options);
+        return new Component
+        {
+            Id = component.Id,
+            Title = component.Title,
+            Content = component.Content,
+            IdType = component.IdType,
+            PosX = component.PosX,
+            PosY = component.PosY,
+            IdBoard = component.IdBoard,
+            IdParent = component.IdParent
+        };
     }
 
     public async Task<string> Patch(int id, object data)

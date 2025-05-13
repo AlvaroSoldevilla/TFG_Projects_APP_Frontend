@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Net.Http.Json;
+using TFG_Projects_APP_Frontend.Entities.Dtos.ConceptBoards;
 using TFG_Projects_APP_Frontend.Entities.Models;
 using TFG_Projects_APP_Frontend.Rest;
 
@@ -18,22 +19,46 @@ public class ConceptBoardsService(RestClient restClient) : IConceptBoardsService
     public async Task<ObservableCollection<ConceptBoard>> GetAll()
     {
         HttpResponseMessage response = await restClient.GetAllAsync(route);
-        var conceptBoards = await response.Content.ReadFromJsonAsync<ObservableCollection<ConceptBoard>>(restClient._options);
-        return conceptBoards;
+        var conceptBoards = await response.Content.ReadFromJsonAsync<ObservableCollection<ConceptBoardRead>>(restClient._options);
+        return new ObservableCollection<ConceptBoard>(conceptBoards.Select(conceptBoard =>
+        {
+            return new ConceptBoard
+            {
+                Id = conceptBoard.Id,
+                Name = conceptBoard.Name,
+                IdConcept = conceptBoard.IdConcept,
+                IdParent = conceptBoard.IdParent
+            };
+        }).ToList());
     }
 
     public async Task<ObservableCollection<ConceptBoard>> GetAllConceptBoardsByConcept(int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/concept/{id}");
-        var conceptBoards = await response.Content.ReadFromJsonAsync<ObservableCollection<ConceptBoard>>(restClient._options);
-        return conceptBoards;
+        var conceptBoards = await response.Content.ReadFromJsonAsync<ObservableCollection<ConceptBoardRead>>(restClient._options);
+        return new ObservableCollection<ConceptBoard>(conceptBoards.Select(conceptBoard =>
+        {
+            return new ConceptBoard
+            {
+                Id = conceptBoard.Id,
+                Name = conceptBoard.Name,
+                IdConcept = conceptBoard.IdConcept,
+                IdParent = conceptBoard.IdParent
+            };
+        }).ToList());
     }
 
     public async Task<ConceptBoard> GetById(int id)
     {
         HttpResponseMessage response = await restClient.GetByIdAsync(route, id);
-        var conceptBoard = await response.Content.ReadFromJsonAsync<ConceptBoard>(restClient._options);
-        return conceptBoard;
+        var conceptBoard = await response.Content.ReadFromJsonAsync<ConceptBoardRead>(restClient._options);
+        return new ConceptBoard 
+        {
+            Id = conceptBoard.Id,
+            Name = conceptBoard.Name,
+            IdConcept = conceptBoard.IdConcept,
+            IdParent = conceptBoard.IdParent
+        };
     }
 
     public async Task<string> Patch(int id, object data)

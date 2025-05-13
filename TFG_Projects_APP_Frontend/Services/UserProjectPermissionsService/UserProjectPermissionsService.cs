@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Net.Http.Json;
+using TFG_Projects_APP_Frontend.Entities.Dtos.UserProjectPermissions;
 using TFG_Projects_APP_Frontend.Entities.Models;
 using TFG_Projects_APP_Frontend.Rest;
 
@@ -18,43 +19,94 @@ public class UserProjectPermissionsService(RestClient restClient) : IUserProject
     public async Task<ObservableCollection<UserProjectPermission>> GetAll()
     {
         HttpResponseMessage response = await restClient.GetAllAsync(route);
-        var userProjectPermissions = await response.Content.ReadFromJsonAsync<ObservableCollection<UserProjectPermission>>(restClient._options);
-        return userProjectPermissions;
+        var userProjectPermissions = await response.Content.ReadFromJsonAsync<ObservableCollection<UserProjectPermissionRead>>(restClient._options);
+        return new ObservableCollection<UserProjectPermission>(userProjectPermissions.Select(userProjectPermission =>
+        {
+            return new UserProjectPermission
+            {
+                Id = userProjectPermission.Id,
+                IdUser = userProjectPermission.IdUser,
+                IdProject = userProjectPermission.IdProject,
+                IdPermission = userProjectPermission.IdPermission
+            };
+        }).ToList());
     }
 
     public async Task<ObservableCollection<UserProjectPermission>> getAllUserProjectPermissionsByPermission(int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/permission/{id}");
-        var userProjectPermissions = await response.Content.ReadFromJsonAsync<ObservableCollection<UserProjectPermission>>(restClient._options);
-        return userProjectPermissions;
+        var userProjectPermissions = await response.Content.ReadFromJsonAsync<ObservableCollection<UserProjectPermissionRead>>(restClient._options);
+        return new ObservableCollection<UserProjectPermission>(userProjectPermissions.Select(userProjectPermission =>
+        {
+            return new UserProjectPermission
+            {
+                Id = userProjectPermission.Id,
+                IdUser = userProjectPermission.IdUser,
+                IdProject = userProjectPermission.IdProject,
+                IdPermission = userProjectPermission.IdPermission
+            };
+        }).ToList());
     }
 
     public async Task<ObservableCollection<UserProjectPermission>> getAllUserProjectPermissionsByProject(int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/project/{id}");
-        var userProjectPermissions = await response.Content.ReadFromJsonAsync<ObservableCollection<UserProjectPermission>>(restClient._options);
-        return userProjectPermissions;
+        var userProjectPermissions = await response.Content.ReadFromJsonAsync<ObservableCollection<UserProjectPermissionRead>>(restClient._options);
+        return new ObservableCollection<UserProjectPermission>(userProjectPermissions.Select(userProjectPermission =>
+        {
+            return new UserProjectPermission
+            {
+                Id = userProjectPermission.Id,
+                IdUser = userProjectPermission.IdUser,
+                IdProject = userProjectPermission.IdProject,
+                IdPermission = userProjectPermission.IdPermission
+            };
+        }).ToList());
     }
 
     public async Task<ObservableCollection<UserProjectPermission>> getAllUserProjectPermissionsByUser(int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/user/{id}");
-        var userProjectPermissions = await response.Content.ReadFromJsonAsync<ObservableCollection<UserProjectPermission>>(restClient._options);
-        return userProjectPermissions;
+        var userProjectPermissions = await response.Content.ReadFromJsonAsync<ObservableCollection<UserProjectPermissionRead>>(restClient._options);
+        return new ObservableCollection<UserProjectPermission>(userProjectPermissions.Select(userProjectPermission =>
+        {
+            return new UserProjectPermission
+            {
+                Id = userProjectPermission.Id,
+                IdUser = userProjectPermission.IdUser,
+                IdProject = userProjectPermission.IdProject,
+                IdPermission = userProjectPermission.IdPermission
+            };
+        }).ToList());
     }
 
     public async Task<ObservableCollection<UserProjectPermission>> getAllUserProjectPermissionsByUserAndProject(int userId, int projectId)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/user/{userId}/project/{projectId}");
-        var userProjectPermissions = await response.Content.ReadFromJsonAsync<ObservableCollection<UserProjectPermission>>(restClient._options);
-        return userProjectPermissions;
+        var userProjectPermissions = await response.Content.ReadFromJsonAsync<ObservableCollection<UserProjectPermissionRead>>(restClient._options);
+        return new ObservableCollection<UserProjectPermission>(userProjectPermissions.Select(userProjectPermission =>
+        {
+            return new UserProjectPermission
+            {
+                Id = userProjectPermission.Id,
+                IdUser = userProjectPermission.IdUser,
+                IdProject = userProjectPermission.IdProject,
+                IdPermission = userProjectPermission.IdPermission
+            };
+        }).ToList());
     }
 
     public async Task<UserProjectPermission> GetById(int id)
     {
         HttpResponseMessage response = await restClient.GetByIdAsync(route, id);
-        var userProjectPermission = await response.Content.ReadFromJsonAsync<UserProjectPermission>(restClient._options);
-        return userProjectPermission;
+        var userProjectPermission = await response.Content.ReadFromJsonAsync<UserProjectPermissionRead>(restClient._options);
+        return new UserProjectPermission
+        {
+            Id = userProjectPermission.Id,
+            IdUser = userProjectPermission.IdUser,
+            IdProject = userProjectPermission.IdProject,
+            IdPermission = userProjectPermission.IdPermission
+        };
     }
 
     public async Task<string> Patch(int id, object data)
