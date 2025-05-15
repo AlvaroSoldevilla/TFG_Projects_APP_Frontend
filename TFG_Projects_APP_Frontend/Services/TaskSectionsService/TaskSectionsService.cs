@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 using TFG_Projects_APP_Frontend.Entities.Dtos.TaskSections;
 using TFG_Projects_APP_Frontend.Entities.Models;
 using TFG_Projects_APP_Frontend.Rest;
@@ -16,11 +15,11 @@ public class TaskSectionsService(RestClient restClient) : ITaskSectionsService
         return result;
     }
 
-    public async Task<ObservableCollection<TaskSection>> GetAll()
+    public async Task<List<TaskSection>> GetAll()
     {
         HttpResponseMessage response = await restClient.GetAllAsync(route);
-        var taskSections = await response.Content.ReadFromJsonAsync<ObservableCollection<TaskSectionRead>>(restClient._options);
-        return new ObservableCollection<TaskSection>(taskSections.Select(taskSection =>
+        var taskSections = await response.Content.ReadFromJsonAsync<List<TaskSectionRead>>(restClient._options);
+        return new List<TaskSection>(taskSections.Select(taskSection =>
         {
             return new TaskSection
             {
@@ -31,11 +30,11 @@ public class TaskSectionsService(RestClient restClient) : ITaskSectionsService
         }).ToList());
     }
 
-    public async Task<ObservableCollection<TaskSection>> getAllTaskSectionsByTaskBoard(int id)
+    public async Task<List<TaskSection>> getAllTaskSectionsByTaskBoard(int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/board/{id}");
-        var taskSections = await response.Content.ReadFromJsonAsync<ObservableCollection<TaskSectionRead>>(restClient._options);
-        return new ObservableCollection<TaskSection>(taskSections.Select(taskSection =>
+        var taskSections = await response.Content.ReadFromJsonAsync<List<TaskSectionRead>>(restClient._options);
+        return new List<TaskSection>(taskSections.Select(taskSection =>
         {
             return new TaskSection
             {

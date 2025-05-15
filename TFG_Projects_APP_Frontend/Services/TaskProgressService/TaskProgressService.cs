@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 using TFG_Projects_APP_Frontend.Entities.Dtos.TaskProgress;
 using TFG_Projects_APP_Frontend.Entities.Models;
 using TFG_Projects_APP_Frontend.Rest;
@@ -16,11 +15,11 @@ public class TaskProgressService(RestClient restClient) : ITaskProgressService
         return result;
     }
 
-    public async Task<ObservableCollection<TaskProgress>> GetAll()
+    public async Task<List<TaskProgress>> GetAll()
     {
         HttpResponseMessage response = await restClient.GetAllAsync(route);
-        var taskProgress = await response.Content.ReadFromJsonAsync<ObservableCollection<TaskProgressRead>>(restClient._options);
-        return new ObservableCollection<TaskProgress>(taskProgress.Select(dto =>
+        var taskProgress = await response.Content.ReadFromJsonAsync<List<TaskProgressRead>>(restClient._options);
+        return new List<TaskProgress>(taskProgress.Select(dto =>
         {
             return new TaskProgress
             {

@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 using TFG_Projects_APP_Frontend.Entities.Dtos.Tasks;
 using TFG_Projects_APP_Frontend.Entities.Dtos.Users;
 using TFG_Projects_APP_Frontend.Entities.Models;
@@ -17,11 +16,11 @@ public class TasksService(RestClient restClient) : ITasksService
         return result;
     }
 
-    public async Task<ObservableCollection<ProjectTask>> GetAll()
+    public async Task<List<ProjectTask>> GetAll()
     {
         HttpResponseMessage response = await restClient.GetAllAsync(route);
-        var tasks = await response.Content.ReadFromJsonAsync<ObservableCollection<TaskRead>>(restClient._options);
-        return new ObservableCollection<ProjectTask>(tasks.Select(task =>
+        var tasks = await response.Content.ReadFromJsonAsync<List<TaskRead>>(restClient._options);
+        return new List<ProjectTask>(tasks.Select(task =>
         {
             return new ProjectTask
             {
@@ -43,11 +42,11 @@ public class TasksService(RestClient restClient) : ITasksService
         }).ToList());
     }
 
-    public async Task<ObservableCollection<ProjectTask>> GetAllTasksByTaskProgress(int id)
+    public async Task<List<ProjectTask>> GetAllTasksByTaskProgress(int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/progress/{id}");
-        var tasks = await response.Content.ReadFromJsonAsync<ObservableCollection<TaskRead>>(restClient._options);
-        return new ObservableCollection<ProjectTask>(tasks.Select(task =>
+        var tasks = await response.Content.ReadFromJsonAsync<List<TaskRead>>(restClient._options);
+        return new List<ProjectTask>(tasks.Select(task =>
         {
             return new ProjectTask
             {
@@ -69,11 +68,11 @@ public class TasksService(RestClient restClient) : ITasksService
         }).ToList());
     }
 
-    public async Task<ObservableCollection<ProjectTask>> GetAllTasksByTaskSection(int id)
+    public async Task<List<ProjectTask>> GetAllTasksByTaskSection(int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/section/{id}");
-        var tasks = await response.Content.ReadFromJsonAsync<ObservableCollection<TaskRead>>(restClient._options);
-        return new ObservableCollection<ProjectTask>(tasks.Select(task =>
+        var tasks = await response.Content.ReadFromJsonAsync<List<TaskRead>>(restClient._options);
+        return new List<ProjectTask>(tasks.Select(task =>
         {
             return new ProjectTask
             {

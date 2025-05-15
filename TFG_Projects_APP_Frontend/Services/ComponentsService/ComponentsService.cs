@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 using TFG_Projects_APP_Frontend.Entities.Dtos.Components;
 using TFG_Projects_APP_Frontend.Entities.Models;
 using TFG_Projects_APP_Frontend.Rest;
@@ -16,11 +15,11 @@ public class ComponentsService(RestClient restClient) : IComponentsService
         return result;
     }
 
-    public async Task<ObservableCollection<Component>> GetAll()
+    public async Task<List<Component>> GetAll()
     {
         HttpResponseMessage response = await restClient.GetAllAsync(route);
-        var components = await response.Content.ReadFromJsonAsync<ObservableCollection<ComponentRead>>(restClient._options);
-        return new ObservableCollection<Component>(components.Select(component => new Component
+        var components = await response.Content.ReadFromJsonAsync<List<ComponentRead>>(restClient._options);
+        return new List<Component>(components.Select(component => new Component
         {
             Id = component.Id,
             Title = component.Title,
@@ -33,11 +32,11 @@ public class ComponentsService(RestClient restClient) : IComponentsService
         }).ToList());
     }
 
-    public async Task<ObservableCollection<Component>> GetAllComponentsByBoard(int id)
+    public async Task<List<Component>> GetAllComponentsByBoard(int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/board/{id}");
-        var components = await response.Content.ReadFromJsonAsync<ObservableCollection<ComponentRead>>(restClient._options);
-        return new ObservableCollection<Component>(components.Select(component => new Component
+        var components = await response.Content.ReadFromJsonAsync<List<ComponentRead>>(restClient._options);
+        return new List<Component>(components.Select(component => new Component
         {
             Id = component.Id,
             Title = component.Title,

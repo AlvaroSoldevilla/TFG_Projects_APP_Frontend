@@ -43,6 +43,7 @@ public static class MauiProgram
 #endif
 
 		builder.Services.AddSingleton<RestClient>();
+        builder.Services.AddSingleton<UserSession>();
 
         builder.Services.AddSingleton<IComponentsService, ComponentsService>();
         builder.Services.AddSingleton<IConceptBoardsService, ConceptBoardsService>();

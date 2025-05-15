@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 using TFG_Projects_APP_Frontend.Entities.Dtos.Projects;
 using TFG_Projects_APP_Frontend.Entities.Models;
 using TFG_Projects_APP_Frontend.Rest;
@@ -16,11 +15,11 @@ public class ProjectsService(RestClient restClient) : IProjectsService
         return result;
     }
 
-    public async Task<ObservableCollection<Project>> GetAll()
+    public async Task<List<Project>> GetAll()
     {
         HttpResponseMessage response = await restClient.GetAllAsync(route);
-        var projects = await response.Content.ReadFromJsonAsync<ObservableCollection<ProjectRead>>(restClient._options);
-        return new ObservableCollection<Project>(projects.Select(project => {
+        var projects = await response.Content.ReadFromJsonAsync<List<ProjectRead>>(restClient._options);
+        return new List<Project>(projects.Select(project => {
             return new Project
             {
                 Id = project.Id,
@@ -30,11 +29,11 @@ public class ProjectsService(RestClient restClient) : IProjectsService
         }).ToList());
     }
 
-    public async Task<ObservableCollection<Project>> GetAllProjectsByUser(int id)
+    public async Task<List<Project>> GetAllProjectsByUser(int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/user/{id}");
-        var projects = await response.Content.ReadFromJsonAsync<ObservableCollection<ProjectRead>>(restClient._options);
-        return new ObservableCollection<Project>(projects.Select(project => {
+        var projects = await response.Content.ReadFromJsonAsync<List<ProjectRead>>(restClient._options);
+        return new List<Project>(projects.Select(project => {
             return new Project
             {
                 Id = project.Id,

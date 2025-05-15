@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
+using System.Diagnostics;
 using TFG_Projects_APP_Frontend.Entities.Models;
 using TFG_Projects_APP_Frontend.Services.ConceptsService;
 using TFG_Projects_APP_Frontend.Services.PermissionsService;
@@ -16,37 +16,50 @@ namespace TFG_Projects_APP_Frontend.PageModels;
 [QueryProperty(nameof(Project), nameof(Project))]
 public partial class ProjectManagementPageModel : ObservableObject
 {
-    private readonly ConceptsService conceptsService;
-    private readonly TaskBoardsService taskBoardsService;
-    private readonly UserProjectPermissionsService userProjectPermissionsService;
-    private readonly PermissionsService permissionsService;
-    private readonly ProjectsService projectsService;
-    private readonly ProjectUsersService projectUsersService;
-    private readonly UsersService usersService;
-    private readonly RolesService rolesService;
+    private readonly IConceptsService conceptsService;
+    private readonly ITaskBoardsService taskBoardsService;
+    private readonly IUserProjectPermissionsService userProjectPermissionsService;
+    private readonly IPermissionsService permissionsService;
+    private readonly IProjectsService projectsService;
+    private readonly IProjectUsersService projectUsersService;
+    private readonly IUsersService usersService;
+    private readonly IRolesService rolesService;
 
+    // Passed project info (Title, Id, etc.)
     public Project Project { get; set; }
 
     [ObservableProperty]
-    private ObservableCollection<Concept> _concepts;
+    private Project _currentProject;
+
+    // Selected items
     [ObservableProperty]
-    private ObservableCollection<TaskBoard> _taskBoards;
+    private Concept _selectedConcept;
+
     [ObservableProperty]
-    private ObservableCollection<Permission> _permissions;
+    private AppUser _selectedUser;
+
     [ObservableProperty]
-    private ObservableCollection<AppUser> _users;
+    private TaskBoard _selectedTaskBoard;
+
+    // Collections (NEVER replace the collection → only clear + add)
     [ObservableProperty]
-    private ObservableCollection<Role> _roles;
+    private ObservableCollection<Concept> _concepts = new();
+
+    [ObservableProperty]
+    private ObservableCollection<TaskBoard> _taskBoards = new();
+
+    [ObservableProperty]
+    private ObservableCollection<AppUser> _users = new();
 
     public ProjectManagementPageModel(
-        ConceptsService conceptsService,
-        TaskBoardsService taskBoardsService,
-        UserProjectPermissionsService userProjectPermissionsService,
-        PermissionsService permissionsService,
-        ProjectsService projectsService,
-        ProjectUsersService projectUsersService,
-        UsersService usersService,
-        RolesService rolesService)
+        IConceptsService conceptsService,
+        ITaskBoardsService taskBoardsService,
+        IUserProjectPermissionsService userProjectPermissionsService,
+        IPermissionsService permissionsService,
+        IProjectsService projectsService,
+        IProjectUsersService projectUsersService,
+        IUsersService usersService,
+        IRolesService rolesService)
     {
         this.conceptsService = conceptsService;
         this.taskBoardsService = taskBoardsService;
@@ -56,14 +69,32 @@ public partial class ProjectManagementPageModel : ObservableObject
         this.projectUsersService = projectUsersService;
         this.usersService = usersService;
         this.rolesService = rolesService;
-
-        LoadData();
     }
 
-    private async Task LoadData()
+    public async Task OnNavigatedTo()
     {
-        Concepts = await conceptsService.GetAllConceptsByProject(Project.Id);
-        TaskBoards = await taskBoardsService.GetAllTaskBoardsByProject(Project.Id);
-        Users = await usersService.GetUsersByProject(Project.Id);
+        CurrentProject = Project;
+
+        var concepts = await conceptsService.GetAllConceptsByProject(Project.Id);
+        var taskBoards = await taskBoardsService.GetAllTaskBoardsByProject(Project.Id);
+        var users = await usersService.GetUsersByProject(Project.Id);
+
+        Concepts.Clear();
+        foreach (var item in concepts)
+        {
+            Concepts.Add(item);
+        }
+            
+        TaskBoards.Clear();
+        foreach (var item in taskBoards)
+        {
+            TaskBoards.Add(item);
+        }
+
+        Users.Clear();
+        foreach (var item in users)
+        {
+            Users.Add(item);
+        }
     }
 }

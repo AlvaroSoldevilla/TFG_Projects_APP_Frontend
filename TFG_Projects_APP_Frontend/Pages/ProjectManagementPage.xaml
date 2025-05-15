@@ -6,10 +6,40 @@
              xmlns:pageModels="clr-namespace:TFG_Projects_APP_Frontend.PageModels"
              x:DataType="pageModels:ProjectManagementPageModel"
              Title="ProjectManagementPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
+    <VerticalStackLayout 
+        Padding="30,0"
+        Spacing="25">
+        <Label Text="{Binding CurrentProject.Title}" FontSize="30"/>
+        <Label Text="{Binding CurrentProject.Description}" FontSize="20"/>
+        <CollectionView ItemsSource="{Binding Concepts}" SelectedItem="{Binding SelectedConcept}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Concept">
+                    <VerticalStackLayout Padding="10">
+                        <Label Text="{Binding Title}" FontSize="16" />
+                        <Label Text="{Binding Description}" FontSize="12" />
+                    </VerticalStackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        <CollectionView ItemsSource="{Binding TaskBoards}" SelectedItem="{Binding SelectedTaskBoard}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:TaskBoard">
+                    <VerticalStackLayout Padding="10">
+                        <Label Text="{Binding Title}" FontSize="16" />
+                        <Label Text="{Binding Description}" FontSize="12" />
+                    </VerticalStackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        <CollectionView ItemsSource="{Binding Users}" SelectedItem="{Binding SelectedUser}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:AppUser">
+                    <VerticalStackLayout Padding="10">
+                        <Label Text="{Binding Username}" FontSize="16" />
+                        <Label Text="{Binding Email}" FontSize="12" />
+                    </VerticalStackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
     </VerticalStackLayout>
 </ContentPage>

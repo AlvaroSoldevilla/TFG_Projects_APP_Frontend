@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 using TFG_Projects_APP_Frontend.Entities.Dtos.Priorities;
 using TFG_Projects_APP_Frontend.Entities.Models;
 using TFG_Projects_APP_Frontend.Rest;
@@ -16,11 +15,11 @@ public class PrioritiesService(RestClient restClient) : IPrioritiesService
         return result;
     }
 
-    public async Task<ObservableCollection<Priority>> GetAll()
+    public async Task<List<Priority>> GetAll()
     {
         HttpResponseMessage response = await restClient.GetAllAsync(route);
-        var priorities = await response.Content.ReadFromJsonAsync<ObservableCollection<PriorityRead>>(restClient._options);
-        return new ObservableCollection<Priority>(priorities.Select(priority =>
+        var priorities = await response.Content.ReadFromJsonAsync<List<PriorityRead>>(restClient._options);
+        return new List<Priority>(priorities.Select(priority =>
         {
             return new Priority
             {

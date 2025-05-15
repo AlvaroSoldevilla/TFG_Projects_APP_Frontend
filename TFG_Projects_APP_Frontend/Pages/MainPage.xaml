@@ -29,6 +29,13 @@
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
+            <ActivityIndicator 
+                IsRunning="{Binding Isloading}" 
+                IsVisible="{Binding Isloading}" 
+                HorizontalOptions="Center" 
+                VerticalOptions="Center" 
+                WidthRequest="50" 
+                HeightRequest="50" />
         </VerticalStackLayout>
     </ScrollView>
 

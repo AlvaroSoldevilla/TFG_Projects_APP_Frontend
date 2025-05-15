@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 using TFG_Projects_APP_Frontend.Entities.Dtos.Types;
 using TFG_Projects_APP_Frontend.Entities.Models;
 using TFG_Projects_APP_Frontend.Rest;
@@ -16,11 +15,11 @@ public class TypesService(RestClient restClient) : ITypesService
         return result;
     }
 
-    public async Task<ObservableCollection<ProjectType>> GetAll()
+    public async Task<List<ProjectType>> GetAll()
     {
         HttpResponseMessage response = await restClient.GetAllAsync(route);
-        var types = await response.Content.ReadFromJsonAsync<ObservableCollection<TypeRead>>(restClient._options);
-        return new ObservableCollection<ProjectType>(types.Select(type =>
+        var types = await response.Content.ReadFromJsonAsync<List<TypeRead>>(restClient._options);
+        return new List<ProjectType>(types.Select(type =>
         {
             return new ProjectType
             {

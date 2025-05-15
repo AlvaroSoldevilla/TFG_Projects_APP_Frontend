@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 using TFG_Projects_APP_Frontend.Entities.Dtos.TaskDependecies;
 using TFG_Projects_APP_Frontend.Entities.Models;
 using TFG_Projects_APP_Frontend.Rest;
@@ -16,11 +15,11 @@ public class TaskDependenciesService(RestClient restClient) : ITaskDependenciesS
         return result;
     }
 
-    public async Task<ObservableCollection<TaskDependency>> GetAll()
+    public async Task<List<TaskDependency>> GetAll()
     {
         HttpResponseMessage response = await restClient.GetAllAsync(route);
-        var taskDependencies = await response.Content.ReadFromJsonAsync<ObservableCollection<TaskDependencyRead>>(restClient._options);
-        return new ObservableCollection<TaskDependency>(taskDependencies.Select(taskDependency =>
+        var taskDependencies = await response.Content.ReadFromJsonAsync<List<TaskDependencyRead>>(restClient._options);
+        return new List<TaskDependency>(taskDependencies.Select(taskDependency =>
         {
             return new TaskDependency
             {
@@ -32,11 +31,11 @@ public class TaskDependenciesService(RestClient restClient) : ITaskDependenciesS
         }).ToList());
     }
 
-    public async Task<ObservableCollection<TaskDependency>> GetAllTaskDependenciesByTask( int id)
+    public async Task<List<TaskDependency>> GetAllTaskDependenciesByTask( int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/task/{id}");
-        var taskDependencies = await response.Content.ReadFromJsonAsync<ObservableCollection<TaskDependencyRead>>(restClient._options);
-        return new ObservableCollection<TaskDependency>(taskDependencies.Select(taskDependency =>
+        var taskDependencies = await response.Content.ReadFromJsonAsync<List<TaskDependencyRead>>(restClient._options);
+        return new List<TaskDependency>(taskDependencies.Select(taskDependency =>
         {
             return new TaskDependency
             {

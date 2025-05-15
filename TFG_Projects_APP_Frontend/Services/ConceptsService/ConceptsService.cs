@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 using TFG_Projects_APP_Frontend.Entities.Dtos.Concepts;
 using TFG_Projects_APP_Frontend.Entities.Models;
 using TFG_Projects_APP_Frontend.Rest;
@@ -16,11 +15,11 @@ public class ConceptsService(RestClient restClient) : IConceptsService
         return result;
     }
 
-    public async Task<ObservableCollection<Concept>> GetAll()
+    public async Task<List<Concept>> GetAll()
     {
         HttpResponseMessage response = await restClient.GetAllAsync(route);
-        var concepts = await response.Content.ReadFromJsonAsync<ObservableCollection<ConceptRead>>(restClient._options);
-        return new ObservableCollection<Concept>(concepts.Select(concept => new Concept
+        var concepts = await response.Content.ReadFromJsonAsync<List<ConceptRead>>(restClient._options);
+        return new List<Concept>(concepts.Select(concept => new Concept
         {
             Id = concept.Id,
             Title = concept.Title,
@@ -29,11 +28,11 @@ public class ConceptsService(RestClient restClient) : IConceptsService
         }).ToList());
     }
 
-    public async Task<ObservableCollection<Concept>> GetAllConceptsByProject(int id)
+    public async Task<List<Concept>> GetAllConceptsByProject(int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/project/{id}");
-        var concepts = await response.Content.ReadFromJsonAsync<ObservableCollection<ConceptRead>>(restClient._options);
-        return new ObservableCollection<Concept>(concepts.Select(concept => new Concept
+        var concepts = await response.Content.ReadFromJsonAsync<List<ConceptRead>>(restClient._options);
+        return new List<Concept>(concepts.Select(concept => new Concept
         {
             Id = concept.Id,
             Title = concept.Title,

@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 using TFG_Projects_APP_Frontend.Entities.Dtos.ConceptBoards;
 using TFG_Projects_APP_Frontend.Entities.Models;
 using TFG_Projects_APP_Frontend.Rest;
@@ -16,11 +15,11 @@ public class ConceptBoardsService(RestClient restClient) : IConceptBoardsService
         return result;
     }
 
-    public async Task<ObservableCollection<ConceptBoard>> GetAll()
+    public async Task<List<ConceptBoard>> GetAll()
     {
         HttpResponseMessage response = await restClient.GetAllAsync(route);
-        var conceptBoards = await response.Content.ReadFromJsonAsync<ObservableCollection<ConceptBoardRead>>(restClient._options);
-        return new ObservableCollection<ConceptBoard>(conceptBoards.Select(conceptBoard =>
+        var conceptBoards = await response.Content.ReadFromJsonAsync<List<ConceptBoardRead>>(restClient._options);
+        return new List<ConceptBoard>(conceptBoards.Select(conceptBoard =>
         {
             return new ConceptBoard
             {
@@ -32,11 +31,11 @@ public class ConceptBoardsService(RestClient restClient) : IConceptBoardsService
         }).ToList());
     }
 
-    public async Task<ObservableCollection<ConceptBoard>> GetAllConceptBoardsByConcept(int id)
+    public async Task<List<ConceptBoard>> GetAllConceptBoardsByConcept(int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/concept/{id}");
-        var conceptBoards = await response.Content.ReadFromJsonAsync<ObservableCollection<ConceptBoardRead>>(restClient._options);
-        return new ObservableCollection<ConceptBoard>(conceptBoards.Select(conceptBoard =>
+        var conceptBoards = await response.Content.ReadFromJsonAsync<List<ConceptBoardRead>>(restClient._options);
+        return new List<ConceptBoard>(conceptBoards.Select(conceptBoard =>
         {
             return new ConceptBoard
             {
