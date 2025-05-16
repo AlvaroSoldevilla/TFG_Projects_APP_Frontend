@@ -67,10 +67,16 @@ public class TaskDependenciesService(RestClient restClient) : ITaskDependenciesS
         return result;
     }
 
-    public async Task<string> Post(object data)
+    public async Task<TaskDependency> Post(object data)
     {
         HttpResponseMessage response = await restClient.PostAsync(route, data);
-        var result = await response.Content.ReadAsStringAsync();
-        return result;
+        var taskDependency = await response.Content.ReadFromJsonAsync<TaskDependencyRead>(restClient._options);
+        return new TaskDependency
+        {
+            Id = taskDependency.Id,
+            IdTask = taskDependency.IdTask,
+            IdDependsOn = taskDependency.IdDependsOn,
+            UnlockAt = taskDependency.UnlockAt
+        };
     }
 }

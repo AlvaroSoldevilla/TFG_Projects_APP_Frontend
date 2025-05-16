@@ -67,10 +67,16 @@ public class ConceptBoardsService(RestClient restClient) : IConceptBoardsService
         return result;
     }
 
-    public async Task<string> Post(object data)
+    public async Task<ConceptBoard> Post(object data)
     {
         HttpResponseMessage response = await restClient.PostAsync(route, data);
-        var result = await response.Content.ReadAsStringAsync();
-        return result;
+        var conceptBoard = await response.Content.ReadFromJsonAsync<ConceptBoardRead>(restClient._options);
+        return new ConceptBoard
+        {
+            Id = conceptBoard.Id,
+            Name = conceptBoard.Name,
+            IdConcept = conceptBoard.IdConcept,
+            IdParent = conceptBoard.IdParent
+        };
     }
 }

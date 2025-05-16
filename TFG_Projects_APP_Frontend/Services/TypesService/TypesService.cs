@@ -47,10 +47,14 @@ public class TypesService(RestClient restClient) : ITypesService
         return result;
     }
 
-    public async Task<string> Post(object data)
+    public async Task<ProjectType> Post(object data)
     {
         HttpResponseMessage response = await restClient.PostAsync(route, data);
-        var result = await response.Content.ReadAsStringAsync();
-        return result;
+        var type = await response.Content.ReadFromJsonAsync<TypeRead>(restClient._options);
+        return new ProjectType
+        {
+            Id = type.Id,
+            Name = type.Name
+        };
     }
 }

@@ -51,10 +51,16 @@ public class PrioritiesService(RestClient restClient) : IPrioritiesService
         return result;
     }
 
-    public async Task<string> Post(object data)
+    public async Task<Priority> Post(object data)
     {
         HttpResponseMessage response = await restClient.PostAsync(route, data);
-        var result = await response.Content.ReadAsStringAsync();
-        return result;
+        var priority = await response.Content.ReadFromJsonAsync<PriorityRead>(restClient._options);
+        return new Priority
+        {
+            Id = priority.Id,
+            Name = priority.Name,
+            Color = priority.Color,
+            PriorityValue = priority.PriorityValue,
+        };
     }
 }

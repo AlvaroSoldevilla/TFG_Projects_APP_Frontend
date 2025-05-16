@@ -148,10 +148,26 @@ public class TasksService(RestClient restClient) : ITasksService
         return result;
     }
 
-    public async Task<string> Post(object data)
+    public async Task<ProjectTask> Post(object data)
     {
         HttpResponseMessage response = await restClient.PostAsync(route, data);
-        var result = await response.Content.ReadAsStringAsync();
-        return result;
+        var task = await response.Content.ReadFromJsonAsync<TaskRead>(restClient._options);
+        return new ProjectTask
+        {
+            Id = task.Id,
+            IdSection = task.IdSection,
+            IdProgressSection = task.IdProgressSection,
+            IdUserAssigned = task.IdUserAssigned,
+            IdParentTask = task.IdParentTask,
+            IdUserCreated = task.IdUserCreated,
+            IdPriority = task.IdPriority,
+            Title = task.Title,
+            Description = task.Description,
+            Progress = task.Progress,
+            CreationDate = task.CreationDate,
+            LimitDate = task.LimitDate,
+            CompletionDate = task.CompletionDate,
+            Finished = task.Finished
+        };
     }
 }

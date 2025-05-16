@@ -61,10 +61,16 @@ public class ConceptsService(RestClient restClient) : IConceptsService
         return result;
     }
 
-    public async Task<string> Post(object data)
+    public async Task<Concept> Post(object data)
     {
         HttpResponseMessage response = await restClient.PostAsync(route, data);
-        var result = await response.Content.ReadAsStringAsync();
-        return result;
+        var concept = await response.Content.ReadFromJsonAsync<ConceptRead>(restClient._options);
+        return new Concept
+        {
+            Id = concept.Id,
+            Title = concept.Title,
+            Description = concept.Description,
+            IdProject = concept.IdProject
+        };
     }
 }

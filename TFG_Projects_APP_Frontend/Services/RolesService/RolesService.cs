@@ -49,10 +49,15 @@ public class RolesService(RestClient restClient) : IRolesService
         return result;
     }
 
-    public async Task<string> Post(object data)
+    public async Task<Role> Post(object data)
     {
         HttpResponseMessage response = await restClient.PostAsync(route, data);
-        var result = await response.Content.ReadAsStringAsync();
-        return result;
+        var role = await response.Content.ReadFromJsonAsync<RoleRead>(restClient._options);
+        return new Role
+        {
+            Id = role.Id,
+            Name = role.Name,
+            Description = role.Description
+        };
     }
 }

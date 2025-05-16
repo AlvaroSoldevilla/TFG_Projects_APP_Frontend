@@ -62,10 +62,16 @@ public class ProjectsService(RestClient restClient) : IProjectsService
         return result;
     }
 
-    public async Task<string> Post(object data)
+    public async Task<Project> Post(object data)
     {
         HttpResponseMessage response = await restClient.PostAsync(route, data);
         var result = await response.Content.ReadAsStringAsync();
-        return result;
+        var project = await response.Content.ReadFromJsonAsync<ProjectRead>(restClient._options);
+        return new Project
+        {
+            Id = project.Id,
+            Title = project.Title,
+            Description = project.Description
+        };
     }
 }

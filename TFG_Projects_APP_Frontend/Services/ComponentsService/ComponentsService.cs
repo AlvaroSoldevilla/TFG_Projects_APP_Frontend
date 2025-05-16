@@ -73,10 +73,20 @@ public class ComponentsService(RestClient restClient) : IComponentsService
         return result;
     }
 
-    public async Task<string> Post(object data)
+    public async Task<Component> Post(object data)
     {
         HttpResponseMessage response = await restClient.PostAsync($"{route}", data);
-        var result = await response.Content.ReadAsStringAsync();
-        return result;
+        var component = await response.Content.ReadFromJsonAsync<ComponentRead>(restClient._options);
+        return new Component
+        {
+            Id = component.Id,
+            Title = component.Title,
+            Content = component.Content,
+            IdType = component.IdType,
+            PosX = component.PosX,
+            PosY = component.PosY,
+            IdBoard = component.IdBoard,
+            IdParent = component.IdParent
+        };
     }
 }

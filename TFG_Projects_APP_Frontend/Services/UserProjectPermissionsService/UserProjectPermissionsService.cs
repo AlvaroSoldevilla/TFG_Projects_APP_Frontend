@@ -115,10 +115,16 @@ public class UserProjectPermissionsService(RestClient restClient) : IUserProject
         return result;
     }
 
-    public async Task<string> Post(object data)
+    public async Task<UserProjectPermission> Post(object data)
     {
         HttpResponseMessage response = await restClient.PostAsync(route, data);
-        var result = await response.Content.ReadAsStringAsync();
-        return result;
+        var userProjectPermission = await response.Content.ReadFromJsonAsync<UserProjectPermissionRead>(restClient._options);
+        return new UserProjectPermission
+        {
+            Id = userProjectPermission.Id,
+            IdUser = userProjectPermission.IdUser,
+            IdProject = userProjectPermission.IdProject,
+            IdPermission = userProjectPermission.IdPermission
+        };
     }
 }

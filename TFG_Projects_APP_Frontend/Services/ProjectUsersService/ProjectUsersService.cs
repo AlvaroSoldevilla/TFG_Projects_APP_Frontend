@@ -83,10 +83,16 @@ public class ProjectUsersService(RestClient restClient) : IProjectUsersService
         return result;
     }
 
-    public async Task<string> Post(object data)
+    public async Task<ProjectUser> Post(object data)
     {
         HttpResponseMessage response = await restClient.PostAsync(route, data);
-        var result = await response.Content.ReadAsStringAsync();
-        return result;
+        var projectUser = await response.Content.ReadFromJsonAsync<ProjectUserRead>(restClient._options);
+        return new ProjectUser
+        {
+            Id = projectUser.Id,
+            IdUser = projectUser.IdUser,
+            IdProject = projectUser.IdProject,
+            IdRole = projectUser.IdRole
+        };
     }
 }

@@ -67,10 +67,16 @@ public class TaskBoardsService(RestClient restClient) : ITaskBoardsService
         return result;
     }
 
-    public async Task<string> Post(object data)
+    public async Task<TaskBoard> Post(object data)
     {
         HttpResponseMessage response = await restClient.PostAsync(route, data);
-        var result = await response.Content.ReadAsStringAsync();
-        return result;
+        var taskBoard = await response.Content.ReadFromJsonAsync<TaskBoardRead>(restClient._options);
+        return new TaskBoard
+        {
+            Id = taskBoard.Id,
+            Title = taskBoard.Title,
+            Description = taskBoard.Description,
+            IdProject = taskBoard.IdProject
+        };
     }
 }

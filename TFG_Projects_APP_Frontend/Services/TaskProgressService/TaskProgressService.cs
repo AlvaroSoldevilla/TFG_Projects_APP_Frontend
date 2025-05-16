@@ -53,10 +53,18 @@ public class TaskProgressService(RestClient restClient) : ITaskProgressService
         return result;
     }
 
-    public async Task<string> Post(object data)
+    public async Task<TaskProgress> Post(object data)
     {
         HttpResponseMessage response = await restClient.PostAsync(route, data);
         var result = await response.Content.ReadAsStringAsync();
-        return result;
+        var taskProgress = await response.Content.ReadFromJsonAsync<TaskProgressRead>(restClient._options);
+        return new TaskProgress
+        {
+            Id = taskProgress.Id,
+            IdSection = taskProgress.IdSection,
+            Title = taskProgress.Title,
+            ModifiesProgress = taskProgress.ModifiesProgress,
+            ProgressValue = taskProgress.ProgressValue
+        };
     }
 }

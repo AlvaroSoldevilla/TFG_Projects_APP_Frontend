@@ -6,7 +6,7 @@ public interface IService<T>
 {
     Task<List<T>> GetAll();
     Task<T> GetById(int id);
-    Task<string> Post(object data);
+    Task<T> Post(object data);
     Task<string> Patch(int id, object data);
     Task<string> Delete(int id);
 }

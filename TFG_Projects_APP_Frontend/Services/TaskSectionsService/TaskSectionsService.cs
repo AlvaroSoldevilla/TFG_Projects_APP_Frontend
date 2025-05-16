@@ -64,10 +64,15 @@ public class TaskSectionsService(RestClient restClient) : ITaskSectionsService
         return result;
     }
 
-    public async Task<string> Post(object data)
+    public async Task<TaskSection> Post(object data)
     {
         HttpResponseMessage response = await restClient.PostAsync(route, data);
-        var result = await response.Content.ReadAsStringAsync();
-        return result;
+        var taskSection = await response.Content.ReadFromJsonAsync<TaskSectionRead>(restClient._options);
+        return new TaskSection
+        {
+            Id = taskSection.Id,
+            Title = taskSection.Title,
+            IdBoard = taskSection.IdBoard
+        };
     }
 }

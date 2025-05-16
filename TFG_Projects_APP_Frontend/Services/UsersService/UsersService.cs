@@ -71,10 +71,15 @@ public class UsersService(RestClient restClient) : IUsersService
         return result;
     }
 
-    public async Task<string> Post(object data)
+    public async Task<AppUser> Post(object data)
     {
         HttpResponseMessage response = await restClient.PostAsync(route, data);
-        var result = await response.Content.ReadAsStringAsync();
-        return result;
+        var user = await response.Content.ReadFromJsonAsync<UserRead>(restClient._options);
+        return new AppUser
+        {
+            Id = user.Id,
+            Username = user.Username,
+            Email = user.Email,
+        };
     }
 }

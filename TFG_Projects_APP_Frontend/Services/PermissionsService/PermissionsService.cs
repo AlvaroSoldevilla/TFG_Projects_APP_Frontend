@@ -47,10 +47,14 @@ public class PermissionsService(RestClient restClient) : IPermissionsService
         return result;
     }
 
-    public async Task<string> Post(object data)
+    public async Task<Permission> Post(object data)
     {
         HttpResponseMessage response = await restClient.PostAsync(route, data);
-        var result = await response.Content.ReadAsStringAsync();
-        return result;
+        var permission = await response.Content.ReadFromJsonAsync<PermissionRead>(restClient._options);
+        return new Permission
+        {
+            Id = permission.Id,
+            Name = permission.Name,
+        };
     }
 }
