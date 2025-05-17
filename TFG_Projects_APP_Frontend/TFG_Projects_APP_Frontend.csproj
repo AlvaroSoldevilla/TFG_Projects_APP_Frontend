@@ -66,10 +66,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Components\" />
-	</ItemGroup>
-
-	<ItemGroup>
+	  <MauiXaml Update="Components\CreateModal\ObjectBuilder.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Pages\AppSettingsPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
