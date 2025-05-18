@@ -1,4 +1,6 @@
 ﻿using TFG_Projects_APP_Frontend.Pages;
+using TFG_Projects_APP_Frontend.Pages.Concepts;
+using TFG_Projects_APP_Frontend.Pages.Tasks;
 
 namespace TFG_Projects_APP_Frontend
 {
@@ -13,6 +15,8 @@ namespace TFG_Projects_APP_Frontend
         private static void InitializeRouting()
         {
             Routing.RegisterRoute("ProjectmanagementPage", typeof(ProjectManagementPage));
+            Routing.RegisterRoute("TaskBoardPage", typeof(TaskBoardPage));
+            Routing.RegisterRoute("ConceptBoardPage", typeof(ConceptBoardPage));
         }
     }
 }

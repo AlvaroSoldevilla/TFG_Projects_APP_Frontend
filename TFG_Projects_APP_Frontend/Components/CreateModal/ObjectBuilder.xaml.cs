@@ -16,6 +16,13 @@ public partial class DynamicInputPage<T> : ContentPage where T : new()
     private void BuildForm()
     {
         var layout = new VerticalStackLayout { Padding = 20, Spacing = 10 };
+        var objectName = typeof(T).Name.Replace("Form", "").Replace("Create", "");
+        layout.Children.Add(new Label
+        {
+            Text = $"Create {objectName}",
+            FontSize = 24,
+            HorizontalOptions = LayoutOptions.Center
+        });
 
         foreach (var field in _fields)
         {
@@ -37,8 +44,11 @@ public partial class DynamicInputPage<T> : ContentPage where T : new()
         }
 
         var button = new Button { Text = "Create" };
+        var cancelButton = new Button { Text = "Cancel" };
         button.Clicked += Submit;
+        cancelButton.Clicked += Cancel;
         layout.Children.Add(button);
+        layout.Children.Add(cancelButton);
 
         Content = new ScrollView { Content = layout };
     }
@@ -68,6 +78,11 @@ public partial class DynamicInputPage<T> : ContentPage where T : new()
         }
 
         _tcs.SetResult(obj);
+        Application.Current.MainPage.Navigation.PopModalAsync();
+    }
+
+    private void Cancel(object sender, EventArgs e)
+    {
         Application.Current.MainPage.Navigation.PopModalAsync();
     }
 }

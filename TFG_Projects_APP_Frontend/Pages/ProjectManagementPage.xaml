@@ -1,45 +1,87 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="TFG_Projects_APP_Frontend.Pages.ProjectManagementPage"
-             xmlns:models="clr-namespace:TFG_Projects_APP_Frontend.Entities.Models"
-             xmlns:pageModels="clr-namespace:TFG_Projects_APP_Frontend.PageModels"
-             x:DataType="pageModels:ProjectManagementPageModel"
-             Title="ProjectManagementPage">
-    <VerticalStackLayout 
-        Padding="30,0"
-        Spacing="25">
-        <Label Text="{Binding CurrentProject.Title}" FontSize="30"/>
-        <Label Text="{Binding CurrentProject.Description}" FontSize="20"/>
-        <CollectionView ItemsSource="{Binding Concepts}" SelectedItem="{Binding SelectedConcept}">
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="models:Concept">
-                    <VerticalStackLayout Padding="10">
-                        <Label Text="{Binding Title}" FontSize="16" />
-                        <Label Text="{Binding Description}" FontSize="12" />
-                    </VerticalStackLayout>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-        <CollectionView ItemsSource="{Binding TaskBoards}" SelectedItem="{Binding SelectedTaskBoard}">
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="models:TaskBoard">
-                    <VerticalStackLayout Padding="10">
-                        <Label Text="{Binding Title}" FontSize="16" />
-                        <Label Text="{Binding Description}" FontSize="12" />
-                    </VerticalStackLayout>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-        <CollectionView ItemsSource="{Binding Users}" SelectedItem="{Binding SelectedUser}">
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="models:AppUser">
-                    <VerticalStackLayout Padding="10">
-                        <Label Text="{Binding Username}" FontSize="16" />
-                        <Label Text="{Binding Email}" FontSize="12" />
-                    </VerticalStackLayout>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-    </VerticalStackLayout>
+<ContentPage
+    x:Class="TFG_Projects_APP_Frontend.Pages.ProjectManagementPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:models="clr-namespace:TFG_Projects_APP_Frontend.Entities.Models"
+    xmlns:pageModels="clr-namespace:TFG_Projects_APP_Frontend.PageModels"
+    Title="ProjectManagementPage"
+    x:DataType="pageModels:ProjectManagementPageModel">
+    <ScrollView>
+        <VerticalStackLayout Padding="30,0" Spacing="25">
+            <Label FontSize="30" Text="{Binding CurrentProject.Title}" />
+            <Label FontSize="20" Text="{Binding CurrentProject.Description}" />
+            <Button Command="{Binding CreateConceptCommand}" Text="Create concept" />
+            <CollectionView
+                ItemsSource="{Binding Concepts}"
+                SelectedItem="{Binding SelectedConcept}"
+                SelectionChangedCommand="{Binding ConceptSelectedCommand}"
+                SelectionMode="Single">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:Concept">
+                        <Border>
+                            <StackLayout Padding="10" Orientation="Vertical">
+                                <Label FontSize="16" Text="{Binding Title}" />
+                                <Label FontSize="12" Text="{Binding Description}" />
+                            </StackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            <ActivityIndicator
+                HeightRequest="50"
+                HorizontalOptions="Center"
+                IsRunning="{Binding IsLoadingConcepts}"
+                IsVisible="{Binding IsLoadingConcepts}"
+                VerticalOptions="Center"
+                WidthRequest="50" />
+            <Button Command="{Binding CreateTaskBoardCommand}" Text="Create task board" />
+            <CollectionView
+                ItemsSource="{Binding TaskBoards}"
+                SelectedItem="{Binding SelectedTaskBoard}"
+                SelectionChangedCommand="{Binding TaskBoardSelectedCommand}"
+                SelectionMode="Single">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:TaskBoard">
+                        <Border>
+                            <StackLayout Padding="10" Orientation="Vertical">
+                                <Label FontSize="16" Text="{Binding Title}" />
+                                <Label FontSize="12" Text="{Binding Description}" />
+                            </StackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            <ActivityIndicator
+                HeightRequest="50"
+                HorizontalOptions="Center"
+                IsRunning="{Binding IsLoadingTaskBoards}"
+                IsVisible="{Binding IsLoadingTaskBoards}"
+                VerticalOptions="Center"
+                WidthRequest="50" />
+            <CollectionView
+                ItemsSource="{Binding Users}"
+                SelectedItem="{Binding SelectedUser}"
+                SelectionChangedCommand="{Binding UserSelectedCommand}"
+                SelectionMode="Single">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:AppUser">
+                        <Border>
+                            <StackLayout Padding="10" Orientation="Vertical">
+                                <Label FontSize="16" Text="{Binding Username}" />
+                                <Label FontSize="12" Text="{Binding Email}" />
+                            </StackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            <ActivityIndicator
+                HeightRequest="50"
+                HorizontalOptions="Center"
+                IsRunning="{Binding IsLoadingUsers}"
+                IsVisible="{Binding IsLoadingUsers}"
+                VerticalOptions="Center"
+                WidthRequest="50" />
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

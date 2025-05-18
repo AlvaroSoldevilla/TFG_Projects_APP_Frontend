@@ -6,4 +6,5 @@ internal class TaskProgressCreate
     public string Title { get; set; } = string.Empty;
     public bool? ModifiesProgress { get; set; } = false;
     public int? ProgressValue { get; set; } = 0;
+    public int Order { get; set; } = 0;
 }

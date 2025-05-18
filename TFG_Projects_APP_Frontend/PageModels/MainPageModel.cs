@@ -61,8 +61,12 @@ public partial class MainPageModel : ObservableObject
     {
         Isloading = true;
         var project = await FormDialog.ShowCreateObjectMenuAsync<ProjectCreate>();
-        if (project != null)
+        if (project != null && !string.IsNullOrEmpty(project.Title))
         {
+            if (string.IsNullOrEmpty(project.Description))
+            {
+                project.Description = string.Empty;
+            }
             var returnProject = await projectsService.Post(project);
             await projectUsersService.Post(new ProjectUserCreate
             {
@@ -76,6 +80,12 @@ public partial class MainPageModel : ObservableObject
                 IdPermission = 1
             });
             Projects.Add(returnProject);
+        } else
+        {
+            if (string.IsNullOrEmpty(project.Title))
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", "Title is required", "OK");
+            }
         }
         Isloading = false;
     }

@@ -5,6 +5,7 @@ public class TaskSection
     public int Id { get; set; }
     public int IdBoard { get; set; }
     public string Title { get; set; } = String.Empty;
+    public int Order { get; set; } = 0;
 
     public TaskBoard TaskBoard { get; set; }
     public List<TaskProgress>? ProgressSections { get; set; }
