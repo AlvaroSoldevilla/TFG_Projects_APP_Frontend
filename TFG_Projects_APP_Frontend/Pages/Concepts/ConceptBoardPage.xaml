@@ -8,9 +8,49 @@
              x:Class="TFG_Projects_APP_Frontend.Pages.Concepts.ConceptBoardPage"
              Title="ConceptBoardPage">
     <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
+        <StackLayout Orientation="Horizontal">
+            <StackLayout Orientation="Vertical" >
+                <CollectionView ItemsSource="{Binding Types}" SelectionMode="Single">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:ProjectType">
+                            <Border Padding="5">
+                                <Button
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Concepts.ConceptBoardPageModel}}, Path=TypeSelectedCommand}"
+                                    CommandParameter="{Binding .}"
+                                    Text="{Binding Name}" />
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+                <ActivityIndicator
+                    HeightRequest="50"
+                    HorizontalOptions="Center"
+                    IsRunning="{Binding IsLoading}"
+                    IsVisible="{Binding IsLoading}"
+                    VerticalOptions="Center"
+                    WidthRequest="50" />
+            </StackLayout>
+            <StackLayout Orientation="Vertical">
+                <CollectionView ItemsSource="{Binding Components}" SelectionMode="Single">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:Component">
+                            <Border Padding="5">
+                                <StackLayout>
+                                    <Label Text="{Binding Title}" />
+                                    <Label Text="{Binding Content}" />
+                                </StackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+                <ActivityIndicator
+                    HeightRequest="50"
+                    HorizontalOptions="Center"
+                    IsRunning="{Binding IsLoading}"
+                    IsVisible="{Binding IsLoading}"
+                    VerticalOptions="Center"
+                    WidthRequest="50" />
+            </StackLayout>
+        </StackLayout>
     </VerticalStackLayout>
 </ContentPage>

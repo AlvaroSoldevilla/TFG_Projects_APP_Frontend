@@ -3,4 +3,5 @@
 internal class ComponentRead : ComponentCreate
 {
     public int Id { get; set; }
+    public int? IdParent { get; set; }
 }

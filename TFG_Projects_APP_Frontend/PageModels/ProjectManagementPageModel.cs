@@ -1,16 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using TFG_Projects_APP_Frontend.Components.CreateModal;
 using TFG_Projects_APP_Frontend.Entities.Dtos.ConceptBoards;
 using TFG_Projects_APP_Frontend.Entities.Dtos.Concepts;
-using TFG_Projects_APP_Frontend.Entities.Dtos.Projects;
-using TFG_Projects_APP_Frontend.Entities.Dtos.ProjectUsers;
 using TFG_Projects_APP_Frontend.Entities.Dtos.TaskBoards;
 using TFG_Projects_APP_Frontend.Entities.Dtos.TaskProgress;
 using TFG_Projects_APP_Frontend.Entities.Dtos.TaskSections;
-using TFG_Projects_APP_Frontend.Entities.Dtos.UserProjectPermissions;
 using TFG_Projects_APP_Frontend.Entities.Models;
 using TFG_Projects_APP_Frontend.Services.ConceptBoardsService;
 using TFG_Projects_APP_Frontend.Services.ConceptsService;
@@ -138,10 +134,15 @@ public partial class ProjectManagementPageModel : ObservableObject
     [RelayCommand]
     private async void ConceptSelected(Concept concept)
     {
-        await Shell.Current.GoToAsync("ConceptBoardPage", new Dictionary<string, object>
+        var conceptBoards = await conceptBoardsService.GetAllConceptBoardsByConcept(SelectedConcept.Id);
+        if (conceptBoards != null)
         {
-             {"Concept", SelectedConcept }
-        });
+            var conceptBoard = conceptBoards.First(conceptBoard => conceptBoard.IdParent == conceptBoard.Id);
+            await Shell.Current.GoToAsync("ConceptBoardPage", new Dictionary<string, object>
+            {
+                 {"ConceptBoard", conceptBoard }
+            });
+        }
     }
 
     [RelayCommand]
@@ -194,6 +195,7 @@ public partial class ProjectManagementPageModel : ObservableObject
                 ProgressValue = 0
             });
             var taskBoards = TaskBoards.ToList();
+            taskBoards.Add(returnTaskBoard);
             TaskBoards.Clear();
             TaskBoards = new(taskBoards);
         } else
@@ -232,9 +234,21 @@ public partial class ProjectManagementPageModel : ObservableObject
                 IdConcept = returnConcept.Id,
                 Name = "Default Board"
             });
-            var concepts = Concepts.ToList();
-            Concepts.Clear();
-            Concepts = new(concepts);
+            conceptBoard.IdParent = conceptBoard.Id;
+            var conceptBoardUpdate = new ConceptBoardUpdate
+            {
+                IdConcept = conceptBoard.IdConcept,
+                IdParent = conceptBoard.IdParent,
+                Name = conceptBoard.Name,
+            };
+            var conceptBoardReturn = await conceptBoardsService.Patch(conceptBoard.Id, conceptBoardUpdate);
+            if (conceptBoardReturn == "Concept board updated")
+            {
+                var concepts = Concepts.ToList();
+                concepts.Add(returnConcept);
+                Concepts.Clear();
+                Concepts = new(concepts);
+            }
         } else
         {
             if (string.IsNullOrEmpty(conceptForm.Title))
