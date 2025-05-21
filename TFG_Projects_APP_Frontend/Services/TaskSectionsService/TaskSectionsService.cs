@@ -24,6 +24,7 @@ public class TaskSectionsService(RestClient restClient) : ITaskSectionsService
             return new TaskSection
             {
                 Id = taskSection.Id,
+                IdDefaultProgress = taskSection.IdDefaultProgress,
                 Title = taskSection.Title,
                 IdBoard = taskSection.IdBoard
             };
@@ -39,6 +40,7 @@ public class TaskSectionsService(RestClient restClient) : ITaskSectionsService
             return new TaskSection
             {
                 Id = taskSection.Id,
+                IdDefaultProgress = taskSection.IdDefaultProgress,
                 Title = taskSection.Title,
                 IdBoard = taskSection.IdBoard
             };
@@ -52,6 +54,7 @@ public class TaskSectionsService(RestClient restClient) : ITaskSectionsService
         return new TaskSection
         {
             Id = taskSection.Id,
+            IdDefaultProgress = taskSection.IdDefaultProgress,
             Title = taskSection.Title,
             IdBoard = taskSection.IdBoard
         };
@@ -71,6 +74,7 @@ public class TaskSectionsService(RestClient restClient) : ITaskSectionsService
         return new TaskSection
         {
             Id = taskSection.Id,
+            IdDefaultProgress = taskSection.IdDefaultProgress,
             Title = taskSection.Title,
             IdBoard = taskSection.IdBoard
         };

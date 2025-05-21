@@ -8,9 +8,35 @@
              x:DataType="pageModels:Tasks.TaskBoardPageModel"
              Title="TaskBoardPage">
     <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
+        <Button Command="{Binding CreateTaskSectionCommand}" Text="Create Task Section" />
+        <StackLayout Orientation="Horizontal">
+            <CollectionView ItemsSource="{Binding TaskSections}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:TaskSection">
+                        <Border Padding="5">
+                            <StackLayout>
+                                <Label Text="{Binding Title}" />
+                                <Button
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=TaskCreateCommand}"
+                                    CommandParameter="{Binding .}"
+                                    Text="Create Task" />
+                                <ListView ItemsSource="{Binding Tasks}">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate x:DataType="models:ProjectTask">
+                                            <ViewCell>
+                                                <StackLayout>
+                                                    <Label Text="{Binding Title}" />
+                                                    <Label Text="{Binding Description}" />
+                                                </StackLayout>
+                                            </ViewCell>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </StackLayout>
+                        </Border>
+                    </DataTemplate>
+                    </CollectionView.ItemTemplate>
+            </CollectionView>
+        </StackLayout>
     </VerticalStackLayout>
 </ContentPage>

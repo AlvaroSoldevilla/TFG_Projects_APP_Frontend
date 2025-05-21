@@ -22,6 +22,7 @@ public class ConceptsService(RestClient restClient) : IConceptsService
         return new List<Concept>(concepts.Select(concept => new Concept
         {
             Id = concept.Id,
+            IdFirstBoard = concept.IdFirstBoard,
             Title = concept.Title,
             Description = concept.Description,
             IdProject = concept.IdProject
@@ -36,6 +37,7 @@ public class ConceptsService(RestClient restClient) : IConceptsService
         {
             Id = concept.Id,
             Title = concept.Title,
+            IdFirstBoard = concept.IdFirstBoard,
             Description = concept.Description,
             IdProject = concept.IdProject
         }).ToList());
@@ -49,6 +51,7 @@ public class ConceptsService(RestClient restClient) : IConceptsService
         {
             Id = concept.Id,
             Title = concept.Title,
+            IdFirstBoard = concept.IdFirstBoard,
             Description = concept.Description,
             IdProject = concept.IdProject
         };
@@ -69,6 +72,7 @@ public class ConceptsService(RestClient restClient) : IConceptsService
         {
             Id = concept.Id,
             Title = concept.Title,
+            IdFirstBoard = concept.IdFirstBoard,
             Description = concept.Description,
             IdProject = concept.IdProject
         };

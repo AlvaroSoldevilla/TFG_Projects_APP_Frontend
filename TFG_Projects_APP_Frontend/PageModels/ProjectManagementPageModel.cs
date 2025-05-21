@@ -134,10 +134,9 @@ public partial class ProjectManagementPageModel : ObservableObject
     [RelayCommand]
     private async void ConceptSelected(Concept concept)
     {
-        var conceptBoards = await conceptBoardsService.GetAllConceptBoardsByConcept(SelectedConcept.Id);
-        if (conceptBoards != null)
+        var conceptBoard = await conceptBoardsService.GetById(SelectedConcept.IdFirstBoard);
+        if (conceptBoard != null)
         {
-            var conceptBoard = conceptBoards.First(conceptBoard => conceptBoard.IdParent == conceptBoard.Id);
             await Shell.Current.GoToAsync("ConceptBoardPage", new Dictionary<string, object>
             {
                  {"ConceptBoard", conceptBoard }
@@ -184,16 +183,24 @@ public partial class ProjectManagementPageModel : ObservableObject
             {
                 IdBoard = returnTaskBoard.Id,
                 Title = "Default Section",
-                Order = 0
+                Order = 1
             });
             var taskProgress = await taskProgressService.Post(new TaskProgressCreate
             {
                 IdSection = taskSection.Id,
                 Title = "Default Progress",
-                Order = 0,
+                Order = 1,
                 ModifiesProgress = false,
                 ProgressValue = 0
             });
+            await taskSectionsService.Patch(taskSection.Id, new TaskSectionUpdate
+            {
+                IdBoard = taskSection.IdBoard,
+                IdDefaultProgress = taskProgress.Id,
+                Title = taskSection.Title,
+                Order = taskSection.Order
+            });
+
             var taskBoards = TaskBoards.ToList();
             taskBoards.Add(returnTaskBoard);
             TaskBoards.Clear();

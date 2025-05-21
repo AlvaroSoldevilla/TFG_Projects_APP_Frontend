@@ -3,4 +3,5 @@
 internal class TaskRead : TaskCreate
 {
     public int Id { get; set; }
+    public DateTime CreationDate { get; set; }
 }
