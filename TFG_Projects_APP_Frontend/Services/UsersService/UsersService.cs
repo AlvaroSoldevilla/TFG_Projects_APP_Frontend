@@ -8,10 +8,10 @@ namespace TFG_Projects_APP_Frontend.Services.UsersService;
 public class UsersService(RestClient restClient) : IUsersService
 {
     private readonly string route = "users";
-    public async Task<string> AuthenticateUser(string email, object data)
+    public async Task<AppUser> AuthenticateUser(object data)
     {
         HttpResponseMessage response = await restClient.PostAsync($"{route}/auth/", data);
-        var result = await response.Content.ReadAsStringAsync();
+        var result = await response.Content.ReadFromJsonAsync<AppUser>(restClient._options);
         return result;
     }
 

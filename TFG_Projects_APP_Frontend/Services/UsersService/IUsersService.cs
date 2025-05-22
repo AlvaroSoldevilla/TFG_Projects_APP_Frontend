@@ -5,5 +5,5 @@ namespace TFG_Projects_APP_Frontend.Services.UsersService;
 public interface IUsersService : IService<AppUser>
 {
     Task<List<AppUser>> GetUsersByProject(int id);
-    Task<string> AuthenticateUser(string email, object data);
+    Task<AppUser> AuthenticateUser(object data);
 }

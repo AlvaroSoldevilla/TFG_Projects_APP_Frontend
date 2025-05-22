@@ -9,8 +9,12 @@
     Title="Project Design APP">
 
     <ShellContent
+    Title="Log Out"
+    ContentTemplate="{DataTemplate pages:LoginPage}"
+    Route="LoginPage" />
+
+    <ShellContent
         Title="Home"
         ContentTemplate="{DataTemplate pages:MainPage}"
         Route="MainPage" />
-
 </Shell>

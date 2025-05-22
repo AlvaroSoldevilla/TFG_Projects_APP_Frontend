@@ -1,10 +1,10 @@
-﻿using TFG_Projects_APP_Frontend.Entities.Models;
+﻿using TFG_Projects_APP_Frontend.Pages;
 
 namespace TFG_Projects_APP_Frontend
 {
     public partial class App : Application
     {
-        public App()
+        public App(LoginPage loginPage)
         {
             InitializeComponent();
         }
