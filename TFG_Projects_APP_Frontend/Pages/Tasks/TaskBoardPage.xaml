@@ -7,14 +7,17 @@
              xmlns:pageModels="clr-namespace:TFG_Projects_APP_Frontend.PageModels"
              x:DataType="pageModels:Tasks.TaskBoardPageModel"
              Title="TaskBoardPage">
-    <VerticalStackLayout>
+    <VerticalStackLayout Padding="20">
         <Button Command="{Binding CreateTaskSectionCommand}" Text="Create Task Section" />
-        <StackLayout Orientation="Horizontal">
+        <StackLayout Orientation="Horizontal" Spacing="20">
             <CollectionView ItemsSource="{Binding TaskSections}">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Horizontal" Span="1" />
+                </CollectionView.ItemsLayout>
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="models:TaskSection">
                         <Border Padding="5">
-                            <StackLayout>
+                            <StackLayout Spacing="5">
                                 <Label Text="{Binding Title}" />
                                 <Button
                                     Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=TaskCreateCommand}"
@@ -24,10 +27,12 @@
                                     <ListView.ItemTemplate>
                                         <DataTemplate x:DataType="models:ProjectTask">
                                             <ViewCell>
-                                                <StackLayout>
-                                                    <Label Text="{Binding Title}" />
-                                                    <Label Text="{Binding Description}" />
-                                                </StackLayout>
+                                                <Border Padding="10" Margin="5" BackgroundColor="#f0f0f0">
+                                                    <StackLayout>
+                                                        <Label Text="{Binding Title}" />
+                                                        <Label Text="{Binding Description}" />
+                                                    </StackLayout>
+                                                </Border>
                                             </ViewCell>
                                         </DataTemplate>
                                     </ListView.ItemTemplate>

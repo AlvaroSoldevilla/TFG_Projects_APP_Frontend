@@ -8,6 +8,7 @@ using TFG_Projects_APP_Frontend.Entities.Dtos.TaskBoards;
 using TFG_Projects_APP_Frontend.Entities.Dtos.TaskProgress;
 using TFG_Projects_APP_Frontend.Entities.Dtos.TaskSections;
 using TFG_Projects_APP_Frontend.Entities.Models;
+using TFG_Projects_APP_Frontend.Services;
 using TFG_Projects_APP_Frontend.Services.ConceptBoardsService;
 using TFG_Projects_APP_Frontend.Services.ConceptsService;
 using TFG_Projects_APP_Frontend.Services.PermissionsService;
@@ -103,6 +104,19 @@ public partial class ProjectManagementPageModel : ObservableObject
         IsLoadingConcepts = true;
         IsLoadingTaskBoards = true;
         IsLoadingUsers = true;
+        SelectedConcept = null;
+        SelectedTaskBoard = null;
+        SelectedUser = null;
+        if (Project == null)
+        {
+            if (NavigationContext.CurrentProject == null) {
+                await Shell.Current.GoToAsync("//MainPage");
+                return;
+            } else
+            {
+                Project = NavigationContext.CurrentProject;
+            }
+        }
         CurrentProject = Project;
 
         var concepts = await conceptsService.GetAllConceptsByProject(Project.Id);
@@ -134,13 +148,18 @@ public partial class ProjectManagementPageModel : ObservableObject
     [RelayCommand]
     private async void ConceptSelected(Concept concept)
     {
-        var conceptBoard = await conceptBoardsService.GetById(SelectedConcept.IdFirstBoard);
-        if (conceptBoard != null)
+        NavigationContext.CurrentConcept = SelectedConcept;
+        if (SelectedConcept != null)
         {
-            await Shell.Current.GoToAsync("ConceptBoardPage", new Dictionary<string, object>
+            var conceptBoard = await conceptBoardsService.GetById(SelectedConcept.IdFirstBoard);
+            NavigationContext.CurrentConceptBoards.Push(conceptBoard);
+            if (conceptBoard != null)
+            {
+                await Shell.Current.GoToAsync("ConceptBoardPage", new Dictionary<string, object>
             {
                  {"ConceptBoard", conceptBoard }
             });
+            }
         }
     }
 
@@ -153,6 +172,7 @@ public partial class ProjectManagementPageModel : ObservableObject
     [RelayCommand]
     private async void TaskBoardSelected(TaskBoard taskBoard)
     {
+        NavigationContext.CurrentTaskBoard = SelectedTaskBoard;
         await Shell.Current.GoToAsync("TaskBoardPage", new Dictionary<string, object>
         {
              {"TaskBoard", SelectedTaskBoard }

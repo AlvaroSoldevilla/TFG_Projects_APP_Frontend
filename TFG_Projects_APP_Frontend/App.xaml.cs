@@ -11,7 +11,10 @@ namespace TFG_Projects_APP_Frontend
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
-            return new Window(new AppShell());
+            var window = new Window(new AppShell());
+            window.MinimumWidth = 500;
+            window.MinimumHeight = 600;
+            return window;
         }
     }
 }

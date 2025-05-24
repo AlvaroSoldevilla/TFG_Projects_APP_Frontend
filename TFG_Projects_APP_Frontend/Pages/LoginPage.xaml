@@ -12,12 +12,12 @@
              Shell.FlyoutBehavior="Disabled"
              Title="Login">
 
-    <ScrollView>
-        <VerticalStackLayout
-            Padding="30"
-            Spacing="20"
-            VerticalOptions="Center"
-            HorizontalOptions="Center">
+    <ScrollView 
+        Padding="30"
+        VerticalOptions="Center"
+        HorizontalOptions="Center"
+        WidthRequest="350">
+        <VerticalStackLayout Spacing="20">
 
             <Label 
                 Text="Welcome!" 
@@ -25,20 +25,56 @@
                 FontAttributes="Bold"
                 HorizontalOptions="Center" />
 
+            <Button Text="Debug Login" Command="{Binding DebugLoginCommand}"/>
+
             <HorizontalStackLayout Spacing="10">
                 <Entry 
                     x:Name="IP"
                     Placeholder="Server IP"
                     Text="{Binding Route, Mode=TwoWay}"
-                    BackgroundColor="White"/>
+                    BackgroundColor="White"
+                    WidthRequest="80"/>
 
                 <Entry 
                     x:Name="Port"
                     Placeholder="Port"
                     Text="{Binding Port, Mode=TwoWay}"
-                    BackgroundColor="White"/>
+                    BackgroundColor="White"
+                    WidthRequest="60"/>
+                <Button
+                    Text="Test connection"
+                    Command="{Binding TestConnectionCommand}"
+                    BackgroundColor="#4CAF50"
+                    TextColor="White"
+                    CornerRadius="10"
+                    Padding="10"
+                    FontAttributes="Bold"
+                    IsVisible="{Binding ShowTestButton}"
+                    WidthRequest="130"/>
+                <VerticalStackLayout
+                    VerticalOptions="Center"
+                    HorizontalOptions="Center"
+                    Spacing="0"
+                    IsVisible="{Binding IsTesting}"
+                    WidthRequest="130">
+                    <ActivityIndicator
+                        IsRunning="{Binding IsTesting}"
+                        IsVisible="{Binding IsTesting}"
+                        VerticalOptions="Center"
+                        Color="Gray"
+                        HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+
             </HorizontalStackLayout>
 
+            <Button
+                Text="Save API location"
+                Command="{Binding ChangeRouteCommand}"
+                BackgroundColor="#2196F3"
+                TextColor="White"
+                CornerRadius="10"
+                Padding="10"
+                FontAttributes="Bold" />
             <Entry 
                 x:Name="Username"
                 Placeholder="Username"

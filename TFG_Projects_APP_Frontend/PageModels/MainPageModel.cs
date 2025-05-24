@@ -6,6 +6,7 @@ using TFG_Projects_APP_Frontend.Entities.Dtos.Projects;
 using TFG_Projects_APP_Frontend.Entities.Dtos.ProjectUsers;
 using TFG_Projects_APP_Frontend.Entities.Dtos.UserProjectPermissions;
 using TFG_Projects_APP_Frontend.Entities.Models;
+using TFG_Projects_APP_Frontend.Services;
 using TFG_Projects_APP_Frontend.Services.ProjectsService;
 using TFG_Projects_APP_Frontend.Services.ProjectUsersService;
 using TFG_Projects_APP_Frontend.Services.UserProjectPermissionsService;
@@ -25,6 +26,7 @@ public partial class MainPageModel : ObservableObject
 
     [ObservableProperty]
     ObservableCollection<Project> _projects;
+
     [ObservableProperty]
     Project _selectedProject;
 
@@ -37,19 +39,25 @@ public partial class MainPageModel : ObservableObject
         this.userProjectPermissionsService = userProjectPermissionsService;
         this.projectUsersService = projectUsersService;
         this.userSession = userSession;
-        LoadData();
+    }
+
+    public async Task OnNavigatedTo()
+    {
+        await LoadData();
     }
 
     private async Task LoadData()
     {
         Isloading = true;
         Projects = new(await projectsService.GetAllProjectsByUser(userSession.User.Id));
+        SelectedProject = null;
         Isloading = false;
     }
 
     [RelayCommand]
     private async void ProjectSelected(Project project)
     {
+        NavigationContext.CurrentProject = SelectedProject;
         await Shell.Current.GoToAsync("ProjectmanagementPage", new Dictionary<string, object>
         {
              {"Project", SelectedProject }

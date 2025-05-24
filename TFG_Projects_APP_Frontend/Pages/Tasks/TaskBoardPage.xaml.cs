@@ -18,4 +18,5 @@ public partial class TaskBoardPage : ContentPage
         base.OnNavigatedTo(args);
         ViewModel?.OnNavigatedTo();
     }
+
 }

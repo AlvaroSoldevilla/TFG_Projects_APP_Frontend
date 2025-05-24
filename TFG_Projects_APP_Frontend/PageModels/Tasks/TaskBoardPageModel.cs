@@ -2,11 +2,11 @@
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using TFG_Projects_APP_Frontend.Components.CreateModal;
-using TFG_Projects_APP_Frontend.Entities.Dtos.TaskBoards;
 using TFG_Projects_APP_Frontend.Entities.Dtos.TaskProgress;
 using TFG_Projects_APP_Frontend.Entities.Dtos.Tasks;
 using TFG_Projects_APP_Frontend.Entities.Dtos.TaskSections;
 using TFG_Projects_APP_Frontend.Entities.Models;
+using TFG_Projects_APP_Frontend.Services;
 using TFG_Projects_APP_Frontend.Services.TaskBoardsService;
 using TFG_Projects_APP_Frontend.Services.TaskDependeciesService;
 using TFG_Projects_APP_Frontend.Services.TaskProgressService;
@@ -56,12 +56,35 @@ public partial class TaskBoardPageModel : ObservableObject
 
     public async Task OnNavigatedTo()
     {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
         IsLoading = true;
+        SelectedTaskSection = null;
+
+        if (TaskBoard == null)
+        {
+            if (NavigationContext.CurrentTaskBoard != null)
+            {
+                TaskBoard = NavigationContext.CurrentTaskBoard;
+            }
+            else
+            {
+                await Shell.Current.GoToAsync("..");
+                IsLoading = false;
+                return;
+            }
+            return;
+        }
+
         var taskSections = await taskSectionsService.getAllTaskSectionsByTaskBoard(TaskBoard.Id);
         taskSections = taskSections.OrderBy(x => x.Order).ToList();
         foreach (var taskSection in taskSections)
         {
             taskSection.Tasks = await tasksService.GetAllTasksByTaskSection(taskSection.Id);
+            taskSection.Tasks = taskSection.Tasks.OrderBy(x => x.Priority).ToList();
         }
         TaskSections = new(taskSections);
         IsLoading = false;
@@ -130,15 +153,9 @@ public partial class TaskBoardPageModel : ObservableObject
                 Finished = false
             };
 
-            var taskReturn = await tasksService.Post(taskCreate);
+            await tasksService.Post(taskCreate);
 
-            var taskSections = await taskSectionsService.getAllTaskSectionsByTaskBoard(TaskBoard.Id);
-            taskSections = taskSections.OrderBy(x => x.Order).ToList();
-            foreach (var section in taskSections)
-            {
-                taskSection.Tasks = await tasksService.GetAllTasksByTaskSection(section.Id);
-            }
-            TaskSections = new(taskSections);
+            await LoadData();
         }
         else
         {

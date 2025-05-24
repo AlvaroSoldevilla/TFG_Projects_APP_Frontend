@@ -76,4 +76,17 @@ public class RestClient
             throw new Exception($"Error: {response.StatusCode}");
         }
     }
+
+    public async Task<HttpResponseMessage> TestConnection(string address)
+    {
+        try
+        {
+            var response = await _client.GetAsync(address);
+            return response;
+        }
+        catch (Exception ex)
+        {
+            return null;
+        }
+    }
 }

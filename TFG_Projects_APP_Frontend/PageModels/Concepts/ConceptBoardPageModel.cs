@@ -6,6 +6,7 @@ using TFG_Projects_APP_Frontend.Entities.Dtos.Components;
 using TFG_Projects_APP_Frontend.Entities.Dtos.ProjectUsers;
 using TFG_Projects_APP_Frontend.Entities.Dtos.UserProjectPermissions;
 using TFG_Projects_APP_Frontend.Entities.Models;
+using TFG_Projects_APP_Frontend.Services;
 using TFG_Projects_APP_Frontend.Services.ComponentsService;
 using TFG_Projects_APP_Frontend.Services.ConceptBoardsService;
 using TFG_Projects_APP_Frontend.Services.TypesService;
@@ -50,6 +51,17 @@ public partial class ConceptBoardPageModel : ObservableObject
     public async Task OnNavigatedTo()
     {
         IsLoading = true;
+        if (ConceptBoard == null)
+        {
+            if (NavigationContext.CurrentConceptBoards.Count() == 0)
+            {
+                await Shell.Current.GoToAsync("..");
+            } else
+            {
+                ConceptBoard = NavigationContext.CurrentConceptBoards.Pop();
+            }
+        }
+
         Components = new(await componentsService.GetAllComponentsByBoard(ConceptBoard.Id));
         Types = new(await typesService.GetAll());
         IsLoading = false;

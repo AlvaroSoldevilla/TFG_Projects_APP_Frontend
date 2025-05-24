@@ -17,4 +17,14 @@
         Title="Home"
         ContentTemplate="{DataTemplate pages:MainPage}"
         Route="MainPage" />
+
+    <ShellContent
+        Title="User Settings"
+        ContentTemplate="{DataTemplate pages:UserSettingsPage}"
+        Route="UserSettingsPage" />
+
+    <ShellContent
+        Title="App Settings"
+        ContentTemplate="{DataTemplate pages:AppSettingsPage}"
+        Route="AppSettingsPage" />
 </Shell>
