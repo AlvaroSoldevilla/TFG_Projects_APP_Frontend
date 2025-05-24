@@ -6,44 +6,68 @@
     xmlns:dtos="clr-namespace:TFG_Projects_APP_Frontend.Entities.Dtos.Users"
     xmlns:models="clr-namespace:TFG_Projects_APP_Frontend.Entities.Models"
     xmlns:pageModels="clr-namespace:TFG_Projects_APP_Frontend.PageModels"
-    x:DataType="pageModels:MainPageModel">
-
-    <ScrollView>
-        <VerticalStackLayout Padding="30,0" Spacing="25">
-            <Button Command="{Binding CreateProjectCommand}" Text="Create project" />
-            <CollectionView
-                ItemsSource="{Binding Projects}"
-                SelectedItem="{Binding SelectedProject}"
-                SelectionChangedCommand="{Binding ProjectSelectedCommand}"
-                SelectionMode="Single">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="models:Project">
-                        <Border Padding="5">
-                            <StackLayout Orientation="Horizontal">
-                                <StackLayout Padding="10">
-                                    <StackLayout Orientation="Horizontal" Spacing="8">
-                                        <Label FontSize="16" Text="{Binding Id}" />
-                                        <Label FontSize="16" Text="{Binding Title}" />
+    x:DataType="pageModels:MainPageModel"
+    Shell.NavBarIsVisible="False"
+    NavigationPage.HasNavigationBar="False">
+    <ScrollView Padding="30">
+        <StackLayout Padding="30,0" Spacing="25" Orientation="Horizontal">
+            <VerticalStackLayout Padding="30,0" Spacing="25" HorizontalOptions="StartAndExpand">
+                <Button Command="{Binding CreateProjectCommand}" Text="Create project" />
+                <CollectionView
+                    ItemsSource="{Binding Projects}"
+                    SelectedItem="{Binding SelectedProject}"
+                    SelectionChangedCommand="{Binding ProjectSelectedCommand}"
+                    SelectionMode="Single">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:Project">
+                            <Border Padding="5">
+                                <StackLayout Orientation="Horizontal">
+                                    <StackLayout Padding="10">
+                                        <StackLayout Orientation="Horizontal" Spacing="8">
+                                            <Label FontSize="16" Text="{Binding Id}" />
+                                            <Label FontSize="16" Text="{Binding Title}" />
+                                        </StackLayout>
+                                        <Label FontSize="12" Text="{Binding Description}" />
                                     </StackLayout>
-                                    <Label FontSize="12" Text="{Binding Description}" />
+                                    <Button
+                                        Command="{Binding ProjectDeleteCommand, Source={RelativeSource AncestorType={x:Type pageModels:MainPageModel}}}"
+                                        CommandParameter="{Binding .}"
+                                        Text="Delete" />
+                                    <Button
+                                        Command="{Binding ProjectEditCommand, Source={RelativeSource AncestorType={x:Type pageModels:MainPageModel}}}"
+                                        CommandParameter="{Binding .}"
+                                        Text="Edit" />
                                 </StackLayout>
-                                <Button
-                                    Command="{Binding ProjectDeleteCommand, Source={RelativeSource AncestorType={x:Type pageModels:MainPageModel}}}"
-                                    CommandParameter="{Binding .}"
-                                    Text="Delete" />
-                            </StackLayout>
-                        </Border>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-            <ActivityIndicator
-                HeightRequest="50"
-                HorizontalOptions="Center"
-                IsRunning="{Binding Isloading}"
-                IsVisible="{Binding Isloading}"
-                VerticalOptions="Center"
-                WidthRequest="50" />
-        </VerticalStackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+                <ActivityIndicator
+                    HeightRequest="50"
+                    HorizontalOptions="Center"
+                    IsRunning="{Binding Isloading}"
+                    IsVisible="{Binding Isloading}"
+                    VerticalOptions="Center"
+                    WidthRequest="50" />
+            </VerticalStackLayout>
+            <VerticalStackLayout IsVisible="{Binding EditingProject}">
+                <StackLayout Orientation="Horizontal">
+                    <Label FontSize="30" Text="Edit Project" />
+                    <Button Text="X" Command="{Binding CloseEditingCommand}"/>
+                </StackLayout>
+                
+                <Label FontSize="20" Text="Title:"/>
+                <Entry
+                    x:Name="ProjectTitle"
+                    Text="{Binding EditingProjectData.Title, Mode=TwoWay}"/>
+                <Label FontSize="20" Text="Description:"/>
+                <Entry
+                    x:Name="ProjectDescription"
+                    Text="{Binding EditingProjectData.Description, Mode=TwoWay}"/>
+                <Button
+                    Text="Save"
+                    Command="{Binding SaveProjectCommand}"/>
+            </VerticalStackLayout>
+        </StackLayout>
     </ScrollView>
-
 </ContentPage>

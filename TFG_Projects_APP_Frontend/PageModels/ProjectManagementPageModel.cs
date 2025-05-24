@@ -51,6 +51,9 @@ public partial class ProjectManagementPageModel : ObservableObject
     private bool _isLoadingUsers;
 
     [ObservableProperty]
+    private bool _isEditingUser;
+
+    [ObservableProperty]
     private Project _currentProject;
 
     [ObservableProperty]
@@ -70,6 +73,9 @@ public partial class ProjectManagementPageModel : ObservableObject
 
     [ObservableProperty]
     private ObservableCollection<AppUser> _users = new();
+
+    [ObservableProperty]
+    private ObservableCollection<Role> _roles = new();
 
     public ProjectManagementPageModel(
         IConceptsService conceptsService,
@@ -122,6 +128,7 @@ public partial class ProjectManagementPageModel : ObservableObject
         var concepts = await conceptsService.GetAllConceptsByProject(Project.Id);
         var taskBoards = await taskBoardsService.GetAllTaskBoardsByProject(Project.Id);
         var users = await usersService.GetUsersByProject(Project.Id);
+        var roles = await rolesService.GetAll();
 
         Concepts.Clear();
         foreach (var item in concepts)
@@ -138,8 +145,14 @@ public partial class ProjectManagementPageModel : ObservableObject
         Users.Clear();
         foreach (var item in users)
         {
+            var userRole = await projectUsersService.GetProjectUserByUserAndProject(item.Id, Project.Id);
+            if (userRole.IdRole != null)
+            {
+                item.Role = await rolesService.GetById(userRole.Id);
+            }
             Users.Add(item);
         }
+
         IsLoadingConcepts = false;
         IsLoadingTaskBoards = false;
         IsLoadingUsers = false;
@@ -166,7 +179,7 @@ public partial class ProjectManagementPageModel : ObservableObject
     [RelayCommand]
     private async void UserSelected(AppUser user)
     {
-
+        IsEditingUser = true;
     }
 
     [RelayCommand]

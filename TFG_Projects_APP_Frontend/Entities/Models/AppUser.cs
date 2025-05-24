@@ -7,6 +7,7 @@ public class AppUser
     public string? Email { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
 
+    public Role? Role { get; set; }
     public List<UserProjectPermission>? ProjectPermissions { get; set; }
     public List<ProjectUser>? Projects { get; set; }
     public List<ProjectTask>? TasksCreated { get; set; }

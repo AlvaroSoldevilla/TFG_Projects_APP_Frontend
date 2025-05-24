@@ -25,7 +25,13 @@ public partial class MainPageModel : ObservableObject
     private bool _isloading;
 
     [ObservableProperty]
+    private bool _editingProject;
+
+    [ObservableProperty]
     ObservableCollection<Project> _projects;
+
+    [ObservableProperty]
+    private Project _editingProjectData;
 
     [ObservableProperty]
     Project _selectedProject;
@@ -79,7 +85,8 @@ public partial class MainPageModel : ObservableObject
             await projectUsersService.Post(new ProjectUserCreate
             {
                 IdProject = returnProject.Id,
-                IdUser = userSession.User.Id
+                IdUser = userSession.User.Id,
+                IdRole = 1
             });
             await userProjectPermissionsService.Post(new UserProjectPermissionCreate
             {
@@ -97,6 +104,7 @@ public partial class MainPageModel : ObservableObject
         }
         Isloading = false;
     }
+
     [RelayCommand]
     private async void ProjectDelete(Project project)
     {
@@ -112,5 +120,50 @@ public partial class MainPageModel : ObservableObject
             await projectsService.Delete(project.Id);
             Projects.Remove(project);
         }
+    }
+
+    [RelayCommand]
+    private async void ProjectEdit(Project project)
+    {
+        EditingProject = true;
+        EditingProjectData = new Project
+        {
+            Id = project.Id,
+            Title = project.Title,
+            Description = project.Description
+        };
+    }
+
+    [RelayCommand]
+    private async void CloseEditing()
+    {
+        EditingProject = false;
+        EditingProjectData = null;
+    }
+
+    [RelayCommand]
+    private async void SaveProject(Project project)
+    {
+        Isloading = true;
+        if (string.IsNullOrEmpty(EditingProjectData.Title))
+        {
+            await Application.Current.MainPage.DisplayAlert("Error", "Title is required", "OK");
+            Isloading = false;
+            return;
+        }
+
+        var projectUpdate = new ProjectUpdate
+        {
+            Title = EditingProjectData.Title,
+            Description = EditingProjectData.Description
+        };
+
+        EditingProject = false;
+
+        await projectsService.Patch(EditingProjectData.Id, projectUpdate);
+        EditingProjectData = null;
+        await LoadData();
+
+        Isloading = false;
     }
 }

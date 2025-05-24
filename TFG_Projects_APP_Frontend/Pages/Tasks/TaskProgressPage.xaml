@@ -6,7 +6,9 @@
              xmlns:dtos="clr-namespace:TFG_Projects_APP_Frontend.Entities.Dtos.Users"
              xmlns:pageModels="clr-namespace:TFG_Projects_APP_Frontend.PageModels"
              x:DataType="pageModels:Tasks.TaskProgressPageModel"
-             Title="TaskProgressPage">
+             Title="TaskProgressPage"
+             Shell.NavBarIsVisible="False"
+             NavigationPage.HasNavigationBar="False">
     <VerticalStackLayout>
         <Label 
             Text="Welcome to .NET MAUI!"

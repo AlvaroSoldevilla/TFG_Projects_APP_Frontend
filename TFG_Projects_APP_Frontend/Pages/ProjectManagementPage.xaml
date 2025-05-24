@@ -6,82 +6,96 @@
     xmlns:models="clr-namespace:TFG_Projects_APP_Frontend.Entities.Models"
     xmlns:pageModels="clr-namespace:TFG_Projects_APP_Frontend.PageModels"
     Title="ProjectManagementPage"
-    x:DataType="pageModels:ProjectManagementPageModel">
+    x:DataType="pageModels:ProjectManagementPageModel"
+    Shell.NavBarIsVisible="False"
+    NavigationPage.HasNavigationBar="False">
     <ScrollView>
-        <VerticalStackLayout Padding="30,0" Spacing="25">
-            <Label FontSize="30" Text="{Binding CurrentProject.Title}" />
-            <Label FontSize="20" Text="{Binding CurrentProject.Description}" />
-            <Button Command="{Binding CreateConceptCommand}" Text="Create concept" />
-            <CollectionView
-                ItemsSource="{Binding Concepts}"
-                SelectedItem="{Binding SelectedConcept}"
-                SelectionChangedCommand="{Binding ConceptSelectedCommand}"
-                SelectionMode="Single">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="models:Concept">
-                        <Border>
-                            <StackLayout Padding="10" Orientation="Vertical">
-                                <Label FontSize="16" Text="{Binding Title}" />
-                                <Label FontSize="12" Text="{Binding Description}" />
-                            </StackLayout>
-                        </Border>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-            <ActivityIndicator
-                HeightRequest="50"
-                HorizontalOptions="Center"
-                IsRunning="{Binding IsLoadingConcepts}"
-                IsVisible="{Binding IsLoadingConcepts}"
-                VerticalOptions="Center"
-                WidthRequest="50" />
-            <Button Command="{Binding CreateTaskBoardCommand}" Text="Create task board" />
-            <CollectionView
-                ItemsSource="{Binding TaskBoards}"
-                SelectedItem="{Binding SelectedTaskBoard}"
-                SelectionChangedCommand="{Binding TaskBoardSelectedCommand}"
-                SelectionMode="Single">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="models:TaskBoard">
-                        <Border>
-                            <StackLayout Padding="10" Orientation="Vertical">
-                                <Label FontSize="16" Text="{Binding Title}" />
-                                <Label FontSize="12" Text="{Binding Description}" />
-                            </StackLayout>
-                        </Border>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-            <ActivityIndicator
-                HeightRequest="50"
-                HorizontalOptions="Center"
-                IsRunning="{Binding IsLoadingTaskBoards}"
-                IsVisible="{Binding IsLoadingTaskBoards}"
-                VerticalOptions="Center"
-                WidthRequest="50" />
-            <CollectionView
-                ItemsSource="{Binding Users}"
-                SelectedItem="{Binding SelectedUser}"
-                SelectionChangedCommand="{Binding UserSelectedCommand}"
-                SelectionMode="Single">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="models:AppUser">
-                        <Border>
-                            <StackLayout Padding="10" Orientation="Vertical">
-                                <Label FontSize="16" Text="{Binding Username}" />
-                                <Label FontSize="12" Text="{Binding Email}" />
-                            </StackLayout>
-                        </Border>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-            <ActivityIndicator
-                HeightRequest="50"
-                HorizontalOptions="Center"
-                IsRunning="{Binding IsLoadingUsers}"
-                IsVisible="{Binding IsLoadingUsers}"
-                VerticalOptions="Center"
-                WidthRequest="50" />
-        </VerticalStackLayout>
+        <StackLayout Orientation="Horizontal" Padding="20">
+            <VerticalStackLayout Padding="30,0" Spacing="25">
+                <Label FontSize="30" Text="{Binding CurrentProject.Title}" />
+                <Label FontSize="20" Text="{Binding CurrentProject.Description}" />
+                <Button Command="{Binding CreateConceptCommand}" Text="Create concept" />
+                <CollectionView
+                    ItemsSource="{Binding Concepts}"
+                    SelectedItem="{Binding SelectedConcept}"
+                    SelectionChangedCommand="{Binding ConceptSelectedCommand}"
+                    SelectionMode="Single">
+                    <CollectionView.ItemsLayout>
+                        <GridItemsLayout Orientation="Horizontal" Span="1" />
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:Concept">
+                            <Border>
+                                <StackLayout Padding="10" Orientation="Vertical">
+                                    <Label FontSize="16" Text="{Binding Title}" />
+                                    <Label FontSize="12" Text="{Binding Description}" />
+                                </StackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+                <ActivityIndicator
+                    HeightRequest="50"
+                    HorizontalOptions="Center"
+                    IsRunning="{Binding IsLoadingConcepts}"
+                    IsVisible="{Binding IsLoadingConcepts}"
+                    VerticalOptions="Center"
+                    WidthRequest="50" />
+                <Button Command="{Binding CreateTaskBoardCommand}" Text="Create task board" />
+                <CollectionView
+                    ItemsSource="{Binding TaskBoards}"
+                    SelectedItem="{Binding SelectedTaskBoard}"
+                    SelectionChangedCommand="{Binding TaskBoardSelectedCommand}"
+                    SelectionMode="Single">
+                    <CollectionView.ItemsLayout>
+                        <GridItemsLayout Orientation="Horizontal" Span="1" />
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:TaskBoard">
+                            <Border>
+                                <StackLayout Padding="10" Orientation="Vertical">
+                                    <Label FontSize="16" Text="{Binding Title}" />
+                                    <Label FontSize="12" Text="{Binding Description}" />
+                                </StackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+                <ActivityIndicator
+                    HeightRequest="50"
+                    HorizontalOptions="Center"
+                    IsRunning="{Binding IsLoadingTaskBoards}"
+                    IsVisible="{Binding IsLoadingTaskBoards}"
+                    VerticalOptions="Center"
+                    WidthRequest="50" />
+                <CollectionView
+                    ItemsSource="{Binding Users}"
+                    SelectedItem="{Binding SelectedUser}"
+                    SelectionChangedCommand="{Binding UserSelectedCommand}"
+                    SelectionMode="Single">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:AppUser">
+                            <Border>
+                                <StackLayout Padding="10" Orientation="Vertical">
+                                    <Label FontSize="16" Text="{Binding Username}" />
+                                    <Label FontSize="12" Text="{Binding Email}" />
+                                    <Label FontSize="12" Text="{Binding Role.Name}" />
+                                </StackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+                <ActivityIndicator
+                    HeightRequest="50"
+                    HorizontalOptions="Center"
+                    IsRunning="{Binding IsLoadingUsers}"
+                    IsVisible="{Binding IsLoadingUsers}"
+                    VerticalOptions="Center"
+                    WidthRequest="50" />
+            </VerticalStackLayout>
+            <StackLayout Spacing="20" Padding="10" IsVisible="{Binding IsEditingUser}" HorizontalOptions="End">
+                <Label Text="Edit User" FontSize="20" FontAttributes="Bold" />
+            </StackLayout>
+        </StackLayout>
     </ScrollView>
 </ContentPage>

@@ -5,7 +5,9 @@
              xmlns:models="clr-namespace:TFG_Projects_APP_Frontend.Entities.Models"
              xmlns:pageModels="clr-namespace:TFG_Projects_APP_Frontend.PageModels"
              x:DataType="pageModels:AppSettingsPageModel"
-             Title="AppSettingsPage">
+             Title="AppSettingsPage"
+             Shell.NavBarIsVisible="False"
+             NavigationPage.HasNavigationBar="False">
     <VerticalStackLayout>
         <Label 
             Text="Welcome to .NET MAUI!"

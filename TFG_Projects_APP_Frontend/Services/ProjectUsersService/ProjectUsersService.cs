@@ -76,6 +76,19 @@ public class ProjectUsersService(RestClient restClient) : IProjectUsersService
         };
     }
 
+    public async Task<ProjectUser> GetProjectUserByUserAndProject(int userId, int projectId)
+    {
+        HttpResponseMessage response = await restClient.GetByIdAsync($"{route}/project/{projectId}/user", userId);
+        var projectUser = await response.Content.ReadFromJsonAsync<ProjectUserRead>(restClient._options);
+        return new ProjectUser
+        {
+            Id = projectUser.Id,
+            IdUser = projectUser.IdUser,
+            IdProject = projectUser.IdProject,
+            IdRole = projectUser.IdRole
+        };
+    }
+
     public async Task<string> Patch(int id, object data)
     {
         HttpResponseMessage response = await restClient.PatchAsync(route, id, data);

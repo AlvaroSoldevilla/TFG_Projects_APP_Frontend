@@ -6,7 +6,9 @@
              xmlns:pageModels="clr-namespace:TFG_Projects_APP_Frontend.PageModels"
              x:DataType="pageModels:Concepts.ConceptBoardPageModel"
              x:Class="TFG_Projects_APP_Frontend.Pages.Concepts.ConceptBoardPage"
-             Title="ConceptBoardPage">
+             Title="ConceptBoardPage"
+             Shell.NavBarIsVisible="False"
+             NavigationPage.HasNavigationBar="False">
     <VerticalStackLayout>
         <StackLayout Orientation="Horizontal">
             <StackLayout Orientation="Vertical" >

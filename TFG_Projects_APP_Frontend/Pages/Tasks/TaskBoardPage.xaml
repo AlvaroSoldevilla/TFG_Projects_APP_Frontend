@@ -6,7 +6,9 @@
              xmlns:dtos="clr-namespace:TFG_Projects_APP_Frontend.Entities.Dtos.Users"
              xmlns:pageModels="clr-namespace:TFG_Projects_APP_Frontend.PageModels"
              x:DataType="pageModels:Tasks.TaskBoardPageModel"
-             Title="TaskBoardPage">
+             Title="TaskBoardPage"
+             Shell.NavBarIsVisible="False"
+             NavigationPage.HasNavigationBar="False">
     <VerticalStackLayout Padding="20">
         <Button Command="{Binding CreateTaskSectionCommand}" Text="Create Task Section" />
         <StackLayout Orientation="Horizontal" Spacing="20">
