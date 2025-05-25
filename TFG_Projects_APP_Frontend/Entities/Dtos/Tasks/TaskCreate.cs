@@ -14,4 +14,5 @@ internal class TaskCreate
     public DateTime? LimitDate { get; set; }
     public DateTime? CompletionDate { get; set; }
     public bool Finished { get; set; } = false;
+    public bool IsParent { get; set; } = false;
 }

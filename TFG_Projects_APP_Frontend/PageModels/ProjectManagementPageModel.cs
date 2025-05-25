@@ -4,9 +4,11 @@ using System.Collections.ObjectModel;
 using TFG_Projects_APP_Frontend.Components.CreateModal;
 using TFG_Projects_APP_Frontend.Entities.Dtos.ConceptBoards;
 using TFG_Projects_APP_Frontend.Entities.Dtos.Concepts;
+using TFG_Projects_APP_Frontend.Entities.Dtos.ProjectUsers;
 using TFG_Projects_APP_Frontend.Entities.Dtos.TaskBoards;
 using TFG_Projects_APP_Frontend.Entities.Dtos.TaskProgress;
 using TFG_Projects_APP_Frontend.Entities.Dtos.TaskSections;
+using TFG_Projects_APP_Frontend.Entities.Dtos.UserProjectPermissions;
 using TFG_Projects_APP_Frontend.Entities.Models;
 using TFG_Projects_APP_Frontend.Services;
 using TFG_Projects_APP_Frontend.Services.ConceptBoardsService;
@@ -54,6 +56,18 @@ public partial class ProjectManagementPageModel : ObservableObject
     private bool _isEditingUser;
 
     [ObservableProperty]
+    private bool _isEditingConcept;
+
+    [ObservableProperty]
+    private bool _isEditingTaskBoard;
+
+    [ObservableProperty]
+    private bool _isLookingForUser = false;
+
+    [ObservableProperty]
+    private string _adduserEmail = string.Empty;
+
+    [ObservableProperty]
     private Project _currentProject;
 
     [ObservableProperty]
@@ -75,7 +89,35 @@ public partial class ProjectManagementPageModel : ObservableObject
     private ObservableCollection<AppUser> _users = new();
 
     [ObservableProperty]
+    private ObservableCollection<AppUser> _allusers = new();
+
+    [ObservableProperty]
     private ObservableCollection<Role> _roles = new();
+
+    [ObservableProperty]
+    private ObservableCollection<Permission> _permissions = new();
+
+    [ObservableProperty]
+    private ObservableCollection<Permission> _userRemovePermissions = new();
+
+    [ObservableProperty]
+    private ObservableCollection<Permission> _userAddPermissions = new();
+
+    [ObservableProperty]
+    private ObservableCollection<object> _selectedUserRemovePermissions = new();
+
+    [ObservableProperty]
+    private ObservableCollection<object> _selectedUserAddPermissions = new();
+
+
+    [ObservableProperty]
+    private AppUser _editingUserData;
+
+    [ObservableProperty]
+    private Concept _editingConceptData;
+
+    [ObservableProperty]
+    private TaskBoard _editingTaskBoardData;
 
     public ProjectManagementPageModel(
         IConceptsService conceptsService,
@@ -110,15 +152,34 @@ public partial class ProjectManagementPageModel : ObservableObject
         IsLoadingConcepts = true;
         IsLoadingTaskBoards = true;
         IsLoadingUsers = true;
+
+        IsEditingUser = false;
+        IsEditingConcept = false;
+        IsEditingTaskBoard = false;
+        EditingUserData = null;
+        EditingConceptData = null;
+        EditingTaskBoardData = null;
         SelectedConcept = null;
         SelectedTaskBoard = null;
         SelectedUser = null;
+
+        await LoadData();
+
+        IsLoadingConcepts = false;
+        IsLoadingTaskBoards = false;
+        IsLoadingUsers = false;
+    }
+
+    private async Task LoadData()
+    {
         if (Project == null)
         {
-            if (NavigationContext.CurrentProject == null) {
+            if (NavigationContext.CurrentProject == null)
+            {
                 await Shell.Current.GoToAsync("//MainPage");
                 return;
-            } else
+            }
+            else
             {
                 Project = NavigationContext.CurrentProject;
             }
@@ -129,13 +190,14 @@ public partial class ProjectManagementPageModel : ObservableObject
         var taskBoards = await taskBoardsService.GetAllTaskBoardsByProject(Project.Id);
         var users = await usersService.GetUsersByProject(Project.Id);
         var roles = await rolesService.GetAll();
+        var permissions = await permissionsService.GetAll();
 
         Concepts.Clear();
         foreach (var item in concepts)
         {
             Concepts.Add(item);
         }
-            
+
         TaskBoards.Clear();
         foreach (var item in taskBoards)
         {
@@ -148,14 +210,22 @@ public partial class ProjectManagementPageModel : ObservableObject
             var userRole = await projectUsersService.GetProjectUserByUserAndProject(item.Id, Project.Id);
             if (userRole.IdRole != null)
             {
-                item.Role = await rolesService.GetById(userRole.Id);
+                item.Role = await rolesService.GetById((int)userRole.IdRole);
             }
             Users.Add(item);
         }
 
-        IsLoadingConcepts = false;
-        IsLoadingTaskBoards = false;
-        IsLoadingUsers = false;
+        Roles.Clear();
+        foreach (var item in roles)
+        {
+            Roles.Add(item);
+        }
+
+        Permissions.Clear();
+        foreach (var item in permissions)
+        {
+            Permissions.Add(item);
+        }
     }
 
     [RelayCommand]
@@ -179,7 +249,52 @@ public partial class ProjectManagementPageModel : ObservableObject
     [RelayCommand]
     private async void UserSelected(AppUser user)
     {
-        IsEditingUser = true;
+        IsEditingConcept = false;
+        IsEditingTaskBoard = false;
+
+        if (SelectedUser != null)
+        {
+            var matchingRole = Roles.FirstOrDefault(r => r.Id == SelectedUser.Role?.Id);
+            if (matchingRole != null)
+            {
+                EditingUserData = new AppUser
+                {
+                    Id = SelectedUser.Id,
+                    Username = SelectedUser.Username,
+                    Email = SelectedUser.Email,
+                    Role = matchingRole,
+                };
+            } else
+            {
+                EditingUserData = new AppUser
+                {
+                    Id = SelectedUser.Id,
+                    Username = SelectedUser.Username,
+                    Email = SelectedUser.Email,
+                    Role = null
+                };
+            }
+
+            var userPermissions = await userProjectPermissionsService.getAllUserProjectPermissionsByUserAndProject(SelectedUser.Id, Project.Id);
+
+            EditingUserData.ProjectPermissions = new(userPermissions);
+            UserRemovePermissions.Clear();
+            UserAddPermissions.Clear();
+
+            foreach (var permission in Permissions)
+            {
+                if (userPermissions.Any(up => up.IdPermission == permission.Id))
+                {
+                    UserRemovePermissions.Add(permission);
+                }
+                else
+                {
+                    UserAddPermissions.Add(permission);
+                }
+            }
+
+            IsEditingUser = true;
+        }
     }
 
     [RelayCommand]
@@ -282,6 +397,17 @@ public partial class ProjectManagementPageModel : ObservableObject
                 Name = conceptBoard.Name,
             };
             var conceptBoardReturn = await conceptBoardsService.Patch(conceptBoard.Id, conceptBoardUpdate);
+            returnConcept.IdFirstBoard = conceptBoard.Id;
+            
+            var conceptUpdate = new ConceptUpdate
+            {
+                IdProject = returnConcept.IdProject,
+                IdFirstBoard = returnConcept.IdFirstBoard,
+                Title = returnConcept.Title,
+                Description = returnConcept.Description
+            };
+            await conceptsService.Patch(returnConcept.Id, conceptUpdate);
+
             if (conceptBoardReturn == "Concept board updated")
             {
                 var concepts = Concepts.ToList();
@@ -300,6 +426,58 @@ public partial class ProjectManagementPageModel : ObservableObject
     }
 
     [RelayCommand]
+    private async void LookForUser()
+    {
+        IsLookingForUser = true;
+    }
+
+    [RelayCommand]
+    private async void AddUserToProject()
+    {
+        var userFound = false;
+
+        var allUsers = await usersService.GetAll();
+        Allusers.Clear();
+        if (!string.IsNullOrEmpty(AdduserEmail))
+        {
+            if (Users.Any(user => user.Email == AdduserEmail))
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", "User already exists in the project", "OK");
+                return;
+            } else
+            {
+                if (Allusers.Any(user => user.Email == AdduserEmail))
+                {
+                    var projectUserCreate = new ProjectUserCreate
+                    {
+                        IdProject = Project.Id,
+                        IdUser = Allusers.FirstOrDefault(user => user.Email == AdduserEmail).Id,
+                        IdRole = 2
+                    };
+                    userFound = true;
+                }
+
+                if (userFound)
+                {
+                    await Application.Current.MainPage.DisplayAlert("Success", "User added to project", "OK");
+                    IsLookingForUser = false;
+
+                    IsLoadingUsers = true;
+                    await LoadData();
+                    IsLoadingUsers = false;
+                }
+                else
+                {
+                    await Application.Current.MainPage.DisplayAlert("Error", "User not found", "OK");
+                }
+            }
+        } else
+        {
+            await Application.Current.MainPage.DisplayAlert("Error", "Input an email", "OK");
+        }
+    }
+
+    [RelayCommand]
     private async void TaskBoardDelete(TaskBoard taskBoard)
     {
         IsLoadingTaskBoards = true;
@@ -313,9 +491,21 @@ public partial class ProjectManagementPageModel : ObservableObject
         if (confirmed)
         {
             await taskBoardsService.Delete(taskBoard.Id);
-            TaskBoards.Remove(taskBoard);
+            await LoadData();
         }
         IsLoadingTaskBoards = false;
+    }
+
+    [RelayCommand]
+    private async void TaskBoardEdit(TaskBoard taskBoard)
+    {
+        IsEditingTaskBoard = true;
+        EditingTaskBoardData = new TaskBoard
+        {
+            Id = taskBoard.Id,
+            Title = taskBoard.Title,
+            Description = taskBoard.Description
+        };
     }
 
     [RelayCommand]
@@ -331,9 +521,169 @@ public partial class ProjectManagementPageModel : ObservableObject
 
         if (confirmed)
         {
-            await projectsService.Delete(concept.Id);
-            Concepts.Remove(concept);
+            await conceptsService.Delete(concept.Id);
+            await LoadData();
         }
         IsLoadingConcepts = false;
     }
+
+    [RelayCommand]
+    private async void ConceptEdit(Concept concept)
+    {
+        IsEditingConcept = true;
+        EditingConceptData = new Concept
+        {
+            Id = concept.Id,
+            IdProject = concept.IdProject,
+            IdFirstBoard = concept.IdFirstBoard,
+            Title = concept.Title,
+            Description = concept.Description
+        };
+    }
+
+    [RelayCommand]
+    private async void UserRemove(AppUser user)
+    {
+        IsLoadingUsers = true;
+
+        bool confirmed = await Application.Current.MainPage.DisplayAlert(
+            "Confirm Remove User",
+            "Are you sure you want to remove this user from the project?",
+            "Remove",
+            "Cancel"
+        );
+
+        if (confirmed)
+        {
+            var projectUser = await projectUsersService.GetProjectUserByUserAndProject(user.Id, Project.Id);
+            if (projectUser != null)
+            {
+                await projectUsersService.Delete(projectUser.Id);
+            }
+            Users.Remove(user);
+        }
+
+        IsLoadingUsers = false;
+    }
+
+    [RelayCommand]
+    private async void CloseEditingUser()
+    {
+        EditingUserData = null;
+        SelectedUser = null;
+        UserRemovePermissions.Clear();
+        UserAddPermissions.Clear();
+        SelectedUserAddPermissions.Clear();
+        SelectedUserRemovePermissions.Clear();
+
+        IsEditingUser = false;
+    }
+
+    [RelayCommand]
+    private async void CloseEditingConcept()
+    {
+        EditingConceptData = null;
+        IsEditingConcept = false;
+    }
+
+    [RelayCommand]
+    private async void CloseEditingTaskBoard()
+    {
+        EditingTaskBoardData = null;
+        IsEditingUser = false;
+    }
+
+    [RelayCommand]
+    private async void SaveUserChanges()
+    {
+        if (EditingUserData != null)
+        {
+            var updateRole = new ProjectUserUpdate
+            {
+                IdProject = Project.Id,
+                IdUser = EditingUserData.Id,
+                IdRole = EditingUserData.Role?.Id
+            };
+            IsLoadingUsers = true;
+
+            var projectUser = await projectUsersService.GetProjectUserByUserAndProject(EditingUserData.Id, Project.Id);
+
+            await projectUsersService.Patch(projectUser.Id, updateRole);
+
+            var userPermissions = await userProjectPermissionsService.getAllUserProjectPermissionsByUserAndProject(EditingUserData.Id, Project.Id);
+
+            foreach (var p in SelectedUserRemovePermissions)
+            {
+                if (p is Permission permission)
+                {
+                    if (userPermissions.Any(up => up.IdPermission == permission.Id))
+                    {
+                        await userProjectPermissionsService.Delete(userPermissions.First(up => up.IdPermission == permission.Id).Id);
+                    }
+                }
+            }
+
+            foreach (var p in SelectedUserAddPermissions)
+            {
+                if (p is Permission permission)
+                {
+                    if (!userPermissions.Any(up => up.IdPermission == permission.Id))
+                    {
+                        await userProjectPermissionsService.Post(new UserProjectPermissionCreate
+                        {
+                            IdProject = Project.Id,
+                            IdUser = EditingUserData.Id,
+                            IdPermission = permission.Id
+                        });
+                    }
+                }
+                
+            }
+
+            CloseEditingUser();
+            await LoadData();
+            IsLoadingUsers = false;
+        }
+    }
+
+    [RelayCommand]
+    private async void SaveConceptChanges()
+    {
+        if (EditingConceptData != null)
+        {
+            var conceptUpdate = new ConceptUpdate
+            {
+                IdProject = Project.Id,
+                IdFirstBoard = EditingConceptData.IdFirstBoard,
+                Title = EditingConceptData.Title,
+                Description = EditingConceptData.Description
+            };
+
+            IsEditingConcept = true;
+            await conceptsService.Patch(EditingConceptData.Id, conceptUpdate);
+            CloseEditingConcept();
+            await LoadData();
+        }
+        IsEditingConcept = false;
+    }
+
+    [RelayCommand]
+    private async void SaveTaskBoardChanges()
+    {
+        if (EditingTaskBoardData != null)
+        {
+            var taskBoardUpdate = new TaskBoardUpdate
+            {
+                IdProject = Project.Id,
+                Title = EditingTaskBoardData.Title,
+                Description = EditingTaskBoardData.Description
+            };
+            IsEditingTaskBoard = true;
+            await taskBoardsService.Patch(EditingTaskBoardData.Id, taskBoardUpdate);
+            CloseEditingTaskBoard();
+            await LoadData();
+        }
+        IsEditingTaskBoard = false;
+    }
+
 }

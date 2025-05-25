@@ -51,20 +51,25 @@ public partial class ConceptBoardPageModel : ObservableObject
     public async Task OnNavigatedTo()
     {
         IsLoading = true;
+        await LoadData();
+        IsLoading = false;
+    }
+
+    private async Task LoadData()
+    {
         if (ConceptBoard == null)
         {
             if (NavigationContext.CurrentConceptBoards.Count() == 0)
             {
                 await Shell.Current.GoToAsync("..");
-            } else
+            }
+            else
             {
                 ConceptBoard = NavigationContext.CurrentConceptBoards.Pop();
             }
         }
-
         Components = new(await componentsService.GetAllComponentsByBoard(ConceptBoard.Id));
         Types = new(await typesService.GetAll());
-        IsLoading = false;
     }
 
     [RelayCommand]
@@ -101,14 +106,8 @@ public partial class ConceptBoardPageModel : ObservableObject
                 IdBoard = component.IdBoard,
                 IdParent = component.Id
             };
-            var componentResult = await componentsService.Patch(component.Id, componentUpdate);
-            if (componentResult == "Component updated")
-            {
-                var components = Components.ToList();
-                components.Add(component);
-                Components.Clear();
-                Components = new(components);
-            }
+            await componentsService.Patch(component.Id, componentUpdate);
+            await LoadData();
         }
         else
         {

@@ -1,118 +1,125 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="TFG_Projects_APP_Frontend.Pages.LoginPage"
-             xmlns:models="clr-namespace:TFG_Projects_APP_Frontend.Entities.Models"
-             xmlns:dtos="clr-namespace:TFG_Projects_APP_Frontend.Entities.Dtos.Users"
-             xmlns:pageModels="clr-namespace:TFG_Projects_APP_Frontend.PageModels"
-             x:DataType="pageModels:LoginPageModel"
-             BackgroundColor="#f5f5f5"
-             Shell.NavBarIsVisible="False"
-             NavigationPage.HasNavigationBar="False"
-             Shell.FlyoutBehavior="Disabled"
-             Title="Login">
+<ContentPage
+    x:Class="TFG_Projects_APP_Frontend.Pages.LoginPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:dtos="clr-namespace:TFG_Projects_APP_Frontend.Entities.Dtos.Users"
+    xmlns:models="clr-namespace:TFG_Projects_APP_Frontend.Entities.Models"
+    xmlns:pageModels="clr-namespace:TFG_Projects_APP_Frontend.PageModels"
+    Title="Login"
+    x:DataType="pageModels:LoginPageModel"
+    BackgroundColor="#f5f5f5"
+    NavigationPage.HasNavigationBar="False"
+    Shell.FlyoutBehavior="Disabled"
+    Shell.NavBarIsVisible="False">
 
-    <ScrollView 
+    <ScrollView
         Padding="30"
-        VerticalOptions="Center"
         HorizontalOptions="Center"
+        VerticalOptions="Center"
         WidthRequest="350">
         <VerticalStackLayout Spacing="20">
 
-            <Label 
-                Text="Welcome!" 
-                FontSize="32" 
+            <Label
                 FontAttributes="Bold"
-                HorizontalOptions="Center" />
+                FontSize="32"
+                HorizontalOptions="Center"
+                Text="Welcome!" />
 
-            <Button Text="Debug Login" Command="{Binding DebugLoginCommand}"/>
+            <Button Command="{Binding DebugLoginCommand}" Text="Debug Login" />
 
             <HorizontalStackLayout Spacing="10">
-                <Entry 
+                <Entry
                     x:Name="IP"
+                    BackgroundColor="White"
                     Placeholder="Server IP"
                     Text="{Binding Route, Mode=TwoWay}"
-                    BackgroundColor="White"
-                    WidthRequest="80"/>
+                    WidthRequest="80" />
 
-                <Entry 
+                <Entry
                     x:Name="Port"
+                    BackgroundColor="White"
                     Placeholder="Port"
                     Text="{Binding Port, Mode=TwoWay}"
-                    BackgroundColor="White"
-                    WidthRequest="60"/>
+                    WidthRequest="60" />
                 <Button
-                    Text="Test connection"
-                    Command="{Binding TestConnectionCommand}"
-                    BackgroundColor="#4CAF50"
-                    TextColor="White"
-                    CornerRadius="10"
                     Padding="10"
+                    BackgroundColor="#4CAF50"
+                    Command="{Binding TestConnectionCommand}"
+                    CornerRadius="10"
                     FontAttributes="Bold"
                     IsVisible="{Binding ShowTestButton}"
-                    WidthRequest="130"/>
+                    Text="Test connection"
+                    TextColor="White"
+                    WidthRequest="130" />
                 <VerticalStackLayout
-                    VerticalOptions="Center"
                     HorizontalOptions="Center"
-                    Spacing="0"
                     IsVisible="{Binding IsTesting}"
+                    Spacing="0"
+                    VerticalOptions="Center"
                     WidthRequest="130">
                     <ActivityIndicator
+                        HorizontalOptions="Center"
                         IsRunning="{Binding IsTesting}"
                         IsVisible="{Binding IsTesting}"
                         VerticalOptions="Center"
-                        Color="Gray"
-                        HorizontalOptions="Center"/>
+                        Color="Gray" />
                 </VerticalStackLayout>
 
             </HorizontalStackLayout>
 
             <Button
-                Text="Save API location"
+                Padding="10"
+                BackgroundColor="#2196F3"
                 Command="{Binding ChangeRouteCommand}"
-                BackgroundColor="#2196F3"
-                TextColor="White"
                 CornerRadius="10"
-                Padding="10"
-                FontAttributes="Bold" />
-            <Entry 
+                FontAttributes="Bold"
+                Text="Save API location"
+                TextColor="White" />
+            <Entry
                 x:Name="Username"
+                BackgroundColor="White"
                 Placeholder="Username"
-                Text="{Binding Username, Mode=TwoWay}"
-                BackgroundColor="White"/>
+                Text="{Binding Username, Mode=TwoWay}" />
 
-            <Entry 
+            <Entry
                 x:Name="Email"
-                Placeholder="Email"
-                Text="{Binding Email, Mode=TwoWay}"
+                BackgroundColor="White"
                 Keyboard="Email"
-                BackgroundColor="White"/>
+                Placeholder="Email"
+                Text="{Binding Email, Mode=TwoWay}" />
 
-            <Entry 
+            <Entry
                 x:Name="Password"
-                Placeholder="Password"
-                Text="{Binding Password, Mode=TwoWay}"
+                BackgroundColor="White"
                 IsPassword="True"
-                BackgroundColor="White"/>
+                Placeholder="Password"
+                Text="{Binding Password, Mode=TwoWay}" />
 
-            <Button 
-                Text="Login"
-                Command="{Binding LoginCommand}"
+            <Button
+                Padding="10"
                 BackgroundColor="#4CAF50"
-                TextColor="White"
+                Command="{Binding LoginCommand}"
                 CornerRadius="10"
-                Padding="10"
-                FontAttributes="Bold" />
+                FontAttributes="Bold"
+                Text="Login"
+                TextColor="White" />
 
-            <Button 
-                Text="Register"
-                Command="{Binding RegisterCommand}"
+            <Button
+                Padding="10"
                 BackgroundColor="#2196F3"
-                TextColor="White"
+                Command="{Binding RegisterCommand}"
                 CornerRadius="10"
-                Padding="10"
-                FontAttributes="Bold" />
+                FontAttributes="Bold"
+                Text="Register"
+                TextColor="White" />
 
+            <ActivityIndicator
+                HorizontalOptions="Center"
+                IsRunning="{Binding IsLoading}"
+                IsVisible="{Binding IsLoading}"
+                VerticalOptions="Center"
+                Color="Gray" />
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

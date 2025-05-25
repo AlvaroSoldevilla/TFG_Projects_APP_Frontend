@@ -16,6 +16,7 @@ public class ProjectTask
     public DateTime? LimitDate { get; set; }
     public DateTime? CompletionDate { get; set; }
     public bool Finished { get; set; } = false;
+    public bool IsParent { get; set; } = false;
 
     public TaskSection? TaskSection { get; set; }
     public TaskProgress? ProgressSection { get; set; }

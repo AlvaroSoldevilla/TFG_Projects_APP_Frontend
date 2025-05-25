@@ -7,12 +7,21 @@
     xmlns:models="clr-namespace:TFG_Projects_APP_Frontend.Entities.Models"
     xmlns:pageModels="clr-namespace:TFG_Projects_APP_Frontend.PageModels"
     x:DataType="pageModels:MainPageModel"
-    Shell.NavBarIsVisible="False"
-    NavigationPage.HasNavigationBar="False">
+    NavigationPage.HasNavigationBar="False"
+    Shell.NavBarIsVisible="False">
     <ScrollView Padding="30">
-        <StackLayout Padding="30,0" Spacing="25" Orientation="Horizontal">
-            <VerticalStackLayout Padding="30,0" Spacing="25" HorizontalOptions="StartAndExpand">
-                <Button Command="{Binding CreateProjectCommand}" Text="Create project" />
+        <StackLayout Orientation="Horizontal" Spacing="25">
+            <VerticalStackLayout
+                Padding="30,0"
+                HorizontalOptions="StartAndExpand"
+                Spacing="25">
+                <Button
+                    Command="{Binding CreateProjectCommand}"
+                    HeightRequest="40"
+                    HorizontalOptions="Start"
+                    Text="Create project"
+                    VerticalOptions="Start"
+                    WidthRequest="150" />
                 <CollectionView
                     ItemsSource="{Binding Projects}"
                     SelectedItem="{Binding SelectedProject}"
@@ -50,23 +59,20 @@
                     VerticalOptions="Center"
                     WidthRequest="50" />
             </VerticalStackLayout>
-            <VerticalStackLayout IsVisible="{Binding EditingProject}">
+            <VerticalStackLayout IsVisible="{Binding IsEditingProject}">
                 <StackLayout Orientation="Horizontal">
                     <Label FontSize="30" Text="Edit Project" />
-                    <Button Text="X" Command="{Binding CloseEditingCommand}"/>
+                    <Button Command="{Binding CloseEditingCommand}" Text="X" />
                 </StackLayout>
-                
-                <Label FontSize="20" Text="Title:"/>
-                <Entry
-                    x:Name="ProjectTitle"
-                    Text="{Binding EditingProjectData.Title, Mode=TwoWay}"/>
-                <Label FontSize="20" Text="Description:"/>
-                <Entry
+
+                <Label FontSize="20" Text="Title:" />
+                <Entry x:Name="ProjectTitle" Text="{Binding EditingProjectData.Title, Mode=TwoWay}" />
+                <Label FontSize="20" Text="Description:" />
+                <Editor
                     x:Name="ProjectDescription"
-                    Text="{Binding EditingProjectData.Description, Mode=TwoWay}"/>
-                <Button
-                    Text="Save"
-                    Command="{Binding SaveProjectCommand}"/>
+                    HeightRequest="100"
+                    Text="{Binding EditingProjectData.Description, Mode=TwoWay}" />
+                <Button Command="{Binding SaveProjectCommand}" Text="Save" />
             </VerticalStackLayout>
         </StackLayout>
     </ScrollView>

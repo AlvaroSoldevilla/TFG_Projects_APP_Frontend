@@ -13,5 +13,6 @@ internal class TaskUpdate
     public int? Progress { get; set; } = 0;
     public DateTime? LimitDate { get; set; }
     public DateTime? CompletionDate { get; set; }
-    public bool? Finished { get; set; }
+    public bool? Finished { get; set; } = false;
+    public bool? IsParent { get; set; } = false;
 }

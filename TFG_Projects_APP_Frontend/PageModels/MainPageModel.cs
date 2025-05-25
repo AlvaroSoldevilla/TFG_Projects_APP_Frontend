@@ -25,7 +25,7 @@ public partial class MainPageModel : ObservableObject
     private bool _isloading;
 
     [ObservableProperty]
-    private bool _editingProject;
+    private bool _isEditingProject;
 
     [ObservableProperty]
     ObservableCollection<Project> _projects;
@@ -125,7 +125,7 @@ public partial class MainPageModel : ObservableObject
     [RelayCommand]
     private async void ProjectEdit(Project project)
     {
-        EditingProject = true;
+        IsEditingProject = true;
         EditingProjectData = new Project
         {
             Id = project.Id,
@@ -137,7 +137,7 @@ public partial class MainPageModel : ObservableObject
     [RelayCommand]
     private async void CloseEditing()
     {
-        EditingProject = false;
+        IsEditingProject = false;
         EditingProjectData = null;
     }
 
@@ -158,7 +158,7 @@ public partial class MainPageModel : ObservableObject
             Description = EditingProjectData.Description
         };
 
-        EditingProject = false;
+        IsEditingProject = false;
 
         await projectsService.Patch(EditingProjectData.Id, projectUpdate);
         EditingProjectData = null;

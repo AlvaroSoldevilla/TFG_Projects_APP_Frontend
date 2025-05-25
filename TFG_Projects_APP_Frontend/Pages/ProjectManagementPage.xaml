@@ -5,16 +5,31 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:models="clr-namespace:TFG_Projects_APP_Frontend.Entities.Models"
     xmlns:pageModels="clr-namespace:TFG_Projects_APP_Frontend.PageModels"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     Title="ProjectManagementPage"
     x:DataType="pageModels:ProjectManagementPageModel"
-    Shell.NavBarIsVisible="False"
-    NavigationPage.HasNavigationBar="False">
+    NavigationPage.HasNavigationBar="False"
+    Shell.NavBarIsVisible="False">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
     <ScrollView>
-        <StackLayout Orientation="Horizontal" Padding="20">
-            <VerticalStackLayout Padding="30,0" Spacing="25">
+        <StackLayout Padding="20" Orientation="Horizontal">
+            <VerticalStackLayout
+                Padding="30,0"
+                HorizontalOptions="StartAndExpand"
+                Spacing="25">
                 <Label FontSize="30" Text="{Binding CurrentProject.Title}" />
                 <Label FontSize="20" Text="{Binding CurrentProject.Description}" />
-                <Button Command="{Binding CreateConceptCommand}" Text="Create concept" />
+                <Button
+                    Command="{Binding CreateConceptCommand}"
+                    HeightRequest="40"
+                    HorizontalOptions="Start"
+                    Text="Create concept"
+                    VerticalOptions="Start"
+                    WidthRequest="150" />
                 <CollectionView
                     ItemsSource="{Binding Concepts}"
                     SelectedItem="{Binding SelectedConcept}"
@@ -25,10 +40,20 @@
                     </CollectionView.ItemsLayout>
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:Concept">
-                            <Border>
+                            <Border Padding="10">
                                 <StackLayout Padding="10" Orientation="Vertical">
                                     <Label FontSize="16" Text="{Binding Title}" />
                                     <Label FontSize="12" Text="{Binding Description}" />
+                                    <StackLayout Orientation="Horizontal">
+                                        <Button
+                                            Command="{Binding ConceptDeleteCommand, Source={RelativeSource AncestorType={x:Type pageModels:ProjectManagementPageModel}}}"
+                                            CommandParameter="{Binding .}"
+                                            Text="Delete" />
+                                        <Button
+                                            Command="{Binding ConceptEditCommand, Source={RelativeSource AncestorType={x:Type pageModels:ProjectManagementPageModel}}}"
+                                            CommandParameter="{Binding .}"
+                                            Text="Edit" />
+                                    </StackLayout>
                                 </StackLayout>
                             </Border>
                         </DataTemplate>
@@ -41,7 +66,13 @@
                     IsVisible="{Binding IsLoadingConcepts}"
                     VerticalOptions="Center"
                     WidthRequest="50" />
-                <Button Command="{Binding CreateTaskBoardCommand}" Text="Create task board" />
+                <Button
+                    Command="{Binding CreateTaskBoardCommand}"
+                    HeightRequest="40"
+                    HorizontalOptions="Start"
+                    Text="Create task board"
+                    VerticalOptions="Start"
+                    WidthRequest="150" />
                 <CollectionView
                     ItemsSource="{Binding TaskBoards}"
                     SelectedItem="{Binding SelectedTaskBoard}"
@@ -52,10 +83,20 @@
                     </CollectionView.ItemsLayout>
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:TaskBoard">
-                            <Border>
+                            <Border Padding="10">
                                 <StackLayout Padding="10" Orientation="Vertical">
                                     <Label FontSize="16" Text="{Binding Title}" />
                                     <Label FontSize="12" Text="{Binding Description}" />
+                                    <StackLayout Orientation="Horizontal">
+                                        <Button
+                                            Command="{Binding TaskBoardDeleteCommand, Source={RelativeSource AncestorType={x:Type pageModels:ProjectManagementPageModel}}}"
+                                            CommandParameter="{Binding .}"
+                                            Text="Delete" />
+                                        <Button
+                                            Command="{Binding TaskBoardEditCommand, Source={RelativeSource AncestorType={x:Type pageModels:ProjectManagementPageModel}}}"
+                                            CommandParameter="{Binding .}"
+                                            Text="Edit" />
+                                    </StackLayout>
                                 </StackLayout>
                             </Border>
                         </DataTemplate>
@@ -68,6 +109,20 @@
                     IsVisible="{Binding IsLoadingTaskBoards}"
                     VerticalOptions="Center"
                     WidthRequest="50" />
+                <Button
+                    Command="{Binding LookForUserCommand}"
+                    HeightRequest="40"
+                    HorizontalOptions="Start"
+                    IsVisible="{Binding IsLookingForUser, Converter={StaticResource InvertedBoolConverter}}"
+                    Text="Add user"
+                    VerticalOptions="Start"
+                    WidthRequest="150" />
+
+                <StackLayout IsVisible="{Binding IsLookingForUser}" Orientation="Horizontal">
+                    <Entry Placeholder="Search user by email" Text="{Binding AdduserEmail, Mode=TwoWay}" />
+                    <Button Command="{Binding AddUserToProjectCommand}" Text="Search" />
+                </StackLayout>
+
                 <CollectionView
                     ItemsSource="{Binding Users}"
                     SelectedItem="{Binding SelectedUser}"
@@ -75,11 +130,17 @@
                     SelectionMode="Single">
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:AppUser">
-                            <Border>
-                                <StackLayout Padding="10" Orientation="Vertical">
-                                    <Label FontSize="16" Text="{Binding Username}" />
-                                    <Label FontSize="12" Text="{Binding Email}" />
-                                    <Label FontSize="12" Text="{Binding Role.Name}" />
+                            <Border Padding="10">
+                                <StackLayout Orientation="Horizontal">
+                                    <StackLayout Padding="10" Orientation="Vertical">
+                                        <Label FontSize="16" Text="{Binding Username}" />
+                                        <Label FontSize="12" Text="{Binding Email}" />
+                                        <Label FontSize="12" Text="{Binding Role.Name}" />
+                                    </StackLayout>
+                                    <Button
+                                        Command="{Binding UserRemoveCommand, Source={RelativeSource AncestorType={x:Type pageModels:ProjectManagementPageModel}}}"
+                                        CommandParameter="{Binding .}"
+                                        Text="Remove" />
                                 </StackLayout>
                             </Border>
                         </DataTemplate>
@@ -93,9 +154,80 @@
                     VerticalOptions="Center"
                     WidthRequest="50" />
             </VerticalStackLayout>
-            <StackLayout Spacing="20" Padding="10" IsVisible="{Binding IsEditingUser}" HorizontalOptions="End">
-                <Label Text="Edit User" FontSize="20" FontAttributes="Bold" />
-            </StackLayout>
+
+            <VerticalStackLayout IsVisible="{Binding IsEditingConcept}">
+                <StackLayout Orientation="Vertical">
+                    <Label FontSize="30" Text="Edit concept" />
+                    <Button Command="{Binding CloseEditingConceptCommand}" Text="X" />
+                    <Label FontSize="20" Text="Title:" />
+                    <Entry Placeholder="Title" Text="{Binding EditingConceptData.Title}" />
+                    <Label FontSize="20" Text="Description:" />
+                    <Editor
+                        HeightRequest="100"
+                        Placeholder="Description"
+                        Text="{Binding EditingConceptData.Description}" />
+                    <Button Command="{Binding SaveConceptChangesCommand}" Text="Save Changes" />
+                </StackLayout>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout IsVisible="{Binding IsEditingTaskBoard}">
+                <StackLayout Orientation="Vertical">
+                    <Label FontSize="30" Text="Edit task board" />
+                    <Button Command="{Binding CloseEditingTaskBoardCommand}" Text="X" />
+                    <Label FontSize="20" Text="Title:" />
+                    <Entry Placeholder="Title" Text="{Binding EditingTaskBoardData.Title}" />
+                    <Label FontSize="20" Text="Description:" />
+                    <Editor
+                        HeightRequest="100"
+                        Placeholder="Description"
+                        Text="{Binding EditingTaskBoardData.Description}" />
+                    <Button Command="{Binding SaveTaskBoardChangesCommand}" Text="Save Changes" />
+                </StackLayout>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout IsVisible="{Binding IsEditingUser}">
+                <StackLayout Orientation="Horizontal">
+                    <Label FontSize="30" Text="Edit user" />
+                    <Button Command="{Binding CloseEditingUserCommand}" Text="X" />
+                </StackLayout>
+
+                <Label FontSize="20" Text="Role:" />
+                <Picker
+                    Title="Select a role"
+                    ItemDisplayBinding="{Binding Name}"
+                    ItemsSource="{Binding Roles}"
+                    SelectedItem="{Binding EditingUserData.Role}" />
+
+                <Label FontSize="20" Text="Remove permissions:" />
+                <CollectionView
+                    ItemsSource="{Binding UserRemovePermissions}"
+                    SelectedItems="{Binding SelectedUserRemovePermissions}"
+                    SelectionMode="Multiple">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:Permission">
+                            <StackLayout Padding="10" Orientation="Vertical">
+                                <Label FontSize="16" Text="{Binding Name}" />
+                            </StackLayout>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <Label FontSize="20" Text="Add permissions:" />
+                <CollectionView
+                    ItemsSource="{Binding UserAddPermissions}"
+                    SelectedItems="{Binding SelectedUserAddPermissions}"
+                    SelectionMode="Multiple">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:Permission">
+                            <StackLayout Padding="10" Orientation="Vertical">
+                                <Label FontSize="16" Text="{Binding Name}" />
+                            </StackLayout>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <Button Command="{Binding SaveUserChangesCommand}" Text="Save Changes" />
+            </VerticalStackLayout>
         </StackLayout>
     </ScrollView>
 </ContentPage>

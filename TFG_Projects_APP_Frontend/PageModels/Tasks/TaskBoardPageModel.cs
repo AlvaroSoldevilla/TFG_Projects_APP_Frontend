@@ -150,7 +150,8 @@ public partial class TaskBoardPageModel : ObservableObject
                 IdUserCreated = userSession.User.Id,
                 IdPriority = 3,
                 Progress = 0,
-                Finished = false
+                Finished = false,
+                IsParent = false
             };
 
             await tasksService.Post(taskCreate);
