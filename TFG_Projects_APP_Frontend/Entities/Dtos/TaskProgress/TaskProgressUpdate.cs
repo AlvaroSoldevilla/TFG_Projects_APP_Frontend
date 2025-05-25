@@ -6,4 +6,5 @@ internal class TaskProgressUpdate
     public string? Title { get; set; }
     public bool? ModifiesProgress { get; set; }
     public int? ProgressValue { get; set; }
+    public int Order { get; set; }
 }

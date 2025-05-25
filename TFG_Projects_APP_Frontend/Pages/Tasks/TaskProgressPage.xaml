@@ -1,18 +1,71 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="TFG_Projects_APP_Frontend.Pages.Tasks.TaskProgressPage"
-             xmlns:models="clr-namespace:TFG_Projects_APP_Frontend.Entities.Models"
-             xmlns:dtos="clr-namespace:TFG_Projects_APP_Frontend.Entities.Dtos.Users"
-             xmlns:pageModels="clr-namespace:TFG_Projects_APP_Frontend.PageModels"
-             x:DataType="pageModels:Tasks.TaskProgressPageModel"
-             Title="TaskProgressPage"
-             Shell.NavBarIsVisible="False"
-             NavigationPage.HasNavigationBar="False">
+<ContentPage
+    x:Class="TFG_Projects_APP_Frontend.Pages.Tasks.TaskProgressPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:dtos="clr-namespace:TFG_Projects_APP_Frontend.Entities.Dtos.Users"
+    xmlns:models="clr-namespace:TFG_Projects_APP_Frontend.Entities.Models"
+    xmlns:pageModels="clr-namespace:TFG_Projects_APP_Frontend.PageModels"
+    Title="TaskProgressPage"
+    x:DataType="pageModels:Tasks.TaskProgressPageModel"
+    NavigationPage.HasNavigationBar="False"
+    Shell.NavBarIsVisible="False">
     <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
+        <Button Command="{Binding CreateTaskProgressCommand}" Text="Create Progress Section" />
+        <StackLayout Orientation="Horizontal" Spacing="20">
+            <CollectionView ItemsSource="{Binding TaskProgresses}">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Horizontal" Span="1" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:TaskProgress">
+                        <Border Padding="5">
+                            <StackLayout Spacing="5">
+                                <StackLayout Orientation="Horizontal">
+                                    <Button
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=MoveSectionLeftCommand}"
+                                        CommandParameter="{Binding .}"
+                                        Text="&lt;" />
+                                    <Label Text="{Binding Title}" />
+                                    <Button
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=MoveSectionRightCommand}"
+                                        CommandParameter="{Binding .}"
+                                        Text="&gt;" />
+                                </StackLayout>
+                                <Button
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=TaskCreateCommand}"
+                                    CommandParameter="{Binding .}"
+                                    Text="Create Task" />
+                                <ListView ItemsSource="{Binding Tasks}">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate x:DataType="models:ProjectTask">
+                                            <ViewCell>
+                                                <Border
+                                                    Margin="5"
+                                                    Padding="10"
+                                                    BackgroundColor="#f0f0f0">
+                                                    <StackLayout>
+                                                        <Label Text="{Binding Title}" />
+                                                        <Label Text="{Binding Description}" />
+                                                    </StackLayout>
+                                                </Border>
+                                            </ViewCell>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </StackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+        </StackLayout>
+        <ActivityIndicator
+            HeightRequest="50"
+            HorizontalOptions="Center"
+            IsRunning="{Binding IsLoading}"
+            IsVisible="{Binding IsLoading}"
+            VerticalOptions="Center"
+            WidthRequest="50" />
     </VerticalStackLayout>
 </ContentPage>

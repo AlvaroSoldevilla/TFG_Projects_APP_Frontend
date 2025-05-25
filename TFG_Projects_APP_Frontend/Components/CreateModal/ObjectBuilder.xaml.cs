@@ -29,13 +29,16 @@ public partial class DynamicInputPage<T> : ContentPage where T : new()
             layout.Children.Add(new Label { Text = field.Label });
 
             View input;
+            var baseType = Nullable.GetUnderlyingType(field.DataType) ?? field.DataType;
 
-            if (field.DataType == typeof(string))
+            if (baseType == typeof(string))
                 input = new Entry();
-            else if (field.DataType == typeof(DateTime))
+            else if (baseType == typeof(DateTime))
                 input = new DatePicker();
-            else if (field.DataType == typeof(int))
+            else if (baseType == typeof(int))
                 input = new Entry { Keyboard = Keyboard.Numeric };
+            else if (baseType == typeof(bool))
+                input = new Switch();
             else
                 continue;
 

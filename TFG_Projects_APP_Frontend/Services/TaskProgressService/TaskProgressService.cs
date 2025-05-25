@@ -27,7 +27,26 @@ public class TaskProgressService(RestClient restClient) : ITaskProgressService
                 IdSection = dto.IdSection,
                 Title = dto.Title,
                 ModifiesProgress = dto.ModifiesProgress,
-                ProgressValue = dto.ProgressValue
+                ProgressValue = dto.ProgressValue,
+                Order = dto.Order
+            };
+        }).ToList());
+    }
+
+    public async Task<List<TaskProgress>> getAlltaskProgressByTaskSection(int idSection)
+    {
+        HttpResponseMessage response = await restClient.GetAllAsync($"{route}/section/{idSection}");
+        var taskProgress = await response.Content.ReadFromJsonAsync<List<TaskProgressRead>>(restClient._options);
+        return new List<TaskProgress>(taskProgress.Select(dto =>
+        {
+            return new TaskProgress
+            {
+                Id = dto.Id,
+                IdSection = dto.IdSection,
+                Title = dto.Title,
+                ModifiesProgress = dto.ModifiesProgress,
+                ProgressValue = dto.ProgressValue,
+                Order = dto.Order
             };
         }).ToList());
     }
@@ -42,7 +61,8 @@ public class TaskProgressService(RestClient restClient) : ITaskProgressService
             IdSection = taskProgress.IdSection,
             Title = taskProgress.Title,
             ModifiesProgress = taskProgress.ModifiesProgress,
-            ProgressValue = taskProgress.ProgressValue
+            ProgressValue = taskProgress.ProgressValue,
+            Order = taskProgress.Order
         };
     }
 
@@ -64,7 +84,8 @@ public class TaskProgressService(RestClient restClient) : ITaskProgressService
             IdSection = taskProgress.IdSection,
             Title = taskProgress.Title,
             ModifiesProgress = taskProgress.ModifiesProgress,
-            ProgressValue = taskProgress.ProgressValue
+            ProgressValue = taskProgress.ProgressValue,
+            Order = taskProgress.Order
         };
     }
 }

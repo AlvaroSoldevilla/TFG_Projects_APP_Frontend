@@ -42,8 +42,8 @@ public partial class TaskBoardPageModel : ObservableObject
         ITaskBoardsService taskBoardsService,
         ITaskSectionsService taskSectionsService,
         ITaskProgressService taskProgressService,
-        ITasksService tasksService, 
-        ITaskDependenciesService taskDependenciesService, 
+        ITasksService tasksService,
+        ITaskDependenciesService taskDependenciesService,
         UserSession userSesion)
     {
         this.taskBoardsService = taskBoardsService;
@@ -56,13 +56,16 @@ public partial class TaskBoardPageModel : ObservableObject
 
     public async Task OnNavigatedTo()
     {
+        IsLoading = true;
+        SelectedTaskSection = null;
+
         await LoadData();
+
+        IsLoading = false;
     }
 
     private async Task LoadData()
     {
-        IsLoading = true;
-        SelectedTaskSection = null;
 
         if (TaskBoard == null)
         {
@@ -76,7 +79,6 @@ public partial class TaskBoardPageModel : ObservableObject
                 IsLoading = false;
                 return;
             }
-            return;
         }
 
         var taskSections = await taskSectionsService.getAllTaskSectionsByTaskBoard(TaskBoard.Id);
@@ -87,7 +89,6 @@ public partial class TaskBoardPageModel : ObservableObject
             taskSection.Tasks = taskSection.Tasks.OrderBy(x => x.Priority).ToList();
         }
         TaskSections = new(taskSections);
-        IsLoading = false;
     }
 
     [RelayCommand]
@@ -102,6 +103,9 @@ public partial class TaskBoardPageModel : ObservableObject
                 IdBoard = TaskBoard.Id,
                 Order = TaskSections.Count + 1
             };
+
+            IsLoading = true;
+
             var taskSectionReturn = await taskSectionsService.Post(taskSectionCreate);
             var taskProgressCreate = new TaskProgressCreate()
             {
@@ -133,6 +137,8 @@ public partial class TaskBoardPageModel : ObservableObject
                 await Application.Current.MainPage.DisplayAlert("Error", "Title is required", "OK");
             }
         }
+
+        IsLoading = false;
     }
 
     [RelayCommand]
@@ -154,6 +160,8 @@ public partial class TaskBoardPageModel : ObservableObject
                 IsParent = false
             };
 
+            IsLoading = true;
+
             await tasksService.Post(taskCreate);
 
             await LoadData();
@@ -165,5 +173,76 @@ public partial class TaskBoardPageModel : ObservableObject
                 await Application.Current.MainPage.DisplayAlert("Error", "Title is required", "OK");
             }
         }
+
+        IsLoading = false;
+    }
+
+    [RelayCommand]
+    public async Task MoveSectionLeft(TaskSection taskSection)
+    {
+        if (taskSection.Order > 1)
+        {
+            var previousSection = TaskSections.FirstOrDefault(x => x.Order == taskSection.Order - 1);
+            if (previousSection != null)
+            {
+                taskSection.Order--;
+                previousSection.Order++;
+                await taskSectionsService.Patch(taskSection.Id, new TaskSectionUpdate
+                {
+                    IdBoard = taskSection.IdBoard,
+                    IdDefaultProgress = taskSection.IdDefaultProgress,
+                    Title = taskSection.Title,
+                    Order = taskSection.Order
+                });
+                await taskSectionsService.Patch(previousSection.Id, new TaskSectionUpdate
+                {
+                    IdBoard = previousSection.IdBoard,
+                    IdDefaultProgress = previousSection.IdDefaultProgress,
+                    Title = previousSection.Title,
+                    Order = previousSection.Order
+                });
+                await LoadData();
+            }
+        }
+    }
+
+    [RelayCommand]
+    public async Task MoveSectionRight(TaskSection taskSection)
+    {
+        if (taskSection.Order < TaskSections.Count)
+        {
+            var nextSection = TaskSections.FirstOrDefault(x => x.Order == taskSection.Order + 1);
+            if (nextSection != null)
+            {
+                taskSection.Order++;
+                nextSection.Order--;
+                await taskSectionsService.Patch(taskSection.Id, new TaskSectionUpdate
+                {
+                    IdBoard = taskSection.IdBoard,
+                    IdDefaultProgress = taskSection.IdDefaultProgress,
+                    Title = taskSection.Title,
+                    Order = taskSection.Order
+                });
+                await taskSectionsService.Patch(nextSection.Id, new TaskSectionUpdate
+                {
+                    IdBoard = nextSection.IdBoard,
+                    IdDefaultProgress = nextSection.IdDefaultProgress,
+                    Title = nextSection.Title,
+                    Order = nextSection.Order
+                });
+                await LoadData();
+            }
+        }
+    }
+
+    [RelayCommand]
+    public async Task TaskSectionSelected(TaskSection taskSection)
+    {
+        NavigationContext.CurrentTaskSection = SelectedTaskSection;
+        await Shell.Current.GoToAsync("TaskProgressPage", new Dictionary<string, object>
+        {
+            {"TaskSection", taskSection }
+        });
+
     }
 }

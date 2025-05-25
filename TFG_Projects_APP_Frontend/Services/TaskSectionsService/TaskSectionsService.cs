@@ -26,7 +26,8 @@ public class TaskSectionsService(RestClient restClient) : ITaskSectionsService
                 Id = taskSection.Id,
                 IdDefaultProgress = taskSection.IdDefaultProgress,
                 Title = taskSection.Title,
-                IdBoard = taskSection.IdBoard
+                IdBoard = taskSection.IdBoard,
+                Order = taskSection.Order
             };
         }).ToList());
     }
@@ -42,7 +43,8 @@ public class TaskSectionsService(RestClient restClient) : ITaskSectionsService
                 Id = taskSection.Id,
                 IdDefaultProgress = taskSection.IdDefaultProgress,
                 Title = taskSection.Title,
-                IdBoard = taskSection.IdBoard
+                IdBoard = taskSection.IdBoard,
+                Order = taskSection.Order
             };
         }).ToList());
     }
@@ -56,7 +58,8 @@ public class TaskSectionsService(RestClient restClient) : ITaskSectionsService
             Id = taskSection.Id,
             IdDefaultProgress = taskSection.IdDefaultProgress,
             Title = taskSection.Title,
-            IdBoard = taskSection.IdBoard
+            IdBoard = taskSection.IdBoard,
+            Order = taskSection.Order
         };
     }
 
@@ -76,7 +79,8 @@ public class TaskSectionsService(RestClient restClient) : ITaskSectionsService
             Id = taskSection.Id,
             IdDefaultProgress = taskSection.IdDefaultProgress,
             Title = taskSection.Title,
-            IdBoard = taskSection.IdBoard
+            IdBoard = taskSection.IdBoard,
+            Order = taskSection.Order
         };
     }
 }

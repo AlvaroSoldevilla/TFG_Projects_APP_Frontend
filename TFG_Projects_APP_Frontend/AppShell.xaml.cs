@@ -16,6 +16,7 @@ namespace TFG_Projects_APP_Frontend
         {
             Routing.RegisterRoute("ProjectmanagementPage", typeof(ProjectManagementPage));
             Routing.RegisterRoute("TaskBoardPage", typeof(TaskBoardPage));
+            Routing.RegisterRoute("TaskProgressPage", typeof(TaskProgressPage));
             Routing.RegisterRoute("ConceptBoardPage", typeof(ConceptBoardPage));
         }
     }
