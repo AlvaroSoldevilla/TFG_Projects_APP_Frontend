@@ -6,14 +6,36 @@
     xmlns:dtos="clr-namespace:TFG_Projects_APP_Frontend.Entities.Dtos.Users"
     xmlns:models="clr-namespace:TFG_Projects_APP_Frontend.Entities.Models"
     xmlns:pageModels="clr-namespace:TFG_Projects_APP_Frontend.PageModels"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     Title="TaskBoardPage"
     x:DataType="pageModels:Tasks.TaskBoardPageModel"
     NavigationPage.HasNavigationBar="False"
     Shell.NavBarIsVisible="False">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
     <VerticalStackLayout Padding="20">
-        <Button Command="{Binding CreateTaskSectionCommand}" Text="Create Task Section" />
+        <StackLayout Orientation="Horizontal">
+            <Button
+                Command="{Binding CreateTaskSectionCommand}"
+                HeightRequest="40"
+                HorizontalOptions="Start"
+                Text="Create Task Section"
+                VerticalOptions="Start"
+                WidthRequest="150" />
+            <ActivityIndicator
+                HeightRequest="50"
+                HorizontalOptions="Center"
+                IsRunning="{Binding IsLoading}"
+                IsVisible="{Binding IsLoading}"
+                VerticalOptions="Center"
+                WidthRequest="50" />
+        </StackLayout>
         <StackLayout Orientation="Horizontal" Spacing="20">
             <CollectionView
+                HorizontalOptions="StartAndExpand"
                 ItemsSource="{Binding TaskSections}"
                 SelectedItem="{Binding SelectedTaskSection}"
                 SelectionChangedCommand="{Binding TaskSectionSelectedCommand}"
@@ -72,48 +94,92 @@
             </CollectionView>
 
             <VerticalStackLayout IsVisible="{Binding IsEditingTaskSection}">
-                <Label FontSize="30" Text="Edit Task Section" />
-                <Button Command="{Binding CloseEditingtTaskSectionCommand}" Text="X" />
+                <StackLayout Orientation="Horizontal">
+                    <Label FontSize="30" Text="Edit Task Section" />
+                    <Button Command="{Binding CloseEditingtTaskSectionCommand}" Text="X" />
+                </StackLayout>
+
                 <Label FontSize="20" Text="Title:" />
                 <Entry Placeholder="Enter section title" Text="{Binding EditingTaskSectionData.Title}" />
             </VerticalStackLayout>
 
             <VerticalStackLayout IsVisible="{Binding IsEditingTask}">
-                <Label FontSize="30" Text="Edit task" />
-                <Button Command="{Binding CloseEditingtTaskCommand}" Text="X" />
-                <Label FontSize="20" Text="Title:" />
-                <Entry Placeholder="Enter task title" Text="{Binding EditingTaskData.Title}" />
-                <Label FontSize="20" Text="Description:" />
-                <Editor
-                    HeightRequest="100"
-                    Placeholder="Enter task description"
-                    Text="{Binding EditingTaskData.Description}" />
-                <Label FontSize="20" Text="Assigned To:" />
-                <Picker
-                    Title="Assigned to:"
-                    ItemDisplayBinding="{Binding Username}"
-                    ItemsSource="{Binding Users}"
-                    SelectedItem="{Binding EditingTaskData.UserAssigned}" />
-                <Picker
-                    Title="Priority"
-                    ItemDisplayBinding="{Binding Name}"
-                    ItemsSource="{Binding Priorities}"
-                    SelectedItem="{Binding EditingTaskData.Priority}" />
-                <Button Command="{Binding AddDependencyCommand}" Text="Add dependency" />
-                <CollectionView
-                    ItemsSource="{Binding PossibleDependencies}"
-                    SelectedItems="{Binding DependenciesToRemove}"
-                    SelectionMode="Multiple" />
-                <Button Command="{Binding SaveTaskChangesCommand}" Text="Save Task" />
+                <StackLayout Orientation="Horizontal">
+                    <Label FontSize="30" Text="Edit task" />
+                    <Button Command="{Binding CloseEditingtTaskCommand}" Text="X" />
+                </StackLayout>
+                <ScrollView>
+                    <StackLayout Orientation="Vertical">
+                        <Label FontSize="20" Text="Title:" />
+                        <Entry Placeholder="Enter task title" Text="{Binding EditingTaskData.Title}" />
+                        <Label FontSize="20" Text="Description:" />
+                        <Editor
+                            HeightRequest="100"
+                            Placeholder="Enter task description"
+                            Text="{Binding EditingTaskData.Description}" />
+                        <Label
+                            FontSize="20"
+                            IsVisible="{Binding EditingTaskData.IsParent, Converter={StaticResource InvertedBoolConverter}}"
+                            Text="Parent:" />
+                        <Picker
+                            Title="Select parent task"
+                            IsVisible="{Binding EditingTaskData.IsParent, Converter={StaticResource InvertedBoolConverter}}"
+                            ItemDisplayBinding="{Binding Title}"
+                            ItemsSource="{Binding PossibleParents}"
+                            SelectedItem="{Binding EditingTaskData.Parent}" />
+                        <Label FontSize="20" Text="Assigned To:" />
+                        <Picker
+                            Title="Assigned to:"
+                            ItemDisplayBinding="{Binding Username}"
+                            ItemsSource="{Binding Users}"
+                            SelectedItem="{Binding EditingTaskData.UserAssigned}" />
+                        <Picker
+                            Title="Priority"
+                            ItemDisplayBinding="{Binding Name}"
+                            ItemsSource="{Binding Priorities}"
+                            SelectedItem="{Binding EditingTaskData.Priority}" />
+                        <Label FontSize="20" Text="Add dependency:" />
+                        <StackLayout Orientation="Horizontal">
+                            <Picker
+                                ItemDisplayBinding="{Binding Title}"
+                                ItemsSource="{Binding PossibleDependencies}"
+                                SelectedItem="{Binding DependencyTaskSelected}" />
+                            <Button Command="{Binding AddDependencyCommand}" Text="Add" />
+                        </StackLayout>
+
+
+                        <CollectionView
+                            ItemsSource="{Binding TaskDependencies}"
+                            SelectedItem="{Binding SelectedDependency}"
+                            SelectionChangedCommand="{Binding DependencySelectedCommand}"
+                            SelectionMode="Single">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="models:TaskDependency">
+                                    <Border Padding="5">
+                                        <StackLayout Orientation="Horizontal" Spacing="10">
+                                            <Label Text="{Binding DisplayName}" />
+                                        </StackLayout>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                        <VerticalStackLayout IsVisible="{Binding IsEditingTaskDependency}">
+                            <StackLayout Orientation="Horizontal">
+                                <Label Text="Unlock at:" />
+                                <Entry Keyboard="Numeric" Text="{Binding EditingTaskDependencyData.UnlockAt}" />
+                            </StackLayout>
+                            <Button Command="{Binding SaveTaskDependencyChangesCommand}" Text="Save Dependency" />
+                            <Button Command="{Binding RemoveDependencyCommand}" Text="Remove Dependency" />
+                        </VerticalStackLayout>
+
+
+                        <Button Command="{Binding SaveTaskChangesCommand}" Text="Save Task" />
+                    </StackLayout>
+                </ScrollView>
+
+
             </VerticalStackLayout>
 
         </StackLayout>
-        <ActivityIndicator
-            HeightRequest="50"
-            HorizontalOptions="Center"
-            IsRunning="{Binding IsLoading}"
-            IsVisible="{Binding IsLoading}"
-            VerticalOptions="Center"
-            WidthRequest="50" />
     </VerticalStackLayout>
 </ContentPage>

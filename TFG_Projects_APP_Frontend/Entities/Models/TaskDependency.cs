@@ -6,6 +6,7 @@ public class TaskDependency
     public int IdTask { get; set; }
     public int IdDependsOn { get; set; }
     public int UnlockAt { get; set; } = 100;
+    public string? DisplayName { get; set; } = string.Empty;
 
     public ProjectTask? Task { get; set; }
     public ProjectTask? DependsOn { get; set; }

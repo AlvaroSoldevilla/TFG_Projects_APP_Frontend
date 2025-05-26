@@ -44,6 +44,9 @@ public partial class TaskBoardPageModel : ObservableObject
     private bool _isEditingTask;
 
     [ObservableProperty]
+    private bool _isEditingTaskDependency;
+
+    [ObservableProperty]
     private TaskSection _selectedTaskSection;
 
     [ObservableProperty]
@@ -62,7 +65,14 @@ public partial class TaskBoardPageModel : ObservableObject
     private ObservableCollection<ProjectTask> _possibleDependencies;
 
     [ObservableProperty]
-    private ObservableCollection<object> _dependenciesToRemove;
+    private ObservableCollection<TaskDependency> _taskDependencies;
+
+    [ObservableProperty]
+    private ObservableCollection<ProjectTask> _possibleParents;
+
+
+    [ObservableProperty]
+    private TaskDependency _selectedDependency;
 
     [ObservableProperty]
     private ProjectTask _dependencyTaskSelected;
@@ -75,6 +85,9 @@ public partial class TaskBoardPageModel : ObservableObject
 
     [ObservableProperty]
     private ProjectTask _editingTaskData;
+
+    [ObservableProperty]
+    private TaskDependency _editingTaskDependencyData;
 
 
     public TaskBoardPageModel(
@@ -147,8 +160,24 @@ public partial class TaskBoardPageModel : ObservableObject
                     task.Priority = minPriority;
                 }
             }
+
+            foreach (var task in taskSection.Tasks)
+            {
+                var dependencies = await taskDependenciesService.GetAllTaskDependenciesByTask(task.Id);
+                if (dependencies != null && dependencies.Count > 0)
+                {
+                    task.Dependecies = dependencies;
+                    task.Parent = taskSection.Tasks.FirstOrDefault(x => x.Id == task.IdParentTask);
+                    foreach (var dependency in dependencies)
+                    {
+                        dependency.DependsOn = taskSection.Tasks.FirstOrDefault(x => x.Id == dependency.IdDependsOn);
+                    }
+                }
+            }
+
             taskSection.Tasks = taskSection.Tasks.OrderBy(x => x.Priority.PriorityValue).ToList();
         }
+
         TaskSections = new(taskSections);
     }
 
@@ -336,7 +365,9 @@ public partial class TaskBoardPageModel : ObservableObject
         Users = new ObservableCollection<AppUser>(returnUsers);
 
         List<ProjectTask> tasks = new();
-        
+        List<ProjectTask> parentCandidates = new();
+        List<TaskDependency> dependencies = new();
+
 
         foreach (var taskSection in TaskSections)
         {
@@ -352,7 +383,35 @@ public partial class TaskBoardPageModel : ObservableObject
             }
         }
 
+        var currentTaskSection = TaskSections.FirstOrDefault(x => x.Id == task.IdSection);
+
+        if (currentTaskSection.Tasks != null && currentTaskSection.Tasks.Count != 0)
+        {
+            foreach (var t in currentTaskSection.Tasks)
+            {
+                if (t.Id != task.Id)
+                {
+                    if (t.IsParent || t.Parent == null)
+                    {
+                        parentCandidates.Add(t);
+                    }
+                }
+            }
+        }
+
+        var currentDependencies = await taskDependenciesService.GetAllTaskDependenciesByTask(task.Id);
+
+        foreach (var dependency in currentDependencies)
+        {
+            var dependsOnTask = await tasksService.GetById(dependency.IdDependsOn);
+
+            dependency.DisplayName = dependsOnTask.Title + "->" + task.Title;
+        }
+
+
         PossibleDependencies = new ObservableCollection<ProjectTask>(tasks);
+        PossibleParents = new ObservableCollection<ProjectTask>(parentCandidates);
+        TaskDependencies = new ObservableCollection<TaskDependency>(currentDependencies);
 
         if (task.UserAssigned != null)
         {
@@ -390,8 +449,27 @@ public partial class TaskBoardPageModel : ObservableObject
                 Priority = task.Priority
             };
         }
+    }
 
-        
+    [RelayCommand]
+    private async void DependencySelected(TaskDependency taskDependency)
+    {
+        if (SelectedDependency != null)
+        {
+            IsEditingTaskDependency = true;
+            EditingTaskDependencyData = new TaskDependency
+            {
+                Id = SelectedDependency.Id,
+                IdTask = SelectedDependency.IdTask,
+                IdDependsOn = SelectedDependency.IdDependsOn,
+                UnlockAt = SelectedDependency.UnlockAt,
+                DisplayName = SelectedDependency.DisplayName
+            };
+        } else
+        {
+            IsEditingTaskDependency = false;
+            EditingTaskDependencyData = null;
+        }
     }
 
     [RelayCommand]
@@ -411,36 +489,85 @@ public partial class TaskBoardPageModel : ObservableObject
     [RelayCommand]
     private async void AddDependency(ProjectTask task)
     {
-        if (SelectedTask != null && task != null && SelectedTask.Id != task.Id)
+        if (EditingTaskData != null)
         {
-            if (DependencyTaskSelected != null)
+            if (DependencyTaskSelected == null)
             {
                 await Application.Current.MainPage.DisplayAlert("Error", "You need to select a task", "OK");
             }
-
-            var currentDependencies = await taskDependenciesService.GetAllTaskDependenciesByTask(SelectedTask.Id);
-            if (currentDependencies.Any(x => x.IdDependsOn == task.Id))
+            else
             {
-                await Application.Current.MainPage.DisplayAlert("Error", "This task is already a dependency", "OK");
-            } else
-            {
-                var dependency = new TaskDependencyCreate
+                var currentDependencies = await taskDependenciesService.GetAllTaskDependenciesByTask(EditingTaskData.Id);
+                if (currentDependencies.Any(x => x.IdDependsOn == DependencyTaskSelected.Id))
                 {
-                    IdTask = EditingTaskData.Id,
-                    IdDependsOn = DependencyTaskSelected.Id
-                };
+                    await Application.Current.MainPage.DisplayAlert("Error", "This task is already a dependency", "OK");
+                }
+                else
+                {
+                    var dependency = new TaskDependencyCreate
+                    {
+                        IdTask = EditingTaskData.Id,
+                        IdDependsOn = DependencyTaskSelected.Id,
+                        UnlockAt = 100
+                    };
 
+                    var returnTaskDependency = await taskDependenciesService.Post(dependency);
+                    returnTaskDependency.DisplayName = DependencyTaskSelected.Title + "->" + EditingTaskData.Title;
 
+                    var taskDependencies = TaskDependencies.ToList();
+                    taskDependencies.Add(returnTaskDependency);
+                    TaskDependencies.Clear();
+                    TaskDependencies = new ObservableCollection<TaskDependency>(taskDependencies);
 
+                    IsLoading = true;
+                    await LoadData();
+                    IsLoading = false;
+                }
+            }
+        }
+    }
+
+    [RelayCommand]
+    private async void RemoveDependency(TaskDependency taskDependency)
+    {
+        if (SelectedDependency != null)
+        {
+            var result = await Application.Current.MainPage.DisplayAlert("Confirm", "Are you sure you want to remove this dependency?", "Yes", "No");
+            if (result)
+            {
                 IsLoading = true;
-                await taskDependenciesService.Post(dependency);
+                await taskDependenciesService.Delete(SelectedDependency.Id);
+                var taskDependencies = TaskDependencies.ToList();
+                taskDependencies.Remove(taskDependency);
+                TaskDependencies.Clear();
+                TaskDependencies = new ObservableCollection<TaskDependency>(taskDependencies);
+                SelectedDependency = null;
                 await LoadData();
                 IsLoading = false;
             }
         }
     }
 
-
+    [RelayCommand]
+    private async void SaveTaskDependencyChanges()
+    {
+        if (EditingTaskDependencyData != null)
+        {
+            IsLoading = true;
+            var taskDependencyUpdate = new TaskDependencyUpdate
+            {
+                IdTask = EditingTaskDependencyData.IdTask,
+                IdDependsOn = EditingTaskDependencyData.IdDependsOn,
+                UnlockAt = EditingTaskDependencyData.UnlockAt
+            };
+            await taskDependenciesService.Patch(EditingTaskDependencyData.Id, taskDependencyUpdate);
+            IsEditingTaskDependency = false;
+            EditingTaskDependencyData = null;
+            SelectedDependency = null;
+            await LoadData();
+            IsLoading = false;
+        }
+    }
 
     [RelayCommand]
     private async void SaveTaskChanges()
