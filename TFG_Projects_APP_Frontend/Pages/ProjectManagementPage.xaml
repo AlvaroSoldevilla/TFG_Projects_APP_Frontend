@@ -156,24 +156,26 @@
             </VerticalStackLayout>
 
             <VerticalStackLayout IsVisible="{Binding IsEditingConcept}">
-                <StackLayout Orientation="Vertical">
+                <StackLayout Orientation="Horizontal">
                     <Label FontSize="30" Text="Edit concept" />
                     <Button Command="{Binding CloseEditingConceptCommand}" Text="X" />
-                    <Label FontSize="20" Text="Title:" />
-                    <Entry Placeholder="Title" Text="{Binding EditingConceptData.Title}" />
-                    <Label FontSize="20" Text="Description:" />
-                    <Editor
-                        HeightRequest="100"
-                        Placeholder="Description"
-                        Text="{Binding EditingConceptData.Description}" />
-                    <Button Command="{Binding SaveConceptChangesCommand}" Text="Save Changes" />
                 </StackLayout>
+                <Label FontSize="20" Text="Title:" />
+                <Entry Placeholder="Title" Text="{Binding EditingConceptData.Title}" />
+                <Label FontSize="20" Text="Description:" />
+                <Editor
+                    HeightRequest="100"
+                    Placeholder="Description"
+                    Text="{Binding EditingConceptData.Description}" />
+                <Button Command="{Binding SaveConceptChangesCommand}" Text="Save Changes" />
             </VerticalStackLayout>
 
             <VerticalStackLayout IsVisible="{Binding IsEditingTaskBoard}">
                 <StackLayout Orientation="Vertical">
-                    <Label FontSize="30" Text="Edit task board" />
-                    <Button Command="{Binding CloseEditingTaskBoardCommand}" Text="X" />
+                    <StackLayout Orientation="Horizontal">
+                        <Label FontSize="30" Text="Edit task board" />
+                        <Button Command="{Binding CloseEditingTaskBoardCommand}" Text="X" />
+                    </StackLayout>
                     <Label FontSize="20" Text="Title:" />
                     <Entry Placeholder="Title" Text="{Binding EditingTaskBoardData.Title}" />
                     <Label FontSize="20" Text="Description:" />

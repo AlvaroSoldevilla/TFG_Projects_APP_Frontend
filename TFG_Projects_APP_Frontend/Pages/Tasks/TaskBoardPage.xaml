@@ -36,7 +36,10 @@
                                         CommandParameter="{Binding .}"
                                         Text="&gt;" />
                                 </StackLayout>
-
+                                <Button
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=EditTaskSectionCommand}"
+                                    CommandParameter="{Binding .}"
+                                    Text="Edit" />
                                 <Button
                                     Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=TaskCreateCommand}"
                                     CommandParameter="{Binding .}"
@@ -52,6 +55,10 @@
                                                     <StackLayout>
                                                         <Label Text="{Binding Title}" />
                                                         <Label Text="{Binding Description}" />
+                                                        <Button
+                                                            Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=EditTaskCommand}"
+                                                            CommandParameter="{Binding .}"
+                                                            Text="Edit Task" />
                                                     </StackLayout>
                                                 </Border>
                                             </ViewCell>
@@ -63,6 +70,42 @@
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
+
+            <VerticalStackLayout IsVisible="{Binding IsEditingTaskSection}">
+                <Label FontSize="30" Text="Edit Task Section" />
+                <Button Command="{Binding CloseEditingtTaskSectionCommand}" Text="X" />
+                <Label FontSize="20" Text="Title:" />
+                <Entry Placeholder="Enter section title" Text="{Binding EditingTaskSectionData.Title}" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout IsVisible="{Binding IsEditingTask}">
+                <Label FontSize="30" Text="Edit task" />
+                <Button Command="{Binding CloseEditingtTaskCommand}" Text="X" />
+                <Label FontSize="20" Text="Title:" />
+                <Entry Placeholder="Enter task title" Text="{Binding EditingTaskData.Title}" />
+                <Label FontSize="20" Text="Description:" />
+                <Editor
+                    HeightRequest="100"
+                    Placeholder="Enter task description"
+                    Text="{Binding EditingTaskData.Description}" />
+                <Label FontSize="20" Text="Assigned To:" />
+                <Picker
+                    Title="Assigned to:"
+                    ItemDisplayBinding="{Binding Username}"
+                    ItemsSource="{Binding Users}"
+                    SelectedItem="{Binding EditingTaskData.UserAssigned}" />
+                <Picker
+                    Title="Priority"
+                    ItemDisplayBinding="{Binding Name}"
+                    ItemsSource="{Binding Priorities}"
+                    SelectedItem="{Binding EditingTaskData.Priority}" />
+                <Button Command="{Binding AddDependencyCommand}" Text="Add dependency" />
+                <CollectionView
+                    ItemsSource="{Binding PossibleDependencies}"
+                    SelectedItems="{Binding DependenciesToRemove}"
+                    SelectionMode="Multiple" />
+                <Button Command="{Binding SaveTaskChangesCommand}" Text="Save Task" />
+            </VerticalStackLayout>
 
         </StackLayout>
         <ActivityIndicator

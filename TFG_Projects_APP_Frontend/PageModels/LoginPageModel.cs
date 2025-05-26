@@ -5,7 +5,6 @@ using System.Text;
 using TFG_Projects_APP_Frontend.Entities.Dtos.Users;
 using TFG_Projects_APP_Frontend.Rest;
 using TFG_Projects_APP_Frontend.Services.UsersService;
-using static System.Net.WebRequestMethods;
 
 namespace TFG_Projects_APP_Frontend.PageModels;
 
@@ -47,6 +46,11 @@ public partial class LoginPageModel : ObservableObject
         this.usersService = usersService;
         this.userSession = userSession;
         this.restClient = restClient;
+    }
+
+    public async Task OnNavigatedTo()
+    {
+        int example = 0;
     }
 
     [RelayCommand]

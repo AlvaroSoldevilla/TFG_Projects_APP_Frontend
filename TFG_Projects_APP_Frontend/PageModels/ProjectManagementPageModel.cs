@@ -251,6 +251,8 @@ public partial class ProjectManagementPageModel : ObservableObject
     {
         IsEditingConcept = false;
         IsEditingTaskBoard = false;
+        EditingConceptData = null;
+        EditingTaskBoardData = null;
 
         if (SelectedUser != null)
         {
@@ -500,6 +502,13 @@ public partial class ProjectManagementPageModel : ObservableObject
     private async void TaskBoardEdit(TaskBoard taskBoard)
     {
         IsEditingTaskBoard = true;
+
+        IsEditingConcept = false;
+        IsEditingUser = false;
+        EditingConceptData = null;
+        EditingUserData = null;
+        SelectedUser = null;
+
         EditingTaskBoardData = new TaskBoard
         {
             Id = taskBoard.Id,
@@ -531,6 +540,13 @@ public partial class ProjectManagementPageModel : ObservableObject
     private async void ConceptEdit(Concept concept)
     {
         IsEditingConcept = true;
+
+        IsEditingTaskBoard = false;
+        IsEditingUser = false;
+        EditingTaskBoardData = null;
+        EditingUserData = null;
+        SelectedUser = null;
+
         EditingConceptData = new Concept
         {
             Id = concept.Id,
@@ -570,6 +586,8 @@ public partial class ProjectManagementPageModel : ObservableObject
     private async void CloseEditingUser()
     {
         EditingUserData = null;
+        EditingConceptData = null;
+        EditingTaskBoardData = null;
         SelectedUser = null;
         UserRemovePermissions.Clear();
         UserAddPermissions.Clear();
@@ -577,20 +595,30 @@ public partial class ProjectManagementPageModel : ObservableObject
         SelectedUserRemovePermissions.Clear();
 
         IsEditingUser = false;
+        IsEditingTaskBoard = false;
+        IsEditingConcept = false;
     }
 
     [RelayCommand]
     private async void CloseEditingConcept()
     {
+        EditingUserData = null;
         EditingConceptData = null;
+        EditingTaskBoardData = null;
+        IsEditingUser = false;
+        IsEditingTaskBoard = false;
         IsEditingConcept = false;
     }
 
     [RelayCommand]
     private async void CloseEditingTaskBoard()
     {
+        EditingUserData = null;
+        EditingConceptData = null;
         EditingTaskBoardData = null;
         IsEditingUser = false;
+        IsEditingTaskBoard = false;
+        IsEditingConcept = false;
     }
 
     [RelayCommand]
