@@ -7,7 +7,7 @@ internal class TaskUpdate
     public int? IdUserCreated { get; set; }
     public string? Title { get; set; }
     public int? IdUserAssigned { get; set; }
-    public int? IdParent { get; set; }
+    public int? IdParentTask { get; set; }
     public int? IdPriority { get; set; }
     public string? Description { get; set; }
     public int? Progress { get; set; } = 0;

@@ -16,8 +16,12 @@
             <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
         </ResourceDictionary>
     </ContentPage.Resources>
-    <VerticalStackLayout Padding="20">
-        <StackLayout Orientation="Horizontal">
+    <Grid Padding="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <StackLayout Grid.Row="0" Orientation="Horizontal">
             <Button
                 Command="{Binding CreateTaskSectionCommand}"
                 HeightRequest="40"
@@ -33,7 +37,11 @@
                 VerticalOptions="Center"
                 WidthRequest="50" />
         </StackLayout>
-        <StackLayout Orientation="Horizontal" Spacing="20">
+        <StackLayout
+            Grid.Row="1"
+            Padding="5"
+            Orientation="Horizontal"
+            Spacing="20">
             <CollectionView
                 HorizontalOptions="StartAndExpand"
                 ItemsSource="{Binding TaskSections}"
@@ -47,7 +55,7 @@
                     <DataTemplate x:DataType="models:TaskSection">
                         <Border Padding="5">
                             <StackLayout Spacing="5">
-                                <StackLayout Orientation="Horizontal">
+                                <StackLayout Orientation="Horizontal" Spacing="5">
                                     <Button
                                         Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=MoveSectionLeftCommand}"
                                         CommandParameter="{Binding .}"
@@ -74,9 +82,14 @@
                                                     Margin="5"
                                                     Padding="10"
                                                     BackgroundColor="#f0f0f0">
-                                                    <StackLayout>
+                                                    <StackLayout Spacing="5">
                                                         <Label Text="{Binding Title}" />
                                                         <Label Text="{Binding Description}" />
+                                                        <Label Text="{Binding Progress, StringFormat='Progress: {0:F0}'}" />
+                                                        <Label Text="{Binding LimitDate, StringFormat='Limit Date: {0:dd/MM/yyyy}'}" />
+                                                        <Label Text="{Binding UserAssigned.Username, StringFormat='Assigned to: {0}'}" />
+                                                        <Label Text="{Binding Priority.Name, StringFormat='Priority: {0}'}" />
+                                                        <Label Text="{Binding CompletionDate}" />
                                                         <Button
                                                             Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=EditTaskCommand}"
                                                             CommandParameter="{Binding .}"
@@ -93,8 +106,8 @@
                 </CollectionView.ItemTemplate>
             </CollectionView>
 
-            <VerticalStackLayout IsVisible="{Binding IsEditingTaskSection}">
-                <StackLayout Orientation="Horizontal">
+            <VerticalStackLayout IsVisible="{Binding IsEditingTaskSection}" Spacing="5">
+                <StackLayout Orientation="Horizontal" Spacing="5">
                     <Label FontSize="30" Text="Edit Task Section" />
                     <Button Command="{Binding CloseEditingtTaskSectionCommand}" Text="X" />
                 </StackLayout>
@@ -103,13 +116,20 @@
                 <Entry Placeholder="Enter section title" Text="{Binding EditingTaskSectionData.Title}" />
             </VerticalStackLayout>
 
-            <VerticalStackLayout IsVisible="{Binding IsEditingTask}">
-                <StackLayout Orientation="Horizontal">
+            <Grid IsVisible="{Binding IsEditingTask}" VerticalOptions="FillAndExpand">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <StackLayout
+                    Grid.Row="0"
+                    Orientation="Horizontal"
+                    Spacing="5">
                     <Label FontSize="30" Text="Edit task" />
                     <Button Command="{Binding CloseEditingtTaskCommand}" Text="X" />
                 </StackLayout>
-                <ScrollView>
-                    <StackLayout Orientation="Vertical">
+                <ScrollView Grid.Row="1" VerticalOptions="FillAndExpand">
+                    <VerticalStackLayout Padding="10" Spacing="5">
                         <Label FontSize="20" Text="Title:" />
                         <Entry Placeholder="Enter task title" Text="{Binding EditingTaskData.Title}" />
                         <Label FontSize="20" Text="Description:" />
@@ -117,6 +137,11 @@
                             HeightRequest="100"
                             Placeholder="Enter task description"
                             Text="{Binding EditingTaskData.Description}" />
+                        <Label Text="{Binding ProgressValue, StringFormat='Progress: {0:F0}'}" />
+                        <Slider
+                            Maximum="100"
+                            Minimum="0"
+                            Value="{Binding ProgressValue}" />
                         <Label
                             FontSize="20"
                             IsVisible="{Binding EditingTaskData.IsParent, Converter={StaticResource InvertedBoolConverter}}"
@@ -127,6 +152,9 @@
                             ItemDisplayBinding="{Binding Title}"
                             ItemsSource="{Binding PossibleParents}"
                             SelectedItem="{Binding EditingTaskData.Parent}" />
+                        <Label FontSize="20" Text="Limit date:" />
+                        <DatePicker Date="{Binding EditingTaskData.LimitDate}" Format="dd/MM/yyyy" />
+
                         <Label FontSize="20" Text="Assigned To:" />
                         <Picker
                             Title="Assigned to:"
@@ -164,22 +192,20 @@
                             </CollectionView.ItemTemplate>
                         </CollectionView>
                         <VerticalStackLayout IsVisible="{Binding IsEditingTaskDependency}">
-                            <StackLayout Orientation="Horizontal">
-                                <Label Text="Unlock at:" />
-                                <Entry Keyboard="Numeric" Text="{Binding EditingTaskDependencyData.UnlockAt}" />
-                            </StackLayout>
+                            <Label Text="{Binding UnlockAtValue, StringFormat='Unlock at: {0:F0}'}" />
+                            <Slider
+                                Maximum="100"
+                                Minimum="0"
+                                Value="{Binding UnlockAtValue}" />
                             <Button Command="{Binding SaveTaskDependencyChangesCommand}" Text="Save Dependency" />
                             <Button Command="{Binding RemoveDependencyCommand}" Text="Remove Dependency" />
                         </VerticalStackLayout>
 
 
                         <Button Command="{Binding SaveTaskChangesCommand}" Text="Save Task" />
-                    </StackLayout>
+                    </VerticalStackLayout>
                 </ScrollView>
-
-
-            </VerticalStackLayout>
-
+            </Grid>
         </StackLayout>
-    </VerticalStackLayout>
+    </Grid>
 </ContentPage>
