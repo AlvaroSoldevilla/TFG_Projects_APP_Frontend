@@ -33,6 +33,7 @@ public partial class TaskBoardPageModel : ObservableObject
     private readonly UserSession userSession;
 
     public TaskBoard TaskBoard { get; set; }
+    private List<ProjectTask> AllTasks {get; set;} = new List<ProjectTask>();
 
     [ObservableProperty]
     private bool _isLoading;
@@ -95,6 +96,8 @@ public partial class TaskBoardPageModel : ObservableObject
     [ObservableProperty]
     private TaskDependency _editingTaskDependencyData;
 
+    
+
 
     public TaskBoardPageModel(
         ITaskBoardsService taskBoardsService,
@@ -155,6 +158,7 @@ public partial class TaskBoardPageModel : ObservableObject
             taskSection.Tasks = await tasksService.GetAllTasksByTaskSection(taskSection.Id);
             foreach (var task in taskSection.Tasks)
             {
+                AllTasks.Add(task);
                 if (task.IdUserAssigned != null)
                 {
                     task.UserAssigned = await tasksService.getUserAssigned(task.Id);
@@ -271,6 +275,56 @@ public partial class TaskBoardPageModel : ObservableObject
         }
 
         IsLoading = false;
+    }
+
+    [RelayCommand]
+    public async Task RemoveParent(ProjectTask task)
+    {
+        if (task != null)
+        {
+            if (task.IdParentTask != null)
+            {
+                var parentTask = AllTasks.FirstOrDefault(x => x.Id == task.IdParentTask);
+                task.IdParentTask = null;
+                await tasksService.Patch(task.Id, new TaskUpdate
+                {
+                    IdSection = task.IdSection,
+                    IdProgressSection = task.IdProgressSection,
+                    IdUserCreated = task.IdUserCreated,
+                    Title = task.Title,
+                    IdUserAssigned = task.IdUserAssigned,
+                    IdParentTask = task.IdParentTask,
+                    IdPriority = task.IdPriority,
+                    Description = task.Description,
+                    Progress = task.Progress,
+                    LimitDate = task.LimitDate,
+                    CompletionDate = task.CompletionDate,
+                    Finished = task.Finished,
+                    IsParent = false
+                });
+
+                var isParent = AllTasks.Any(x => x.IdParentTask == task.Id);
+
+                await tasksService.Patch(parentTask.Id, new TaskUpdate
+                {
+                    IdSection = parentTask.IdSection,
+                    IdProgressSection = parentTask.IdProgressSection,
+                    IdUserCreated = parentTask.IdUserCreated,
+                    Title = parentTask.Title,
+                    IdUserAssigned = parentTask.IdUserAssigned,
+                    IdParentTask = parentTask.IdParentTask,
+                    IdPriority = parentTask.IdPriority,
+                    Description = parentTask.Description,
+                    Progress = parentTask.Progress,
+                    LimitDate = parentTask.LimitDate,
+                    CompletionDate = parentTask.CompletionDate,
+                    Finished = parentTask.Finished,
+                    IsParent = isParent
+                });
+            }
+            
+            await LoadData();
+        }
     }
 
     [RelayCommand]
@@ -419,6 +473,7 @@ public partial class TaskBoardPageModel : ObservableObject
         TaskDependencies = new ObservableCollection<TaskDependency>(currentDependencies);
 
         AppUser? userAssigned;
+        ProjectTask? parentTask;
 
         if (task.UserAssigned != null)
         {
@@ -426,6 +481,15 @@ public partial class TaskBoardPageModel : ObservableObject
         } else
         {
             userAssigned = null;
+        }
+
+        if (task.IdParentTask != null)
+        {
+            parentTask = await tasksService.GetById((int)task.IdParentTask);
+        }
+        else
+        {
+            parentTask = null;
         }
 
         EditingTaskData = new ProjectTask
@@ -447,7 +511,8 @@ public partial class TaskBoardPageModel : ObservableObject
             Finished = task.Finished,
             IsParent = task.IsParent,
             Priority = task.Priority,
-            UserAssigned = userAssigned
+            UserAssigned = userAssigned,
+            Parent = parentTask
         };
         
 
@@ -511,6 +576,7 @@ public partial class TaskBoardPageModel : ObservableObject
                 }
                 else
                 {
+                    IsLoading = true;
                     var dependency = new TaskDependencyCreate
                     {
                         IdTask = EditingTaskData.Id,
@@ -525,8 +591,7 @@ public partial class TaskBoardPageModel : ObservableObject
                     taskDependencies.Add(returnTaskDependency);
                     TaskDependencies.Clear();
                     TaskDependencies = new ObservableCollection<TaskDependency>(taskDependencies);
-
-                    IsLoading = true;
+                    
                     await LoadData();
                     IsLoading = false;
                 }
@@ -544,8 +609,7 @@ public partial class TaskBoardPageModel : ObservableObject
             {
                 IsLoading = true;
                 await taskDependenciesService.Delete(SelectedDependency.Id);
-                var taskDependencies = TaskDependencies.ToList();
-                taskDependencies.Remove(taskDependency);
+                var taskDependencies = await taskDependenciesService.GetAllTaskDependenciesByTask(EditingTaskData.Id);
                 TaskDependencies.Clear();
                 TaskDependencies = new ObservableCollection<TaskDependency>(taskDependencies);
                 SelectedDependency = null;
@@ -664,6 +728,8 @@ public partial class TaskBoardPageModel : ObservableObject
             await tasksService.Patch(EditingTaskData.Id, taskUpdate);
 
             await LoadData();
+            EditingTaskData = null;
+            IsEditingTask = false;
             IsLoading = false;
         }
     }
@@ -685,6 +751,55 @@ public partial class TaskBoardPageModel : ObservableObject
             taskSectionsService.Patch(EditingTaskSectionData.Id, taskSectionUpdate);
             await LoadData();
             IsLoading = false;
+        }
+    }
+
+    [RelayCommand]
+    private async void DeleteTaskSection(TaskSection taskSection)
+    {
+        if (taskSection != null)
+        {
+            var result = await Application.Current.MainPage.DisplayAlert("Confirm", "Are you sure you want to delete this section?", "Yes", "No");
+            if (result)
+            {
+                IsLoading = true;
+
+                if (taskSection.Order < TaskSections.Count)
+                {
+                    var nextSections = TaskSections.Where(x => x.Order > taskSection.Order).ToList();
+                    foreach (var section in nextSections)
+                    {
+                        section.Order--;
+                        await taskSectionsService.Patch(section.Id, new TaskSectionUpdate
+                        {
+                            IdBoard = section.IdBoard,
+                            IdDefaultProgress = section.IdDefaultProgress,
+                            Title = section.Title,
+                            Order = section.Order
+                        });
+                    }
+                }
+
+                await taskSectionsService.Delete(taskSection.Id);
+                await LoadData();
+                IsLoading = false;
+            }
+        }
+    }
+
+    [RelayCommand]
+    private async void DeleteTask(ProjectTask task)
+    {
+        if (task != null)
+        {
+            var result = await Application.Current.MainPage.DisplayAlert("Confirm", "Are you sure you want to delete this task?", "Yes", "No");
+            if (result)
+            {
+                IsLoading = true;
+                await tasksService.Delete(task.Id);
+                await LoadData();
+                IsLoading = false;
+            }
         }
     }
 

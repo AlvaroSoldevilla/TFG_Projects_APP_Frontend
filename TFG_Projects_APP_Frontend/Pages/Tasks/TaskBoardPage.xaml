@@ -28,7 +28,7 @@
                 HorizontalOptions="Start"
                 Text="Create Task Section"
                 VerticalOptions="Start"
-                WidthRequest="150" />
+                WidthRequest="200" />
             <ActivityIndicator
                 HeightRequest="50"
                 HorizontalOptions="Center"
@@ -71,6 +71,10 @@
                                     CommandParameter="{Binding .}"
                                     Text="Edit" />
                                 <Button
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=DeleteTaskSectionCommand}"
+                                    CommandParameter="{Binding .}"
+                                    Text="Delete" />
+                                <Button
                                     Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=TaskCreateCommand}"
                                     CommandParameter="{Binding .}"
                                     Text="Create Task" />
@@ -94,6 +98,10 @@
                                                             Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=EditTaskCommand}"
                                                             CommandParameter="{Binding .}"
                                                             Text="Edit Task" />
+                                                        <Button
+                                                            Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=DeleteTaskCommand}"
+                                                            CommandParameter="{Binding .}"
+                                                            Text="Delete Task" />
                                                     </StackLayout>
                                                 </Border>
                                             </ViewCell>
@@ -152,6 +160,10 @@
                             ItemDisplayBinding="{Binding Title}"
                             ItemsSource="{Binding PossibleParents}"
                             SelectedItem="{Binding EditingTaskData.Parent}" />
+                        <Button
+                            Command="{Binding RemoveParentCommand}"
+                            IsVisible="{Binding EditingTaskData.IsParent, Converter={StaticResource InvertedBoolConverter}}"
+                            Text="Remove Parent" />
                         <Label FontSize="20" Text="Limit date:" />
                         <DatePicker Date="{Binding EditingTaskData.LimitDate}" Format="dd/MM/yyyy" />
 

@@ -37,7 +37,8 @@ public class TasksService(RestClient restClient) : ITasksService
                 CreationDate = task.CreationDate,
                 LimitDate = task.LimitDate,
                 CompletionDate = task.CompletionDate,
-                Finished = task.Finished
+                Finished = task.Finished,
+                IsParent = task.IsParent
             };
         }).ToList());
     }
@@ -63,7 +64,8 @@ public class TasksService(RestClient restClient) : ITasksService
                 CreationDate = task.CreationDate,
                 LimitDate = task.LimitDate,
                 CompletionDate = task.CompletionDate,
-                Finished = task.Finished
+                Finished = task.Finished,
+                IsParent = task.IsParent
             };
         }).ToList());
     }
@@ -89,7 +91,8 @@ public class TasksService(RestClient restClient) : ITasksService
                 CreationDate = task.CreationDate,
                 LimitDate = task.LimitDate,
                 CompletionDate = task.CompletionDate,
-                Finished = task.Finished
+                Finished = task.Finished,
+                IsParent = task.IsParent
             };
         }).ToList());
     }
@@ -113,7 +116,8 @@ public class TasksService(RestClient restClient) : ITasksService
             CreationDate = task.CreationDate,
             LimitDate = task.LimitDate,
             CompletionDate = task.CompletionDate,
-            Finished = task.Finished
+            Finished = task.Finished,
+            IsParent = task.IsParent
         };
     }
 
@@ -167,7 +171,8 @@ public class TasksService(RestClient restClient) : ITasksService
             CreationDate = task.CreationDate,
             LimitDate = task.LimitDate,
             CompletionDate = task.CompletionDate,
-            Finished = task.Finished
+            Finished = task.Finished,
+            IsParent = task.IsParent
         };
     }
 }

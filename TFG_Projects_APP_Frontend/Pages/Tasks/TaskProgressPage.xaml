@@ -6,14 +6,43 @@
     xmlns:dtos="clr-namespace:TFG_Projects_APP_Frontend.Entities.Dtos.Users"
     xmlns:models="clr-namespace:TFG_Projects_APP_Frontend.Entities.Models"
     xmlns:pageModels="clr-namespace:TFG_Projects_APP_Frontend.PageModels"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     Title="TaskProgressPage"
     x:DataType="pageModels:Tasks.TaskProgressPageModel"
     NavigationPage.HasNavigationBar="False"
     Shell.NavBarIsVisible="False">
-    <VerticalStackLayout>
-        <Button Command="{Binding CreateTaskProgressCommand}" Text="Create Progress Section" />
-        <StackLayout Orientation="Horizontal" Spacing="20">
-            <CollectionView ItemsSource="{Binding TaskProgresses}">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <Grid Padding="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <StackLayout Grid.Row="0" Orientation="Horizontal">
+            <Button
+                Command="{Binding CreateTaskProgressCommand}"
+                HeightRequest="40"
+                HorizontalOptions="Start"
+                Text="Create Progress Section"
+                VerticalOptions="Start"
+                WidthRequest="200" />
+            <ActivityIndicator
+                HeightRequest="50"
+                HorizontalOptions="Center"
+                IsRunning="{Binding IsLoading}"
+                IsVisible="{Binding IsLoading}"
+                VerticalOptions="Center"
+                WidthRequest="50" />
+        </StackLayout>
+        <StackLayout
+            Grid.Row="1"
+            Padding="5"
+            Orientation="Horizontal"
+            Spacing="20">
+            <CollectionView HorizontalOptions="StartAndExpand" ItemsSource="{Binding TaskProgresses}">
                 <CollectionView.ItemsLayout>
                     <GridItemsLayout Orientation="Horizontal" Span="1" />
                 </CollectionView.ItemsLayout>
@@ -21,17 +50,25 @@
                     <DataTemplate x:DataType="models:TaskProgress">
                         <Border Padding="5">
                             <StackLayout Spacing="5">
-                                <StackLayout Orientation="Horizontal">
+                                <StackLayout Orientation="Horizontal" Spacing="5">
                                     <Button
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=MoveSectionLeftCommand}"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=MoveProgressLeftCommand}"
                                         CommandParameter="{Binding .}"
                                         Text="&lt;" />
                                     <Label Text="{Binding Title}" />
                                     <Button
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=MoveSectionRightCommand}"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=MoveProgressRightCommand}"
                                         CommandParameter="{Binding .}"
                                         Text="&gt;" />
                                 </StackLayout>
+                                <Button
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=EditTaskProgressCommand}"
+                                    CommandParameter="{Binding .}"
+                                    Text="Edit" />
+                                <Button
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=DeleteTaskProgressCommand}"
+                                    CommandParameter="{Binding .}"
+                                    Text="Delete" />
                                 <Button
                                     Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=TaskCreateCommand}"
                                     CommandParameter="{Binding .}"
@@ -44,9 +81,22 @@
                                                     Margin="5"
                                                     Padding="10"
                                                     BackgroundColor="#f0f0f0">
-                                                    <StackLayout>
+                                                    <StackLayout Spacing="5">
                                                         <Label Text="{Binding Title}" />
                                                         <Label Text="{Binding Description}" />
+                                                        <Label Text="{Binding Progress, StringFormat='Progress: {0:F0}'}" />
+                                                        <Label Text="{Binding LimitDate, StringFormat='Limit Date: {0:dd/MM/yyyy}'}" />
+                                                        <Label Text="{Binding UserAssigned.Username, StringFormat='Assigned to: {0}'}" />
+                                                        <Label Text="{Binding Priority.Name, StringFormat='Priority: {0}'}" />
+                                                        <Label Text="{Binding CompletionDate}" />
+                                                        <Button
+                                                            Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=EditTaskCommand}"
+                                                            CommandParameter="{Binding .}"
+                                                            Text="Edit Task" />
+                                                        <Button
+                                                            Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=DeleteTaskCommand}"
+                                                            CommandParameter="{Binding .}"
+                                                            Text="Delete Task" />
                                                     </StackLayout>
                                                 </Border>
                                             </ViewCell>
@@ -59,13 +109,105 @@
                 </CollectionView.ItemTemplate>
             </CollectionView>
 
+            <VerticalStackLayout IsVisible="{Binding IsEditingTaskProgress}" Spacing="5">
+                <StackLayout Orientation="Horizontal" Spacing="5">
+                    <Label FontSize="30" Text="Edit Progress Section" />
+                    <Button Command="{Binding CloseEditingtTaskProgressCommand}" Text="X" />
+                </StackLayout>
+
+                <Label FontSize="20" Text="Title:" />
+                <Entry Placeholder="Enter section title" Text="{Binding EditingTaskProgressData.Title}" />
+                <Label FontSize="20" Text="Modifies Value:" />
+                <Switch IsToggled="{Binding EditingTaskProgressData.ModifiesProgress}" />
+                <Label Text="{Binding TaskProgressValue, StringFormat='Progress: {0:F0}'}" />
+                <Slider
+                    Maximum="100"
+                    Minimum="0"
+                    Value="{Binding TaskProgressValue}" />
+                <Button Command="{Binding SaveTaskProgressChangesCommand}" Text="Save Changes" />
+            </VerticalStackLayout>
+
+            <Grid IsVisible="{Binding IsEditingTask}" VerticalOptions="FillAndExpand">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <StackLayout
+                    Grid.Row="0"
+                    Orientation="Horizontal"
+                    Spacing="5">
+                    <Label FontSize="30" Text="Edit task" />
+                    <Button Command="{Binding CloseEditingtTaskCommand}" Text="X" />
+                </StackLayout>
+                <ScrollView Grid.Row="1" VerticalOptions="FillAndExpand">
+                    <VerticalStackLayout Padding="10" Spacing="5">
+                        <Label FontSize="20" Text="Title:" />
+                        <Entry Placeholder="Enter task title" Text="{Binding EditingTaskData.Title}" />
+                        <Label FontSize="20" Text="Description:" />
+                        <Editor
+                            HeightRequest="100"
+                            Placeholder="Enter task description"
+                            Text="{Binding EditingTaskData.Description}" />
+                        <Label Text="{Binding ProgressValue, StringFormat='Progress: {0:F0}'}" />
+                        <Slider
+                            Maximum="100"
+                            Minimum="0"
+                            Value="{Binding ProgressValue}" />
+                        <Label FontSize="20" Text="Limit date:" />
+                        <DatePicker Date="{Binding EditingTaskData.LimitDate}" Format="dd/MM/yyyy" />
+
+                        <Label FontSize="20" Text="Assigned To:" />
+                        <Picker
+                            Title="Assigned to:"
+                            ItemDisplayBinding="{Binding Username}"
+                            ItemsSource="{Binding Users}"
+                            SelectedItem="{Binding EditingTaskData.UserAssigned}" />
+                        <Picker
+                            Title="Priority"
+                            ItemDisplayBinding="{Binding Name}"
+                            ItemsSource="{Binding Priorities}"
+                            SelectedItem="{Binding EditingTaskData.Priority}" />
+                        <Label FontSize="20" Text="Add dependency:" />
+                        <StackLayout Orientation="Horizontal">
+                            <Picker
+                                ItemDisplayBinding="{Binding Title}"
+                                ItemsSource="{Binding PossibleDependencies}"
+                                SelectedItem="{Binding DependencyTaskSelected}" />
+                            <Button Command="{Binding AddDependencyCommand}" Text="Add" />
+                        </StackLayout>
+
+
+                        <CollectionView
+                            ItemsSource="{Binding TaskDependencies}"
+                            SelectedItem="{Binding SelectedDependency}"
+                            SelectionChangedCommand="{Binding DependencySelectedCommand}"
+                            SelectionMode="Single">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="models:TaskDependency">
+                                    <Border Padding="5">
+                                        <StackLayout Orientation="Horizontal" Spacing="10">
+                                            <Label Text="{Binding DisplayName}" />
+                                        </StackLayout>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                        <VerticalStackLayout IsVisible="{Binding IsEditingTaskDependency}">
+                            <Label Text="{Binding UnlockAtValue, StringFormat='Unlock at: {0:F0}'}" />
+                            <Slider
+                                Maximum="100"
+                                Minimum="0"
+                                Value="{Binding UnlockAtValue}" />
+                            <Button Command="{Binding SaveTaskDependencyChangesCommand}" Text="Save Dependency" />
+                            <Button Command="{Binding RemoveDependencyCommand}" Text="Remove Dependency" />
+                        </VerticalStackLayout>
+
+
+                        <Button Command="{Binding SaveTaskChangesCommand}" Text="Save Task" />
+                    </VerticalStackLayout>
+                </ScrollView>
+            </Grid>
+
         </StackLayout>
-        <ActivityIndicator
-            HeightRequest="50"
-            HorizontalOptions="Center"
-            IsRunning="{Binding IsLoading}"
-            IsVisible="{Binding IsLoading}"
-            VerticalOptions="Center"
-            WidthRequest="50" />
-    </VerticalStackLayout>
+    </Grid>
 </ContentPage>
