@@ -5,5 +5,5 @@ public class ProjectType
     public int Id { get; set; }
     public string Name { get; set; } = String.Empty;
 
-    public List<Component>? Components { get; set; }
+    public List<ConceptComponent>? Components { get; set; }
 }

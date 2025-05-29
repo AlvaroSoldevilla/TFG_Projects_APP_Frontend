@@ -2,7 +2,7 @@
 
 namespace TFG_Projects_APP_Frontend.Services.ComponentsService;
 
-public interface IComponentsService : IService<Component>
+public interface IComponentsService : IService<ConceptComponent>
 {
-    Task<List<Component>> GetAllComponentsByBoard(int id);
+    Task<List<ConceptComponent>> GetAllComponentsByBoard(int id);
 }

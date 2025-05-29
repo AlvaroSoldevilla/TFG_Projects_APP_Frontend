@@ -10,6 +10,6 @@ public class ConceptBoard
     public Concept Concept { get; set; }
     public ConceptBoard? Parent { get; set; }
     public List<ConceptBoard>? Children { get; set; }
-    public List<Component>? Components { get; set; }
+    public List<ConceptComponent>? Components { get; set; }
 
 }

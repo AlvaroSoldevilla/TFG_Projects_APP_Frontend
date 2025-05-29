@@ -67,6 +67,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Components\ConceptComponents\NoteComponent.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Components\ConceptComponents\ConceptBoardComponent.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Components\CreateModal\ObjectBuilder.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -91,6 +97,16 @@
 	  <MauiXaml Update="Pages\UserSettingsPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Components\TaskComponents\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Components\ConceptComponents\ConceptBoardComponent.xaml.cs">
+	    <DependentUpon>ConceptBoardComponent.xaml</DependentUpon>
+	  </Compile>
 	</ItemGroup>
 
 </Project>

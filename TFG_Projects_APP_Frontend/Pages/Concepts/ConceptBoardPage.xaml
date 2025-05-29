@@ -1,58 +1,78 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:models="clr-namespace:TFG_Projects_APP_Frontend.Entities.Models"
-             xmlns:dtos="clr-namespace:TFG_Projects_APP_Frontend.Entities.Dtos.Users"
-             xmlns:pageModels="clr-namespace:TFG_Projects_APP_Frontend.PageModels"
-             x:DataType="pageModels:Concepts.ConceptBoardPageModel"
-             x:Class="TFG_Projects_APP_Frontend.Pages.Concepts.ConceptBoardPage"
-             Title="ConceptBoardPage"
-             Shell.NavBarIsVisible="False"
-             NavigationPage.HasNavigationBar="False">
-    <VerticalStackLayout>
-        <StackLayout Orientation="Horizontal">
-            <StackLayout Orientation="Vertical" >
-                <CollectionView ItemsSource="{Binding Types}" SelectionMode="Single">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="models:ProjectType">
-                            <Border Padding="5">
-                                <Button
-                                    Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Concepts.ConceptBoardPageModel}}, Path=TypeSelectedCommand}"
-                                    CommandParameter="{Binding .}"
-                                    Text="{Binding Name}" />
-                            </Border>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-                <ActivityIndicator
-                    HeightRequest="50"
-                    HorizontalOptions="Center"
-                    IsRunning="{Binding IsLoading}"
-                    IsVisible="{Binding IsLoading}"
-                    VerticalOptions="Center"
-                    WidthRequest="50" />
-            </StackLayout>
-            <StackLayout Orientation="Vertical">
-                <CollectionView ItemsSource="{Binding Components}" SelectionMode="Single">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="models:Component">
-                            <Border Padding="5">
-                                <StackLayout>
-                                    <Label Text="{Binding Title}" />
-                                    <Label Text="{Binding Content}" />
-                                </StackLayout>
-                            </Border>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-                <ActivityIndicator
-                    HeightRequest="50"
-                    HorizontalOptions="Center"
-                    IsRunning="{Binding IsLoading}"
-                    IsVisible="{Binding IsLoading}"
-                    VerticalOptions="Center"
-                    WidthRequest="50" />
-            </StackLayout>
+<ContentPage
+    x:Class="TFG_Projects_APP_Frontend.Pages.Concepts.ConceptBoardPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:dtos="clr-namespace:TFG_Projects_APP_Frontend.Entities.Dtos.Users"
+    xmlns:models="clr-namespace:TFG_Projects_APP_Frontend.Entities.Models"
+    xmlns:pageModels="clr-namespace:TFG_Projects_APP_Frontend.PageModels"
+    Title="ConceptBoardPage"
+    x:DataType="pageModels:Concepts.ConceptBoardPageModel"
+    NavigationPage.HasNavigationBar="False"
+    Shell.NavBarIsVisible="False">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+
+        <StackLayout Grid.Column="0" Orientation="Vertical">
+            <CollectionView ItemsSource="{Binding Types}" SelectionMode="Single">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:ProjectType">
+                        <Border Padding="5">
+                            <Button
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Concepts.ConceptBoardPageModel}}, Path=TypeSelectedCommand}"
+                                CommandParameter="{Binding .}"
+                                Text="{Binding Name}" />
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            <ActivityIndicator
+                HeightRequest="50"
+                HorizontalOptions="Center"
+                IsRunning="{Binding IsLoading}"
+                IsVisible="{Binding IsLoading}"
+                VerticalOptions="Center"
+                WidthRequest="50" />
         </StackLayout>
-    </VerticalStackLayout>
+        <Grid Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <AbsoluteLayout
+                x:Name="ComponentCanvas"
+                Grid.Column="0"
+                BackgroundColor="LightGray"
+                HorizontalOptions="FillAndExpand"
+                VerticalOptions="FillAndExpand" />
+            <VerticalStackLayout
+                Grid.Column="1"
+                IsVisible="{Binding IsEditingComponent}"
+                Spacing="5">
+                <StackLayout Orientation="Horizontal" Spacing="5">
+                    <Label FontSize="30" Text="Edit Component" />
+                    <Button Command="{Binding CloseEditingComponentCommand}" Text="X" />
+                </StackLayout>
+
+                <Label FontSize="20" Text="Title:" />
+                <Entry Placeholder="Enter section title" Text="{Binding EditComponentData.Title}" />
+                <Label FontSize="20" Text="Content:" />
+                <Editor IsVisible="{Binding IsEditingNote}" Text="{Binding EditComponentData.Content}" />
+
+                <Button Command="{Binding DeleteComponentCommand}" Text="Delete" />
+                <Button Command="{Binding SaveComponentCommand}" Text="Save" />
+            </VerticalStackLayout>
+        </Grid>
+
+
+    </Grid>
 </ContentPage>

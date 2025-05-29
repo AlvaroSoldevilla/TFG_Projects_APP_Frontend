@@ -15,11 +15,11 @@ public class ComponentsService(RestClient restClient) : IComponentsService
         return result;
     }
 
-    public async Task<List<Component>> GetAll()
+    public async Task<List<ConceptComponent>> GetAll()
     {
         HttpResponseMessage response = await restClient.GetAllAsync(route);
         var components = await response.Content.ReadFromJsonAsync<List<ComponentRead>>(restClient._options);
-        return new List<Component>(components.Select(component => new Component
+        return new List<ConceptComponent>(components.Select(component => new ConceptComponent
         {
             Id = component.Id,
             Title = component.Title,
@@ -32,11 +32,11 @@ public class ComponentsService(RestClient restClient) : IComponentsService
         }).ToList());
     }
 
-    public async Task<List<Component>> GetAllComponentsByBoard(int id)
+    public async Task<List<ConceptComponent>> GetAllComponentsByBoard(int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/board/{id}");
         var components = await response.Content.ReadFromJsonAsync<List<ComponentRead>>(restClient._options);
-        return new List<Component>(components.Select(component => new Component
+        return new List<ConceptComponent>(components.Select(component => new ConceptComponent
         {
             Id = component.Id,
             Title = component.Title,
@@ -49,11 +49,11 @@ public class ComponentsService(RestClient restClient) : IComponentsService
         }).ToList());
     }
 
-    public async Task<Component> GetById(int id)
+    public async Task<ConceptComponent> GetById(int id)
     {
         HttpResponseMessage response = await restClient.GetByIdAsync($"{route}", id);
         var component = await response.Content.ReadFromJsonAsync<ComponentRead>(restClient._options);
-        return new Component
+        return new ConceptComponent
         {
             Id = component.Id,
             Title = component.Title,
@@ -73,11 +73,11 @@ public class ComponentsService(RestClient restClient) : IComponentsService
         return result;
     }
 
-    public async Task<Component> Post(object data)
+    public async Task<ConceptComponent> Post(object data)
     {
         HttpResponseMessage response = await restClient.PostAsync($"{route}", data);
         var component = await response.Content.ReadFromJsonAsync<ComponentRead>(restClient._options);
-        return new Component
+        return new ConceptComponent
         {
             Id = component.Id,
             Title = component.Title,
