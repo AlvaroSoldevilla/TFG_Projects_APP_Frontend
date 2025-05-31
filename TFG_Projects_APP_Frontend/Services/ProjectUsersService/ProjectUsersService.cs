@@ -11,6 +11,10 @@ public class ProjectUsersService(RestClient restClient) : IProjectUsersService
     public async Task<string> Delete(int id)
     {
         HttpResponseMessage response = await restClient.DeleteAsync(route, id);
+        if (response == null)
+        {
+            return null;
+        }
         var result = await response.Content.ReadAsStringAsync();
         return result;
     }
@@ -18,6 +22,10 @@ public class ProjectUsersService(RestClient restClient) : IProjectUsersService
     public async Task<List<ProjectUser>> GetAll()
     {
         HttpResponseMessage response = await restClient.GetAllAsync(route);
+        if (response == null)
+        {
+            return null;
+        }
         var projectUsers = await response.Content.ReadFromJsonAsync<List<ProjectUserRead>>(restClient._options);
         return new List<ProjectUser>(projectUsers.Select(projectUser =>
         {
@@ -34,6 +42,10 @@ public class ProjectUsersService(RestClient restClient) : IProjectUsersService
     public async Task<List<ProjectUser>> GetAllProjectUsersByProject(int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/project/{id}");
+        if (response == null)
+        {
+            return null;
+        }
         var projectUsers = await response.Content.ReadFromJsonAsync<List<ProjectUserRead>>(restClient._options);
         return new List<ProjectUser>(projectUsers.Select(projectUser =>
         {
@@ -50,6 +62,10 @@ public class ProjectUsersService(RestClient restClient) : IProjectUsersService
     public async Task<List<ProjectUser>> GetAllProjectUsersByUser(int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/user/{id}");
+        if (response == null)
+        {
+            return null;
+        }
         var projectUsers = await response.Content.ReadFromJsonAsync<List<ProjectUserRead>>(restClient._options);
         return new List<ProjectUser>(projectUsers.Select(projectUser =>
         {
@@ -66,6 +82,10 @@ public class ProjectUsersService(RestClient restClient) : IProjectUsersService
     public async Task<ProjectUser> GetById(int id)
     {
         HttpResponseMessage response = await restClient.GetByIdAsync(route, id);
+        if (response == null)
+        {
+            return null;
+        }
         var projectUser = await response.Content.ReadFromJsonAsync<ProjectUserRead>(restClient._options);
         return new ProjectUser
         {
@@ -79,6 +99,10 @@ public class ProjectUsersService(RestClient restClient) : IProjectUsersService
     public async Task<ProjectUser> GetProjectUserByUserAndProject(int userId, int projectId)
     {
         HttpResponseMessage response = await restClient.GetByIdAsync($"{route}/project/{projectId}/user", userId);
+        if (response == null)
+        {
+            return null;
+        }
         var projectUser = await response.Content.ReadFromJsonAsync<ProjectUserRead>(restClient._options);
         return new ProjectUser
         {
@@ -92,6 +116,10 @@ public class ProjectUsersService(RestClient restClient) : IProjectUsersService
     public async Task<string> Patch(int id, object data)
     {
         HttpResponseMessage response = await restClient.PatchAsync(route, id, data);
+        if (response == null)
+        {
+            return null;
+        }
         var result = await response.Content.ReadAsStringAsync();
         return result;
     }
@@ -99,6 +127,10 @@ public class ProjectUsersService(RestClient restClient) : IProjectUsersService
     public async Task<ProjectUser> Post(object data)
     {
         HttpResponseMessage response = await restClient.PostAsync(route, data);
+        if (response == null)
+        {
+            return null;
+        }
         var projectUser = await response.Content.ReadFromJsonAsync<ProjectUserRead>(restClient._options);
         return new ProjectUser
         {

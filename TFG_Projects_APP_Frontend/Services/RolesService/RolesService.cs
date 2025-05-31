@@ -11,6 +11,10 @@ public class RolesService(RestClient restClient) : IRolesService
     public async Task<string> Delete(int id)
     {
         HttpResponseMessage response = await restClient.DeleteAsync(route, id);
+        if (response == null)
+        {
+            return null;
+        }
         var result = await response.Content.ReadAsStringAsync();
         return result;
     }
@@ -18,6 +22,10 @@ public class RolesService(RestClient restClient) : IRolesService
     public async Task<List<Role>> GetAll()
     {
         HttpResponseMessage response = await restClient.GetAllAsync(route);
+        if (response == null)
+        {
+            return null;
+        }
         var roles = await response.Content.ReadFromJsonAsync<List<RoleRead>>(restClient._options);
         return new List<Role>(roles.Select(role =>
         {
@@ -33,6 +41,10 @@ public class RolesService(RestClient restClient) : IRolesService
     public async Task<Role> GetById(int id)
     {
         HttpResponseMessage response = await restClient.GetByIdAsync(route, id);
+        if (response == null)
+        {
+            return null;
+        }
         var role = await response.Content.ReadFromJsonAsync<RoleRead>(restClient._options);
         return new Role
         {
@@ -45,6 +57,10 @@ public class RolesService(RestClient restClient) : IRolesService
     public async Task<string> Patch(int id, object data)
     {
         HttpResponseMessage response = await restClient.PatchAsync(route, id, data);
+        if (response == null)
+        {
+            return null;
+        }
         var result = await response.Content.ReadAsStringAsync();
         return result;
     }
@@ -52,6 +68,10 @@ public class RolesService(RestClient restClient) : IRolesService
     public async Task<Role> Post(object data)
     {
         HttpResponseMessage response = await restClient.PostAsync(route, data);
+        if (response == null)
+        {
+            return null;
+        }
         var role = await response.Content.ReadFromJsonAsync<RoleRead>(restClient._options);
         return new Role
         {

@@ -208,6 +208,12 @@ public partial class TaskProgressPageModel : ObservableObject
 
         if (taskProgress != null && !string.IsNullOrEmpty(taskProgress.Name))
         {
+            if (taskProgress.ProgressValue < 0 || taskProgress.ProgressValue > 100)
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", "Progress value must be between 0 and 100", "OK");
+                return;
+            }
+
             var taskProgressCreate = new TaskProgress
             {
                 IdSection = TaskSection.Id,
@@ -373,103 +379,141 @@ public partial class TaskProgressPageModel : ObservableObject
     [RelayCommand]
     public async void EditTaskProgress(TaskProgress taskProgress)
     {
-        ProgressValue = taskProgress.ProgressValue ?? 0;
-        EditingTaskData = null;
-        IsEditingTask = false;
-
-        IsEditingTaskProgress = true;
-        EditingTaskProgressData = new TaskProgress
+        bool confirmed = true;
+        if (EditingTaskData != null)
         {
-            Id = taskProgress.Id,
-            IdSection = taskProgress.IdSection,
-            Title = taskProgress.Title,
-            ModifiesProgress = taskProgress.ModifiesProgress,
-            ProgressValue = taskProgress.ProgressValue,
-            Order = taskProgress.Order
-        };
+            if (SelectedTask != null)
+            {
+                if (HasChangedTaskData(SelectedTask))
+                {
+                    confirmed = await Application.Current.MainPage.DisplayAlert(
+                    "Change edit",
+                    "You have unsaved changes, are you sure you want to edit another task?",
+                    "Accept",
+                    "Cancel"
+                    );
+                }
+            }
+        }
+        if (confirmed)
+        {
+            TaskProgressValue = taskProgress.ProgressValue ?? 0;
+            EditingTaskData = null;
+            IsEditingTask = false;
+
+            IsEditingTaskProgress = true;
+            EditingTaskProgressData = new TaskProgress
+            {
+                Id = taskProgress.Id,
+                IdSection = taskProgress.IdSection,
+                Title = taskProgress.Title,
+                ModifiesProgress = taskProgress.ModifiesProgress,
+                ProgressValue = taskProgress.ProgressValue,
+                Order = taskProgress.Order
+            };
+        }
     }
 
     [RelayCommand]
     public async Task EditTask(ProjectTask task)
     {
-        EditingTaskProgressData = null;
-        IsEditingTaskProgress = false;
-
-        var returnUsers = await usersService.GetUsersByProject(NavigationContext.CurrentProject.Id);
-        Users = new ObservableCollection<AppUser>(returnUsers);
-
-        List<ProjectTask> tasks = new();
-        List<ProjectTask> parentCandidates = new();
-        List<TaskDependency> dependencies = new();
-
-
-        foreach (var tasprogress in TaskProgresses)
+        bool confirmed = true;
+        if (EditingTaskData != null)
         {
-            if (tasprogress.Tasks != null && tasprogress.Tasks.Count != 0)
+            if (SelectedTask != null)
             {
-                foreach (var t in tasprogress.Tasks)
+                if (HasChangedTaskData(SelectedTask))
                 {
-                    if (t.Id != task.Id)
-                    {
-                        tasks.Add(t);
-                    }
+                    confirmed = await Application.Current.MainPage.DisplayAlert(
+                    "Change edit",
+                    "You have unsaved changes, are you sure you want to edit another task?",
+                    "Accept",
+                    "Cancel"
+                    );
                 }
             }
         }
-
-        var currenttaskProgress = TaskProgresses.FirstOrDefault(x => x.Id == task.IdProgressSection);
-
-        var currentDependencies = await taskDependenciesService.GetAllTaskDependenciesByTask(task.Id);
-
-        foreach (var dependency in currentDependencies)
+        if (confirmed)
         {
-            var dependsOnTask = await tasksService.GetById(dependency.IdDependsOn);
+            EditingTaskProgressData = null;
+            IsEditingTaskProgress = false;
 
-            dependency.DisplayName = dependsOnTask.Title + "->" + task.Title;
+            var returnUsers = await usersService.GetUsersByProject(NavigationContext.CurrentProject.Id);
+            Users = new ObservableCollection<AppUser>(returnUsers);
+
+            List<ProjectTask> tasks = new();
+            List<ProjectTask> parentCandidates = new();
+            List<TaskDependency> dependencies = new();
+
+
+            foreach (var tasprogress in TaskProgresses)
+            {
+                if (tasprogress.Tasks != null && tasprogress.Tasks.Count != 0)
+                {
+                    foreach (var t in tasprogress.Tasks)
+                    {
+                        if (t.Id != task.Id)
+                        {
+                            tasks.Add(t);
+                        }
+                    }
+                }
+            }
+
+            var currenttaskProgress = TaskProgresses.FirstOrDefault(x => x.Id == task.IdProgressSection);
+
+            var currentDependencies = await taskDependenciesService.GetAllTaskDependenciesByTask(task.Id);
+
+            foreach (var dependency in currentDependencies)
+            {
+                var dependsOnTask = await tasksService.GetById(dependency.IdDependsOn);
+
+                dependency.DisplayName = dependsOnTask.Title + "->" + task.Title;
+            }
+
+
+            PossibleDependencies = new ObservableCollection<ProjectTask>(tasks);
+            TaskDependencies = new ObservableCollection<TaskDependency>(currentDependencies);
+
+            AppUser? userAssigned;
+
+            if (task.UserAssigned != null)
+            {
+                userAssigned = await usersService.GetById(task.UserAssigned.Id);
+            }
+            else
+            {
+                userAssigned = null;
+            }
+
+            EditingTaskData = new ProjectTask
+            {
+                Id = task.Id,
+                IdSection = task.IdSection,
+                IdProgressSection = task.IdProgressSection,
+                IdUserAssigned = task.IdUserAssigned,
+                IdParentTask = task.IdParentTask,
+                IdUserCreated = task.IdUserCreated,
+                IdPriority = task.IdPriority,
+                Title = task.Title,
+                Description = task.Description,
+                Progress = task.Progress,
+                CreationDate = task.CreationDate,
+                LimitDate = task.LimitDate,
+                CompletionDate = task.CompletionDate,
+
+                Finished = task.Finished,
+                IsParent = task.IsParent,
+                Priority = task.Priority,
+                UserAssigned = userAssigned,
+            };
+
+
+            progressValue = EditingTaskData.Progress;
+
+            IsEditingTask = true;
+            SelectedTask = task;
         }
-
-
-        PossibleDependencies = new ObservableCollection<ProjectTask>(tasks);
-        TaskDependencies = new ObservableCollection<TaskDependency>(currentDependencies);
-
-        AppUser? userAssigned;
-
-        if (task.UserAssigned != null)
-        {
-            userAssigned = await usersService.GetById(task.UserAssigned.Id);
-        }
-        else
-        {
-            userAssigned = null;
-        }
-
-        EditingTaskData = new ProjectTask
-        {
-            Id = task.Id,
-            IdSection = task.IdSection,
-            IdProgressSection = task.IdProgressSection,
-            IdUserAssigned = task.IdUserAssigned,
-            IdParentTask = task.IdParentTask,
-            IdUserCreated = task.IdUserCreated,
-            IdPriority = task.IdPriority,
-            Title = task.Title,
-            Description = task.Description,
-            Progress = task.Progress,
-            CreationDate = task.CreationDate,
-            LimitDate = task.LimitDate,
-            CompletionDate = task.CompletionDate,
-
-            Finished = task.Finished,
-            IsParent = task.IsParent,
-            Priority = task.Priority,
-            UserAssigned = userAssigned,
-        };
-
-
-        progressValue = EditingTaskData.Progress;
-
-        IsEditingTask = true;
-        SelectedTask = task;
     }
 
     [RelayCommand]
@@ -607,8 +651,6 @@ public partial class TaskProgressPageModel : ObservableObject
             EditingTaskData.Progress = progressValue;
 
             int? idUserAsigned;
-            DateTime? limitDate;
-            DateTime? completionDate;
 
             if (EditingTaskData.Parent != null)
             {
@@ -618,6 +660,7 @@ public partial class TaskProgressPageModel : ObservableObject
                     var parentReturn = await tasksService.GetById((int)EditingTaskData.IdParentTask);
                     await tasksService.Patch(parentReturn.Id, new TaskUpdate
                     {
+                        Id = parentReturn.Id,
                         IdSection = parentReturn.IdSection,
                         IdProgressSection = parentReturn.IdProgressSection,
                         IdUserCreated = parentReturn.IdUserCreated,
@@ -644,22 +687,6 @@ public partial class TaskProgressPageModel : ObservableObject
                 idUserAsigned = EditingTaskData.UserAssigned.Id;
             }
 
-            if (EditingTaskData.CompletionDate != null && EditingTaskData.Progress < 100)
-            {
-                completionDate = null;
-                EditingTaskData.Finished = false;
-            }
-
-            if (EditingTaskData.CompletionDate == null && EditingTaskData.Progress == 100)
-            {
-                completionDate = DateTime.Now;
-                EditingTaskData.Finished = true;
-            }
-            else
-            {
-                completionDate = EditingTaskData.CompletionDate;
-            }
-
             var taskUpdate = new TaskUpdate
             {
                 IdSection = EditingTaskData.IdSection,
@@ -672,7 +699,7 @@ public partial class TaskProgressPageModel : ObservableObject
                 Description = EditingTaskData.Description,
                 Progress = EditingTaskData.Progress,
                 LimitDate = EditingTaskData.LimitDate,
-                CompletionDate = completionDate,
+                CompletionDate = EditingTaskData.CompletionDate,
                 Finished = EditingTaskData.Finished,
                 IsParent = EditingTaskData.IsParent
             };
@@ -771,6 +798,11 @@ public partial class TaskProgressPageModel : ObservableObject
                 IsLoading = false;
             }
         }
+
+        EditingTaskProgressData = null;
+        IsEditingTaskProgress = false;
+        EditingTaskData = null;
+        IsEditingTask = false;
     }
 
     [RelayCommand]
@@ -787,6 +819,9 @@ public partial class TaskProgressPageModel : ObservableObject
                 IsLoading = false;
             }
         }
+
+        EditingTaskData = null;
+        IsEditingTask = false;
     }
 
 }

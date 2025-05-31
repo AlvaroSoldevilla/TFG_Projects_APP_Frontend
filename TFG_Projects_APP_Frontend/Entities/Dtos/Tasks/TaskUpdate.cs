@@ -2,6 +2,7 @@
 
 internal class TaskUpdate
 {
+    public int? Id { get; set; }
     public int? IdSection { get; set; }
     public int? IdProgressSection { get; set; }
     public int? IdUserCreated { get; set; }

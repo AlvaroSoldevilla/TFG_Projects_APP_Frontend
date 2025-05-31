@@ -1,7 +1,5 @@
-using CommunityToolkit.Mvvm.ComponentModel;
 using System.Windows.Input;
 using TFG_Projects_APP_Frontend.Entities.Models;
-using static Android.Icu.Text.Transliterator;
 
 namespace TFG_Projects_APP_Frontend.Components.ConceptComponents;
 
@@ -45,6 +43,7 @@ public partial class ConceptBoardComponent : ContentView
 
     private Point _startOffset;
     private DateTime _lastTapTime;
+    private Point _position;
 
     public ConceptBoardComponent()
 	{

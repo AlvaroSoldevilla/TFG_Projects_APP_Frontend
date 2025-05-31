@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using TFG_Projects_APP_Frontend.Components.CreateModal;
 using TFG_Projects_APP_Frontend.Entities.Dtos.ConceptBoards;
 using TFG_Projects_APP_Frontend.Entities.Dtos.Concepts;
@@ -42,6 +43,8 @@ public partial class ProjectManagementPageModel : ObservableObject
     private readonly UserSession userSession;
 
     public Project Project { get; set; }
+
+    private bool _isLoadingData = false;
 
     [ObservableProperty]
     private bool _isLoadingConcepts;
@@ -163,6 +166,7 @@ public partial class ProjectManagementPageModel : ObservableObject
         SelectedTaskBoard = null;
         SelectedUser = null;
 
+        Debug.WriteLine("OnNavigatedTo called in ProjectManagementPageModel");
         await LoadData();
 
         IsLoadingConcepts = false;
@@ -172,6 +176,11 @@ public partial class ProjectManagementPageModel : ObservableObject
 
     private async Task LoadData()
     {
+        if (_isLoadingData)
+        {
+            return;
+        }
+        _isLoadingData = true;
         if (Project == null)
         {
             if (NavigationContext.CurrentProject == null)
@@ -226,6 +235,7 @@ public partial class ProjectManagementPageModel : ObservableObject
         {
             Permissions.Add(item);
         }
+        _isLoadingData = false;
     }
 
     [RelayCommand]
@@ -436,10 +446,9 @@ public partial class ProjectManagementPageModel : ObservableObject
     [RelayCommand]
     private async void AddUserToProject()
     {
+        IsLoadingUsers = true;
         var userFound = false;
 
-        var allUsers = await usersService.GetAll();
-        Allusers.Clear();
         if (!string.IsNullOrEmpty(AdduserEmail))
         {
             if (Users.Any(user => user.Email == AdduserEmail))
@@ -448,14 +457,16 @@ public partial class ProjectManagementPageModel : ObservableObject
                 return;
             } else
             {
-                if (Allusers.Any(user => user.Email == AdduserEmail))
+                var emailUser = await usersService.GetUserByEmail(AdduserEmail);
+                if (emailUser != null)
                 {
                     var projectUserCreate = new ProjectUserCreate
                     {
                         IdProject = Project.Id,
-                        IdUser = Allusers.FirstOrDefault(user => user.Email == AdduserEmail).Id,
+                        IdUser = emailUser.Id,
                         IdRole = 2
                     };
+                    projectUsersService.Post(projectUserCreate);
                     userFound = true;
                 }
 
@@ -477,6 +488,7 @@ public partial class ProjectManagementPageModel : ObservableObject
         {
             await Application.Current.MainPage.DisplayAlert("Error", "Input an email", "OK");
         }
+        IsLoadingUsers = false;
     }
 
     [RelayCommand]

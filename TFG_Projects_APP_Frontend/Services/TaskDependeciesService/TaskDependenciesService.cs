@@ -11,6 +11,10 @@ public class TaskDependenciesService(RestClient restClient) : ITaskDependenciesS
     public async Task<string> Delete(int id)
     {
         HttpResponseMessage response = await restClient.DeleteAsync(route, id);
+        if (response == null)
+        {
+            return null;
+        }
         var result = await response.Content.ReadAsStringAsync();
         return result;
     }
@@ -18,6 +22,10 @@ public class TaskDependenciesService(RestClient restClient) : ITaskDependenciesS
     public async Task<List<TaskDependency>> GetAll()
     {
         HttpResponseMessage response = await restClient.GetAllAsync(route);
+        if (response == null)
+        {
+            return null;
+        }
         var taskDependencies = await response.Content.ReadFromJsonAsync<List<TaskDependencyRead>>(restClient._options);
         return new List<TaskDependency>(taskDependencies.Select(taskDependency =>
         {
@@ -34,6 +42,10 @@ public class TaskDependenciesService(RestClient restClient) : ITaskDependenciesS
     public async Task<List<TaskDependency>> GetAllTaskDependenciesByTask( int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/task/{id}");
+        if (response == null)
+        {
+            return null;
+        }
         var taskDependencies = await response.Content.ReadFromJsonAsync<List<TaskDependencyRead>>(restClient._options);
         return new List<TaskDependency>(taskDependencies.Select(taskDependency =>
         {
@@ -50,6 +62,10 @@ public class TaskDependenciesService(RestClient restClient) : ITaskDependenciesS
     public async Task<TaskDependency> GetById(int id)
     {
         HttpResponseMessage response = await restClient.GetByIdAsync(route, id);
+        if (response == null)
+        {
+            return null;
+        }
         var taskDependency = await response.Content.ReadFromJsonAsync<TaskDependencyRead>(restClient._options);
         return new TaskDependency
         {
@@ -63,6 +79,10 @@ public class TaskDependenciesService(RestClient restClient) : ITaskDependenciesS
     public async Task<string> Patch(int id, object data)
     {
         HttpResponseMessage response = await restClient.PatchAsync(route, id, data);
+        if (response == null)
+        {
+            return null;
+        }
         var result = await response.Content.ReadAsStringAsync();
         return result;
     }
@@ -70,6 +90,10 @@ public class TaskDependenciesService(RestClient restClient) : ITaskDependenciesS
     public async Task<TaskDependency> Post(object data)
     {
         HttpResponseMessage response = await restClient.PostAsync(route, data);
+        if (response == null)
+        {
+            return null;
+        }
         var taskDependency = await response.Content.ReadFromJsonAsync<TaskDependencyRead>(restClient._options);
         return new TaskDependency
         {

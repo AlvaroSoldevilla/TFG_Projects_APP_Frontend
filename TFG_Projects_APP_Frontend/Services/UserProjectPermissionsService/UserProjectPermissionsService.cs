@@ -11,6 +11,10 @@ public class UserProjectPermissionsService(RestClient restClient) : IUserProject
     public async Task<string> Delete(int id)
     {
         HttpResponseMessage response = await restClient.DeleteAsync(route, id);
+        if (response == null)
+        {
+            return null;
+        }
         var result = await response.Content.ReadAsStringAsync();
         return result;
     }
@@ -18,6 +22,10 @@ public class UserProjectPermissionsService(RestClient restClient) : IUserProject
     public async Task<List<UserProjectPermission>> GetAll()
     {
         HttpResponseMessage response = await restClient.GetAllAsync(route);
+        if (response == null)
+        {
+            return null;
+        }
         var userProjectPermissions = await response.Content.ReadFromJsonAsync<List<UserProjectPermissionRead>>(restClient._options);
         return new List<UserProjectPermission>(userProjectPermissions.Select(userProjectPermission =>
         {
@@ -34,6 +42,10 @@ public class UserProjectPermissionsService(RestClient restClient) : IUserProject
     public async Task<List<UserProjectPermission>> getAllUserProjectPermissionsByPermission(int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/permission/{id}");
+        if (response == null)
+        {
+            return null;
+        }
         var userProjectPermissions = await response.Content.ReadFromJsonAsync<List<UserProjectPermissionRead>>(restClient._options);
         return new List<UserProjectPermission>(userProjectPermissions.Select(userProjectPermission =>
         {
@@ -50,6 +62,10 @@ public class UserProjectPermissionsService(RestClient restClient) : IUserProject
     public async Task<List<UserProjectPermission>> getAllUserProjectPermissionsByProject(int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/project/{id}");
+        if (response == null)
+        {
+            return null;
+        }
         var userProjectPermissions = await response.Content.ReadFromJsonAsync<List<UserProjectPermissionRead>>(restClient._options);
         return new List<UserProjectPermission>(userProjectPermissions.Select(userProjectPermission =>
         {
@@ -66,6 +82,10 @@ public class UserProjectPermissionsService(RestClient restClient) : IUserProject
     public async Task<List<UserProjectPermission>> getAllUserProjectPermissionsByUser(int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/user/{id}");
+        if (response == null)
+        {
+            return null;
+        }
         var userProjectPermissions = await response.Content.ReadFromJsonAsync<List<UserProjectPermissionRead>>(restClient._options);
         return new List<UserProjectPermission>(userProjectPermissions.Select(userProjectPermission =>
         {
@@ -82,6 +102,10 @@ public class UserProjectPermissionsService(RestClient restClient) : IUserProject
     public async Task<List<UserProjectPermission>> getAllUserProjectPermissionsByUserAndProject(int userId, int projectId)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/user/{userId}/project/{projectId}");
+        if (response == null)
+        {
+            return null;
+        }
         var userProjectPermissions = await response.Content.ReadFromJsonAsync<List<UserProjectPermissionRead>>(restClient._options);
         return new List<UserProjectPermission>(userProjectPermissions.Select(userProjectPermission =>
         {
@@ -98,6 +122,10 @@ public class UserProjectPermissionsService(RestClient restClient) : IUserProject
     public async Task<UserProjectPermission> GetById(int id)
     {
         HttpResponseMessage response = await restClient.GetByIdAsync(route, id);
+        if (response == null)
+        {
+            return null;
+        }
         var userProjectPermission = await response.Content.ReadFromJsonAsync<UserProjectPermissionRead>(restClient._options);
         return new UserProjectPermission
         {
@@ -111,6 +139,10 @@ public class UserProjectPermissionsService(RestClient restClient) : IUserProject
     public async Task<string> Patch(int id, object data)
     {
         HttpResponseMessage response = await restClient.PatchAsync(route, id, data);
+        if (response == null)
+        {
+            return null;
+        }
         var result = await response.Content.ReadAsStringAsync();
         return result;
     }
@@ -118,6 +150,10 @@ public class UserProjectPermissionsService(RestClient restClient) : IUserProject
     public async Task<UserProjectPermission> Post(object data)
     {
         HttpResponseMessage response = await restClient.PostAsync(route, data);
+        if (response == null)
+        {
+            return null;
+        }
         var userProjectPermission = await response.Content.ReadFromJsonAsync<UserProjectPermissionRead>(restClient._options);
         return new UserProjectPermission
         {

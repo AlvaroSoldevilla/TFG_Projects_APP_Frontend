@@ -288,6 +288,7 @@ public partial class TaskBoardPageModel : ObservableObject
                 task.IdParentTask = null;
                 await tasksService.Patch(task.Id, new TaskUpdate
                 {
+                    Id = task.Id,
                     IdSection = task.IdSection,
                     IdProgressSection = task.IdProgressSection,
                     IdUserCreated = task.IdUserCreated,
@@ -307,6 +308,7 @@ public partial class TaskBoardPageModel : ObservableObject
 
                 await tasksService.Patch(parentTask.Id, new TaskUpdate
                 {
+                    Id = parentTask.Id,
                     IdSection = parentTask.IdSection,
                     IdProgressSection = parentTask.IdProgressSection,
                     IdUserCreated = parentTask.IdUserCreated,
@@ -398,128 +400,165 @@ public partial class TaskBoardPageModel : ObservableObject
     [RelayCommand]
     public async void EditTaskSection(TaskSection taskSection)
     {
-        EditingTaskData = null;
-        IsEditingTask = false;
-
-        IsEditingTaskSection = true;
-        EditingTaskSectionData = new TaskSection
+        bool confirmed = true;
+        if (EditingTaskData != null)
         {
-            Id = taskSection.Id,
-            Title = taskSection.Title,
-            IdBoard = taskSection.IdBoard,
-            IdDefaultProgress = taskSection.IdDefaultProgress,
-            Order = taskSection.Order
-        };
+            if (SelectedTask != null)
+            {
+                if (HasChangedTaskData(SelectedTask))
+                {
+                    confirmed = await Application.Current.MainPage.DisplayAlert(
+                    "Change edit",
+                    "You have unsaved changes, are you sure you want to edit another task?",
+                    "Accept",
+                    "Cancel"
+                    );
+                }
+            }
+        }
+        if (confirmed)
+        {
+            EditingTaskData = null;
+            IsEditingTask = false;
+
+            IsEditingTaskSection = true;
+            EditingTaskSectionData = new TaskSection
+            {
+                Id = taskSection.Id,
+                Title = taskSection.Title,
+                IdBoard = taskSection.IdBoard,
+                IdDefaultProgress = taskSection.IdDefaultProgress,
+                Order = taskSection.Order
+            };
+        }
     }
 
     [RelayCommand]
     public async Task EditTask(ProjectTask task)
     {
-        EditingTaskSectionData = null;
-        IsEditingTaskSection = false;
-
-        
-
-        var returnUsers = await usersService.GetUsersByProject(NavigationContext.CurrentProject.Id);
-        Users = new ObservableCollection<AppUser>(returnUsers);
-
-        List<ProjectTask> tasks = new();
-        List<ProjectTask> parentCandidates = new();
-        List<TaskDependency> dependencies = new();
-
-
-        foreach (var taskSection in TaskSections)
+        bool confirmed = true;
+        if (EditingTaskData != null)
         {
-            if (taskSection.Tasks != null && taskSection.Tasks.Count != 0)
-            { 
-                foreach (var t in taskSection.Tasks)
+            if (SelectedTask != null)
+            {
+                if (HasChangedTaskData(SelectedTask))
+                {
+                    confirmed = await Application.Current.MainPage.DisplayAlert(
+                    "Change edit",
+                    "You have unsaved changes, are you sure you want to edit another task?",
+                    "Accept",
+                    "Cancel"
+                    );
+                }
+            }
+        }
+        if (confirmed)
+        {
+            EditingTaskSectionData = null;
+            IsEditingTaskSection = false;
+
+            var returnUsers = await usersService.GetUsersByProject(NavigationContext.CurrentProject.Id);
+            Users = new ObservableCollection<AppUser>(returnUsers);
+
+            List<ProjectTask> tasks = new();
+            List<ProjectTask> parentCandidates = new();
+            List<TaskDependency> dependencies = new();
+
+
+            foreach (var taskSection in TaskSections)
+            {
+                if (taskSection.Tasks != null && taskSection.Tasks.Count != 0)
+                {
+                    foreach (var t in taskSection.Tasks)
+                    {
+                        if (t.Id != task.Id)
+                        {
+                            tasks.Add(t);
+                        }
+                    }
+                }
+            }
+
+            var currentTaskSection = TaskSections.FirstOrDefault(x => x.Id == task.IdSection);
+
+            if (currentTaskSection.Tasks != null && currentTaskSection.Tasks.Count != 0)
+            {
+                foreach (var t in currentTaskSection.Tasks)
                 {
                     if (t.Id != task.Id)
                     {
-                        tasks.Add(t);
+                        if (t.IsParent || t.Parent == null)
+                        {
+                            parentCandidates.Add(t);
+                        }
                     }
                 }
             }
-        }
 
-        var currentTaskSection = TaskSections.FirstOrDefault(x => x.Id == task.IdSection);
+            var currentDependencies = await taskDependenciesService.GetAllTaskDependenciesByTask(task.Id);
 
-        if (currentTaskSection.Tasks != null && currentTaskSection.Tasks.Count != 0)
-        {
-            foreach (var t in currentTaskSection.Tasks)
+            foreach (var dependency in currentDependencies)
             {
-                if (t.Id != task.Id)
-                {
-                    if (t.IsParent || t.Parent == null)
-                    {
-                        parentCandidates.Add(t);
-                    }
-                }
+                var dependsOnTask = await tasksService.GetById(dependency.IdDependsOn);
+
+                dependency.DisplayName = dependsOnTask.Title + "->" + task.Title;
             }
+
+
+            PossibleDependencies = new ObservableCollection<ProjectTask>(tasks);
+            PossibleParents = new ObservableCollection<ProjectTask>(parentCandidates);
+            TaskDependencies = new ObservableCollection<TaskDependency>(currentDependencies);
+
+            AppUser? userAssigned;
+            ProjectTask? parentTask;
+
+            if (task.UserAssigned != null)
+            {
+                userAssigned = await usersService.GetById(task.UserAssigned.Id);
+            }
+            else
+            {
+                userAssigned = null;
+            }
+
+            if (task.IdParentTask != null)
+            {
+                parentTask = await tasksService.GetById((int)task.IdParentTask);
+            }
+            else
+            {
+                parentTask = null;
+            }
+
+            EditingTaskData = new ProjectTask
+            {
+                Id = task.Id,
+                IdSection = task.IdSection,
+                IdProgressSection = task.IdProgressSection,
+                IdUserAssigned = task.IdUserAssigned,
+                IdParentTask = task.IdParentTask,
+                IdUserCreated = task.IdUserCreated,
+                IdPriority = task.IdPriority,
+                Title = task.Title,
+                Description = task.Description,
+                Progress = task.Progress,
+                CreationDate = task.CreationDate,
+                LimitDate = task.LimitDate,
+                CompletionDate = task.CompletionDate,
+
+                Finished = task.Finished,
+                IsParent = task.IsParent,
+                Priority = task.Priority,
+                UserAssigned = userAssigned,
+                Parent = parentTask
+            };
+
+
+            progressValue = EditingTaskData.Progress;
+
+            IsEditingTask = true;
+            SelectedTask = task;
         }
-
-        var currentDependencies = await taskDependenciesService.GetAllTaskDependenciesByTask(task.Id);
-
-        foreach (var dependency in currentDependencies)
-        {
-            var dependsOnTask = await tasksService.GetById(dependency.IdDependsOn);
-
-            dependency.DisplayName = dependsOnTask.Title + "->" + task.Title;
-        }
-
-
-        PossibleDependencies = new ObservableCollection<ProjectTask>(tasks);
-        PossibleParents = new ObservableCollection<ProjectTask>(parentCandidates);
-        TaskDependencies = new ObservableCollection<TaskDependency>(currentDependencies);
-
-        AppUser? userAssigned;
-        ProjectTask? parentTask;
-
-        if (task.UserAssigned != null)
-        {
-            userAssigned = await usersService.GetById(task.UserAssigned.Id);
-        } else
-        {
-            userAssigned = null;
-        }
-
-        if (task.IdParentTask != null)
-        {
-            parentTask = await tasksService.GetById((int)task.IdParentTask);
-        }
-        else
-        {
-            parentTask = null;
-        }
-
-        EditingTaskData = new ProjectTask
-        {
-            Id = task.Id,
-            IdSection = task.IdSection,
-            IdProgressSection = task.IdProgressSection,
-            IdUserAssigned = task.IdUserAssigned,
-            IdParentTask = task.IdParentTask,
-            IdUserCreated = task.IdUserCreated,
-            IdPriority = task.IdPriority,
-            Title = task.Title,
-            Description = task.Description,
-            Progress = task.Progress,
-            CreationDate = task.CreationDate,
-            LimitDate = task.LimitDate,
-            CompletionDate = task.CompletionDate,
-
-            Finished = task.Finished,
-            IsParent = task.IsParent,
-            Priority = task.Priority,
-            UserAssigned = userAssigned,
-            Parent = parentTask
-        };
-        
-
-        progressValue = EditingTaskData.Progress;
-
-        IsEditingTask = true;
-        SelectedTask = task;
     }
 
     [RelayCommand]
@@ -645,7 +684,6 @@ public partial class TaskBoardPageModel : ObservableObject
     {
         if (EditingTaskData != null)
         {
-            
             if (string.IsNullOrEmpty(EditingTaskData.Title))
             {
                 await Application.Current.MainPage.DisplayAlert("Error", "Title is required", "OK");
@@ -656,8 +694,6 @@ public partial class TaskBoardPageModel : ObservableObject
             EditingTaskData.Progress = progressValue;
 
             int? idUserAsigned;
-            DateTime? limitDate;
-            DateTime? completionDate;
 
             if (EditingTaskData.Parent != null)
             {
@@ -667,6 +703,7 @@ public partial class TaskBoardPageModel : ObservableObject
                     var parentReturn = await tasksService.GetById((int)EditingTaskData.IdParentTask);
                     await tasksService.Patch(parentReturn.Id, new TaskUpdate
                     {
+                        Id = EditingTaskData.Id,
                         IdSection = parentReturn.IdSection,
                         IdProgressSection = parentReturn.IdProgressSection,
                         IdUserCreated = parentReturn.IdUserCreated,
@@ -692,23 +729,9 @@ public partial class TaskBoardPageModel : ObservableObject
                 idUserAsigned = EditingTaskData.UserAssigned.Id;
             }
 
-            if (EditingTaskData.CompletionDate != null && EditingTaskData.Progress < 100)
-            {
-                completionDate = null;
-                EditingTaskData.Finished = false;
-            }
-
-            if (EditingTaskData.CompletionDate == null && EditingTaskData.Progress == 100)
-            {
-                completionDate = DateTime.Now;
-                EditingTaskData.Finished = true;
-            } else
-            {
-                completionDate = EditingTaskData.CompletionDate;
-            }
-
             var taskUpdate = new TaskUpdate
             {
+                Id = EditingTaskData.Id,
                 IdSection = EditingTaskData.IdSection,
                 IdProgressSection = EditingTaskData.IdProgressSection,
                 IdUserCreated = EditingTaskData.IdUserCreated,
@@ -719,7 +742,7 @@ public partial class TaskBoardPageModel : ObservableObject
                 Description = EditingTaskData.Description,
                 Progress = EditingTaskData.Progress,
                 LimitDate = EditingTaskData.LimitDate,
-                CompletionDate = completionDate,
+                CompletionDate = EditingTaskData.CompletionDate,
                 Finished = EditingTaskData.Finished,
                 IsParent = EditingTaskData.IsParent
             };
@@ -783,8 +806,20 @@ public partial class TaskBoardPageModel : ObservableObject
                 await taskSectionsService.Delete(taskSection.Id);
                 await LoadData();
                 IsLoading = false;
+
+                EditingTaskSectionData = null;
+                IsEditingTaskSection = false;
+                SelectedTaskSection = null;
+                SelectedTask = null;
+                EditingTaskData = null;
+                IsEditingTask = false;
+                SelectedDependency = null;
+                IsEditingTaskDependency = false;
+                EditingTaskDependencyData = null;
             }
         }
+
+        
     }
 
     [RelayCommand]
@@ -799,8 +834,33 @@ public partial class TaskBoardPageModel : ObservableObject
                 await tasksService.Delete(task.Id);
                 await LoadData();
                 IsLoading = false;
+
+                SelectedTaskSection = null;
+                SelectedTask = null;
+                EditingTaskData = null;
+                IsEditingTask = false;
+                SelectedDependency = null;
+                IsEditingTaskDependency = false;
+                EditingTaskDependencyData = null;
             }
         }
     }
 
+    private bool HasChangedTaskData(ProjectTask task)
+    {
+        if (task == null || EditingTaskData == null)
+            return false;
+        return task.IdSection != EditingTaskData.IdSection ||
+               task.IdProgressSection != EditingTaskData.IdProgressSection ||
+               task.IdUserAssigned != EditingTaskData.IdUserAssigned ||
+               task.IdParentTask != EditingTaskData.IdParentTask ||
+               task.IdUserCreated != EditingTaskData.IdUserCreated ||
+               task.Title != EditingTaskData.Title ||
+               task.Description != EditingTaskData.Description ||
+               task.Progress != EditingTaskData.Progress ||
+               task.LimitDate != EditingTaskData.LimitDate ||
+               task.CompletionDate != EditingTaskData.CompletionDate ||
+               task.Finished != EditingTaskData.Finished ||
+               task.IsParent != EditingTaskData.IsParent;
+    }
 }

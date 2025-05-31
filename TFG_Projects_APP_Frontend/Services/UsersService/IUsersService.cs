@@ -6,4 +6,5 @@ public interface IUsersService : IService<AppUser>
 {
     Task<List<AppUser>> GetUsersByProject(int id);
     Task<AppUser> AuthenticateUser(object data);
+    Task<AppUser> GetUserByEmail(string email);
 }

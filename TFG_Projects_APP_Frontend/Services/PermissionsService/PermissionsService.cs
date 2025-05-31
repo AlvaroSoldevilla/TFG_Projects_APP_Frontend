@@ -11,6 +11,10 @@ public class PermissionsService(RestClient restClient) : IPermissionsService
     public async Task<string> Delete(int id)
     {
         HttpResponseMessage response = await restClient.DeleteAsync(route, id);
+        if (response == null)
+        {
+            return null;
+        }
         var result = await response.Content.ReadAsStringAsync();
         return result;
     }
@@ -18,6 +22,10 @@ public class PermissionsService(RestClient restClient) : IPermissionsService
     public async Task<List<Permission>> GetAll()
     {
         HttpResponseMessage response = await restClient.GetAllAsync(route);
+        if (response == null)
+        {
+            return null;
+        }
         var permissions = await response.Content.ReadFromJsonAsync<List<PermissionRead>>(restClient._options);
         return new List<Permission>(permissions.Select(permission =>
         {
@@ -32,6 +40,10 @@ public class PermissionsService(RestClient restClient) : IPermissionsService
     public async Task<Permission> GetById(int id)
     {
         HttpResponseMessage response = await restClient.GetByIdAsync(route, id);
+        if (response == null)
+        {
+            return null;
+        }
         var permission = await response.Content.ReadFromJsonAsync<PermissionRead>(restClient._options);
         return new Permission
         {
@@ -43,6 +55,10 @@ public class PermissionsService(RestClient restClient) : IPermissionsService
     public async Task<string> Patch(int id, object data)
     {
         HttpResponseMessage response = await restClient.PatchAsync(route, id, data);
+        if (response == null)
+        {
+            return null;
+        }
         var result = await response.Content.ReadAsStringAsync();
         return result;
     }
@@ -50,6 +66,10 @@ public class PermissionsService(RestClient restClient) : IPermissionsService
     public async Task<Permission> Post(object data)
     {
         HttpResponseMessage response = await restClient.PostAsync(route, data);
+        if (response == null)
+        {
+            return null;
+        }
         var permission = await response.Content.ReadFromJsonAsync<PermissionRead>(restClient._options);
         return new Permission
         {

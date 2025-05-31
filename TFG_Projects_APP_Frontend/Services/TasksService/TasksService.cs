@@ -12,6 +12,10 @@ public class TasksService(RestClient restClient) : ITasksService
     public async Task<string> Delete(int id)
     {
         HttpResponseMessage response = await restClient.DeleteAsync(route, id);
+        if (response == null)
+        {
+            return null;
+        }
         var result = await response.Content.ReadAsStringAsync();
         return result;
     }
@@ -19,6 +23,10 @@ public class TasksService(RestClient restClient) : ITasksService
     public async Task<List<ProjectTask>> GetAll()
     {
         HttpResponseMessage response = await restClient.GetAllAsync(route);
+        if (response == null)
+        {
+            return null;
+        }
         var tasks = await response.Content.ReadFromJsonAsync<List<TaskRead>>(restClient._options);
         return new List<ProjectTask>(tasks.Select(task =>
         {
@@ -46,6 +54,10 @@ public class TasksService(RestClient restClient) : ITasksService
     public async Task<List<ProjectTask>> GetAllTasksByTaskProgress(int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/progress/{id}");
+        if (response == null)
+        {
+            return null;
+        }
         var tasks = await response.Content.ReadFromJsonAsync<List<TaskRead>>(restClient._options);
         return new List<ProjectTask>(tasks.Select(task =>
         {
@@ -73,6 +85,10 @@ public class TasksService(RestClient restClient) : ITasksService
     public async Task<List<ProjectTask>> GetAllTasksByTaskSection(int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/section/{id}");
+        if (response == null)
+        {
+            return null;
+        }
         var tasks = await response.Content.ReadFromJsonAsync<List<TaskRead>>(restClient._options);
         return new List<ProjectTask>(tasks.Select(task =>
         {
@@ -100,6 +116,10 @@ public class TasksService(RestClient restClient) : ITasksService
     public async Task<ProjectTask> GetById(int id)
     {
         HttpResponseMessage response = await restClient.GetByIdAsync(route, id);
+        if (response == null)
+        {
+            return null;
+        }
         var task = await response.Content.ReadFromJsonAsync<TaskRead>(restClient._options);
         return new ProjectTask
         {
@@ -124,6 +144,10 @@ public class TasksService(RestClient restClient) : ITasksService
     public async Task<AppUser> getUserAssigned(int id)
     {
         HttpResponseMessage response = await restClient.GetByIdAsync($"{route}/user/assigned", id);
+        if (response == null)
+        {
+            return null;
+        }
         var user = await response.Content.ReadFromJsonAsync<UserRead>(restClient._options);
         return new AppUser 
         {
@@ -136,6 +160,10 @@ public class TasksService(RestClient restClient) : ITasksService
     public async Task<AppUser> getUserCreated(int id)
     {
         HttpResponseMessage response = await restClient.GetByIdAsync($"{route}/user/created", id);
+        if (response == null)
+        {
+            return null;
+        }
         var user = await response.Content.ReadFromJsonAsync<UserRead>(restClient._options);
         return new AppUser
         {
@@ -148,6 +176,10 @@ public class TasksService(RestClient restClient) : ITasksService
     public async Task<string> Patch(int id, object data)
     {
         HttpResponseMessage response = await restClient.PatchAsync(route, id, data);
+        if (response == null)
+        {
+            return null;
+        }
         var result = await response.Content.ReadAsStringAsync();
         return result;
     }
@@ -155,6 +187,10 @@ public class TasksService(RestClient restClient) : ITasksService
     public async Task<ProjectTask> Post(object data)
     {
         HttpResponseMessage response = await restClient.PostAsync(route, data);
+        if (response == null)
+        {
+            return null;
+        }
         var task = await response.Content.ReadFromJsonAsync<TaskRead>(restClient._options);
         return new ProjectTask
         {

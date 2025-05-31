@@ -122,6 +122,7 @@
 
                 <Label FontSize="20" Text="Title:" />
                 <Entry Placeholder="Enter section title" Text="{Binding EditingTaskSectionData.Title}" />
+                <Button Command="{Binding SaveTaskSectionChangesCommand}" Text="Save Changes" />
             </VerticalStackLayout>
 
             <Grid IsVisible="{Binding IsEditingTask}" VerticalOptions="FillAndExpand">

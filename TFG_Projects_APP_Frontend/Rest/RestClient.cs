@@ -17,7 +17,7 @@ public class RestClient
         }
         else
         {
-            throw new Exception($"Error: {response.StatusCode}");
+            return null;
         }
     }
 
@@ -30,7 +30,7 @@ public class RestClient
         }
         else
         {
-            throw new Exception($"Error: {response.StatusCode}");
+            return null;
         }
     }
 
@@ -45,7 +45,7 @@ public class RestClient
         }
         else
         {
-            throw new Exception($"Error: {response.StatusCode}");
+            return null;
         }
     }
 
@@ -60,7 +60,7 @@ public class RestClient
         }
         else
         {
-            throw new Exception($"Error: {response.StatusCode}");
+            return null;
         }
     }
 
@@ -73,7 +73,7 @@ public class RestClient
         }
         else
         {
-            throw new Exception($"Error: {response.StatusCode}");
+            return null;
         }
     }
 
@@ -88,5 +88,13 @@ public class RestClient
         {
             return null;
         }
+    }
+
+    public async Task<HttpResponseMessage> AuthenticateUser(string address, object data)
+    {
+        var json = JsonSerializer.Serialize(data, _options);
+        var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+        var response = await _client.PostAsync($"{baseURL}/{address}", content);
+        return response;
     }
 }

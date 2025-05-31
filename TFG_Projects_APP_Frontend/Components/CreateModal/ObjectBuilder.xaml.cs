@@ -36,7 +36,7 @@ public partial class DynamicInputPage<T> : ContentPage where T : new()
             else if (baseType == typeof(DateTime))
                 input = new DatePicker();
             else if (baseType == typeof(int))
-                input = new Entry { Keyboard = Keyboard.Numeric };
+                input = new Entry();
             else if (baseType == typeof(bool))
                 input = new Switch();
             else
@@ -67,15 +67,40 @@ public partial class DynamicInputPage<T> : ContentPage where T : new()
                 continue;
 
             var input = _inputs[field.PropertyName];
+            var baseType = Nullable.GetUnderlyingType(field.DataType) ?? field.DataType;
 
-            object? value = field.DataType switch
+            object? value = null;
+
+            if (baseType == typeof(string))
             {
-                var t when t == typeof(string) => ((Entry)input).Text,
-                var t when t == typeof(int) =>
-                    int.TryParse(((Entry)input).Text, out var i) ? i : 0,
-                var t when t == typeof(DateTime) => ((DatePicker)input).Date,
-                _ => null
-            };
+                value = ((Entry)input).Text;
+            }
+            else if (baseType == typeof(int))
+            {
+                var text = ((Entry)input).Text?.Trim();
+                if (string.IsNullOrEmpty(text))
+                {
+                    // Set to null if nullable, or 0 if not
+                    value = Nullable.GetUnderlyingType(field.DataType) != null ? null : 0;
+                }
+                else if (int.TryParse(text, out var i))
+                {
+                    value = i;
+                }
+                else
+                {
+                    // Optionally, handle parse error (show alert, etc.)
+                    value = Nullable.GetUnderlyingType(field.DataType) != null ? null : 0;
+                }
+            }
+            else if (baseType == typeof(bool))
+            {
+                value = ((Switch)input).IsToggled;
+            }
+            else if (baseType == typeof(DateTime))
+            {
+                value = ((DatePicker)input).Date;
+            }
 
             prop.SetValue(obj, value);
         }

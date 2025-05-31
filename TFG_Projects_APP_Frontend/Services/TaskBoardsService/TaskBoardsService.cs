@@ -11,6 +11,10 @@ public class TaskBoardsService(RestClient restClient) : ITaskBoardsService
     public async Task<string> Delete(int id)
     {
         HttpResponseMessage response = await restClient.DeleteAsync(route, id);
+        if (response == null)
+        {
+            return null;
+        }
         var result = await response.Content.ReadAsStringAsync();
         return result;
     }
@@ -18,6 +22,10 @@ public class TaskBoardsService(RestClient restClient) : ITaskBoardsService
     public async Task<List<TaskBoard>> GetAll()
     {
         HttpResponseMessage response = await restClient.GetAllAsync(route);
+        if (response == null)
+        {
+            return null;
+        }
         var taskBoards = await response.Content.ReadFromJsonAsync<List<TaskBoardRead>>(restClient._options);
         return new List<TaskBoard>(taskBoards.Select(taskBoard =>
         {
@@ -34,6 +42,10 @@ public class TaskBoardsService(RestClient restClient) : ITaskBoardsService
     public async Task<List<TaskBoard>> GetAllTaskBoardsByProject(int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/project/{id}");
+        if (response == null)
+        {
+            return null;
+        }
         var taskBoards = await response.Content.ReadFromJsonAsync<List<TaskBoardRead>>(restClient._options);
         return new List<TaskBoard>(taskBoards.Select(taskBoard =>
         {
@@ -50,6 +62,10 @@ public class TaskBoardsService(RestClient restClient) : ITaskBoardsService
     public async Task<TaskBoard> GetById(int id)
     {
         HttpResponseMessage response = await restClient.GetByIdAsync(route, id);
+        if (response == null)
+        {
+            return null;
+        }
         var taskBoard = await response.Content.ReadFromJsonAsync<TaskBoardRead>(restClient._options);
         return new TaskBoard
         {
@@ -63,6 +79,10 @@ public class TaskBoardsService(RestClient restClient) : ITaskBoardsService
     public async Task<string> Patch(int id, object data)
     {
         HttpResponseMessage response = await restClient.PatchAsync(route, id, data);
+        if (response == null)
+        {
+            return null;
+        }
         var result = await response.Content.ReadAsStringAsync();
         return result;
     }
@@ -70,6 +90,10 @@ public class TaskBoardsService(RestClient restClient) : ITaskBoardsService
     public async Task<TaskBoard> Post(object data)
     {
         HttpResponseMessage response = await restClient.PostAsync(route, data);
+        if (response == null)
+        {
+            return null;
+        }
         var taskBoard = await response.Content.ReadFromJsonAsync<TaskBoardRead>(restClient._options);
         return new TaskBoard
         {

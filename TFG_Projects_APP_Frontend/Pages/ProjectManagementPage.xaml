@@ -120,7 +120,7 @@
 
                 <StackLayout IsVisible="{Binding IsLookingForUser}" Orientation="Horizontal">
                     <Entry Placeholder="Search user by email" Text="{Binding AdduserEmail, Mode=TwoWay}" />
-                    <Button Command="{Binding AddUserToProjectCommand}" Text="Search" />
+                    <Button Command="{Binding AddUserToProjectCommand}" Text="Add user" />
                 </StackLayout>
 
                 <CollectionView

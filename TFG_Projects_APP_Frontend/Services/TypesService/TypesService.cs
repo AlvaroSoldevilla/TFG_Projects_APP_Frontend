@@ -11,6 +11,10 @@ public class TypesService(RestClient restClient) : ITypesService
     public async Task<string> Delete(int id)
     {
         HttpResponseMessage response = await restClient.DeleteAsync(route, id);
+        if (response == null)
+        {
+            return null;
+        }
         var result = await response.Content.ReadAsStringAsync();
         return result;
     }
@@ -18,6 +22,10 @@ public class TypesService(RestClient restClient) : ITypesService
     public async Task<List<ProjectType>> GetAll()
     {
         HttpResponseMessage response = await restClient.GetAllAsync(route);
+        if (response == null)
+        {
+            return null;
+        }
         var types = await response.Content.ReadFromJsonAsync<List<TypeRead>>(restClient._options);
         return new List<ProjectType>(types.Select(type =>
         {
@@ -32,6 +40,10 @@ public class TypesService(RestClient restClient) : ITypesService
     public async Task<ProjectType> GetById(int id)
     {
         HttpResponseMessage response = await restClient.GetByIdAsync(route, id);
+        if (response == null)
+        {
+            return null;
+        }
         var type = await response.Content.ReadFromJsonAsync<TypeRead>(restClient._options);
         return new ProjectType
         {
@@ -43,6 +55,10 @@ public class TypesService(RestClient restClient) : ITypesService
     public async Task<string> Patch(int id, object data)
     {
         HttpResponseMessage response = await restClient.PatchAsync(route, id, data);
+        if (response == null)
+        {
+            return null;
+        }
         var result = await response.Content.ReadAsStringAsync();
         return result;
     }
@@ -50,6 +66,10 @@ public class TypesService(RestClient restClient) : ITypesService
     public async Task<ProjectType> Post(object data)
     {
         HttpResponseMessage response = await restClient.PostAsync(route, data);
+        if (response == null)
+        {
+            return null;
+        }
         var type = await response.Content.ReadFromJsonAsync<TypeRead>(restClient._options);
         return new ProjectType
         {

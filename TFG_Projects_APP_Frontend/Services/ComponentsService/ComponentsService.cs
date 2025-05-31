@@ -11,6 +11,10 @@ public class ComponentsService(RestClient restClient) : IComponentsService
     public async Task<string> Delete(int id)
     {
         HttpResponseMessage response = await restClient.DeleteAsync(route, id);
+        if (response == null)
+        {
+            return null;
+        }
         var result = await response.Content.ReadAsStringAsync();
         return result;
     }
@@ -18,6 +22,10 @@ public class ComponentsService(RestClient restClient) : IComponentsService
     public async Task<List<ConceptComponent>> GetAll()
     {
         HttpResponseMessage response = await restClient.GetAllAsync(route);
+        if (response == null)
+        {
+            return null;
+        }
         var components = await response.Content.ReadFromJsonAsync<List<ComponentRead>>(restClient._options);
         return new List<ConceptComponent>(components.Select(component => new ConceptComponent
         {
@@ -35,6 +43,10 @@ public class ComponentsService(RestClient restClient) : IComponentsService
     public async Task<List<ConceptComponent>> GetAllComponentsByBoard(int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/board/{id}");
+        if (response == null)
+        {
+            return null;
+        }
         var components = await response.Content.ReadFromJsonAsync<List<ComponentRead>>(restClient._options);
         return new List<ConceptComponent>(components.Select(component => new ConceptComponent
         {
@@ -52,6 +64,10 @@ public class ComponentsService(RestClient restClient) : IComponentsService
     public async Task<ConceptComponent> GetById(int id)
     {
         HttpResponseMessage response = await restClient.GetByIdAsync($"{route}", id);
+        if (response == null)
+        {
+            return null;
+        }
         var component = await response.Content.ReadFromJsonAsync<ComponentRead>(restClient._options);
         return new ConceptComponent
         {
@@ -69,6 +85,10 @@ public class ComponentsService(RestClient restClient) : IComponentsService
     public async Task<string> Patch(int id, object data)
     {
         HttpResponseMessage response = await restClient.PatchAsync($"{route}", id, data);
+        if (response == null)
+        {
+            return null;
+        }
         var result = await response.Content.ReadAsStringAsync();
         return result;
     }
@@ -76,6 +96,10 @@ public class ComponentsService(RestClient restClient) : IComponentsService
     public async Task<ConceptComponent> Post(object data)
     {
         HttpResponseMessage response = await restClient.PostAsync($"{route}", data);
+        if (response == null)
+        {
+            return null;
+        }
         var component = await response.Content.ReadFromJsonAsync<ComponentRead>(restClient._options);
         return new ConceptComponent
         {

@@ -11,6 +11,10 @@ public class ConceptBoardsService(RestClient restClient) : IConceptBoardsService
     public async Task<string> Delete(int id)
     {
         HttpResponseMessage response = await restClient.DeleteAsync(route, id);
+        if (response == null)
+        {
+            return null;
+        }
         var result = await response.Content.ReadAsStringAsync();
         return result;
     }
@@ -18,6 +22,10 @@ public class ConceptBoardsService(RestClient restClient) : IConceptBoardsService
     public async Task<List<ConceptBoard>> GetAll()
     {
         HttpResponseMessage response = await restClient.GetAllAsync(route);
+        if (response == null)
+        {
+            return null;
+        }
         var conceptBoards = await response.Content.ReadFromJsonAsync<List<ConceptBoardRead>>(restClient._options);
         return new List<ConceptBoard>(conceptBoards.Select(conceptBoard =>
         {
@@ -34,6 +42,10 @@ public class ConceptBoardsService(RestClient restClient) : IConceptBoardsService
     public async Task<List<ConceptBoard>> GetAllConceptBoardsByConcept(int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/concept/{id}");
+        if (response == null)
+        {
+            return null;
+        }
         var conceptBoards = await response.Content.ReadFromJsonAsync<List<ConceptBoardRead>>(restClient._options);
         return new List<ConceptBoard>(conceptBoards.Select(conceptBoard =>
         {
@@ -50,6 +62,10 @@ public class ConceptBoardsService(RestClient restClient) : IConceptBoardsService
     public async Task<ConceptBoard> GetById(int id)
     {
         HttpResponseMessage response = await restClient.GetByIdAsync(route, id);
+        if (response == null)
+        {
+            return null;
+        }
         var conceptBoard = await response.Content.ReadFromJsonAsync<ConceptBoardRead>(restClient._options);
         return new ConceptBoard 
         {
@@ -63,6 +79,10 @@ public class ConceptBoardsService(RestClient restClient) : IConceptBoardsService
     public async Task<string> Patch(int id, object data)
     {
         HttpResponseMessage response = await restClient.PatchAsync(route, id, data);
+        if (response == null)
+        {
+            return null;
+        }
         var result = await response.Content.ReadAsStringAsync();
         return result;
     }
@@ -70,6 +90,10 @@ public class ConceptBoardsService(RestClient restClient) : IConceptBoardsService
     public async Task<ConceptBoard> Post(object data)
     {
         HttpResponseMessage response = await restClient.PostAsync(route, data);
+        if (response == null)
+        {
+            return null;
+        }
         var conceptBoard = await response.Content.ReadFromJsonAsync<ConceptBoardRead>(restClient._options);
         return new ConceptBoard
         {

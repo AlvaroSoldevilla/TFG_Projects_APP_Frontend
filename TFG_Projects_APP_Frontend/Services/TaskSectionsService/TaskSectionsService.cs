@@ -11,6 +11,10 @@ public class TaskSectionsService(RestClient restClient) : ITaskSectionsService
     public async Task<string> Delete(int id)
     {
         HttpResponseMessage response = await restClient.DeleteAsync(route, id);
+        if (response == null)
+        {
+            return null;
+        }
         var result = await response.Content.ReadAsStringAsync();
         return result;
     }
@@ -18,6 +22,10 @@ public class TaskSectionsService(RestClient restClient) : ITaskSectionsService
     public async Task<List<TaskSection>> GetAll()
     {
         HttpResponseMessage response = await restClient.GetAllAsync(route);
+        if (response == null)
+        {
+            return null;
+        }
         var taskSections = await response.Content.ReadFromJsonAsync<List<TaskSectionRead>>(restClient._options);
         return new List<TaskSection>(taskSections.Select(taskSection =>
         {
@@ -35,6 +43,10 @@ public class TaskSectionsService(RestClient restClient) : ITaskSectionsService
     public async Task<List<TaskSection>> getAllTaskSectionsByTaskBoard(int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/board/{id}");
+        if (response == null)
+        {
+            return null;
+        }
         var taskSections = await response.Content.ReadFromJsonAsync<List<TaskSectionRead>>(restClient._options);
         return new List<TaskSection>(taskSections.Select(taskSection =>
         {
@@ -52,6 +64,10 @@ public class TaskSectionsService(RestClient restClient) : ITaskSectionsService
     public async Task<TaskSection> GetById(int id)
     {
         HttpResponseMessage response = await restClient.GetByIdAsync(route, id);
+        if (response == null)
+        {
+            return null;
+        }
         var taskSection = await response.Content.ReadFromJsonAsync<TaskSectionRead>(restClient._options);
         return new TaskSection
         {
@@ -66,6 +82,10 @@ public class TaskSectionsService(RestClient restClient) : ITaskSectionsService
     public async Task<string> Patch(int id, object data)
     {
         HttpResponseMessage response = await restClient.PatchAsync(route, id, data);
+        if (response == null)
+        {
+            return null;
+        }
         var result = await response.Content.ReadAsStringAsync();
         return result;
     }
@@ -73,6 +93,10 @@ public class TaskSectionsService(RestClient restClient) : ITaskSectionsService
     public async Task<TaskSection> Post(object data)
     {
         HttpResponseMessage response = await restClient.PostAsync(route, data);
+        if (response == null)
+        {
+            return null;
+        }
         var taskSection = await response.Content.ReadFromJsonAsync<TaskSectionRead>(restClient._options);
         return new TaskSection
         {

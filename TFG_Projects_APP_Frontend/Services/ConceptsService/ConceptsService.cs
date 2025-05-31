@@ -11,6 +11,10 @@ public class ConceptsService(RestClient restClient) : IConceptsService
     public async Task<string> Delete(int id)
     {
         HttpResponseMessage response = await restClient.DeleteAsync(route, id);
+        if (response == null)
+        {
+            return null;
+        }
         var result = await response.Content.ReadAsStringAsync();
         return result;
     }
@@ -18,6 +22,10 @@ public class ConceptsService(RestClient restClient) : IConceptsService
     public async Task<List<Concept>> GetAll()
     {
         HttpResponseMessage response = await restClient.GetAllAsync(route);
+        if (response == null)
+        {
+            return null;
+        }
         var concepts = await response.Content.ReadFromJsonAsync<List<ConceptRead>>(restClient._options);
         return new List<Concept>(concepts.Select(concept => new Concept
         {
@@ -32,6 +40,10 @@ public class ConceptsService(RestClient restClient) : IConceptsService
     public async Task<List<Concept>> GetAllConceptsByProject(int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/project/{id}");
+        if (response == null)
+        {
+            return null;
+        }
         var concepts = await response.Content.ReadFromJsonAsync<List<ConceptRead>>(restClient._options);
         return new List<Concept>(concepts.Select(concept => new Concept
         {
@@ -46,6 +58,10 @@ public class ConceptsService(RestClient restClient) : IConceptsService
     public async Task<Concept> GetById(int id)
     {
         HttpResponseMessage response = await restClient.GetByIdAsync(route, id);
+        if (response == null)
+        {
+            return null;
+        }
         var concept = await response.Content.ReadFromJsonAsync<ConceptRead>(restClient._options);
         return new Concept
         {
@@ -60,6 +76,10 @@ public class ConceptsService(RestClient restClient) : IConceptsService
     public async Task<string> Patch(int id, object data)
     {
         HttpResponseMessage response = await restClient.PatchAsync(route, id, data);
+        if (response == null)
+        {
+            return null;
+        }
         var result = await response.Content.ReadAsStringAsync();
         return result;
     }
@@ -67,6 +87,10 @@ public class ConceptsService(RestClient restClient) : IConceptsService
     public async Task<Concept> Post(object data)
     {
         HttpResponseMessage response = await restClient.PostAsync(route, data);
+        if (response == null)
+        {
+            return null;
+        }
         var concept = await response.Content.ReadFromJsonAsync<ConceptRead>(restClient._options);
         return new Concept
         {
