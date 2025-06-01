@@ -74,7 +74,7 @@ public partial class MainPageModel : ObservableObject
     private async void CreateProject()
     {
         Isloading = true;
-        var project = await FormDialog.ShowCreateObjectMenuAsync<ProjectCreate>();
+        var project = await FormDialog.ShowCreateObjectMenuAsync<ProjectCreate>("Create Project");
         if (project != null && !string.IsNullOrEmpty(project.Title))
         {
             if (string.IsNullOrEmpty(project.Description))

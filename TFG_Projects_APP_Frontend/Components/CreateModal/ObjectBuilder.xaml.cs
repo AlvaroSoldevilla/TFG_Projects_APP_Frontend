@@ -5,21 +5,22 @@ public partial class DynamicInputPage<T> : ContentPage where T : new()
     private readonly TaskCompletionSource<T> _tcs;
     private readonly Dictionary<string, View> _inputs = new();
     private readonly List<FieldDefinition> _fields;
+    private string _title { get; set; }
 
-    public DynamicInputPage(TaskCompletionSource<T> tcs)
+    public DynamicInputPage(TaskCompletionSource<T> tcs, string title)
     {
         _tcs = tcs;
         _fields = FormHelper.GetFieldDefinitions<T>();
+        this.Title = title;
         BuildForm();
     }
 
     private void BuildForm()
     {
         var layout = new VerticalStackLayout { Padding = 20, Spacing = 10 };
-        var objectName = typeof(T).Name.Replace("Form", "").Replace("Create", "");
         layout.Children.Add(new Label
         {
-            Text = $"Create {objectName}",
+            Text = Title,
             FontSize = 24,
             HorizontalOptions = LayoutOptions.Center
         });

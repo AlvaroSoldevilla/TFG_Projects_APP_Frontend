@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using TFG_Projects_APP_Frontend.Components.ConceptComponents;
 using TFG_Projects_APP_Frontend.Components.CreateModal;
 using TFG_Projects_APP_Frontend.Entities.Dtos.Components;
@@ -15,7 +16,6 @@ using TFG_Projects_APP_Frontend.Services.UsersService;
 
 namespace TFG_Projects_APP_Frontend.PageModels.Concepts;
 
-[QueryProperty(nameof(ConceptBoard), nameof(ConceptBoard))]
 public partial class ConceptBoardPageModel : ObservableObject
 {
     private readonly IConceptBoardsService conceptBoardsService;
@@ -29,6 +29,9 @@ public partial class ConceptBoardPageModel : ObservableObject
 
     [ObservableProperty]
     private bool _isLoading;
+
+    private bool _isLoadingData = false;
+    private bool _isNavigating = false;
 
     [ObservableProperty]
     private bool _isEditingNote;
@@ -71,18 +74,18 @@ public partial class ConceptBoardPageModel : ObservableObject
     [RelayCommand]
     private async void NavigateInside(ConceptComponent component)
     {
-        if (component != null && component.IdType == 1)
+        if (component != null && component.IdType == 1 && !_isNavigating)
         {
+            _isNavigating = true;
             var componentBaordId = int.Parse(component.Content);
             var componentBoard = await conceptBoardsService.GetById(componentBaordId);
+            NavigationContext.CurrentConceptBoards.Push(ConceptBoard);
             NavigationContext.CurrentConceptBoards.Push(component.Board);
             if (component.Board != null)
             {
-                await Shell.Current.GoToAsync("ConceptBoardPage", new Dictionary<string, object>
-            {
-                 {"ConceptBoard", component.Board }
-            });
+                await Shell.Current.GoToAsync("ConceptBoardPage");
             }
+            _isNavigating = false;
         }
     }
 
@@ -97,6 +100,11 @@ public partial class ConceptBoardPageModel : ObservableObject
 
     private async Task LoadData()
     {
+        if (_isLoadingData)
+        {
+            return; // Prevent multiple loads
+        }
+        _isLoadingData = true;
         if (ConceptBoard == null)
         {
             if (NavigationContext.CurrentConceptBoards.Count() == 0)
@@ -108,6 +116,7 @@ public partial class ConceptBoardPageModel : ObservableObject
                 ConceptBoard = NavigationContext.CurrentConceptBoards.Pop();
             }
         }
+        
         IsLoading = true;
         var componentList = await componentsService.GetAllComponentsByBoard(ConceptBoard.Id);
         _page.ClearComponents();
@@ -131,6 +140,7 @@ public partial class ConceptBoardPageModel : ObservableObject
             PaintComponent(component);
         }
         IsLoading = false;
+        _isLoadingData = false;
     }
 
     private void PaintComponent(ConceptComponent component)
@@ -167,25 +177,63 @@ public partial class ConceptBoardPageModel : ObservableObject
     public async Task TypeSelected(ProjectType projectType)
     {
         IsLoading = true;
-        var returnComponent = await FormDialog.ShowCreateObjectMenuAsync<ComponentFormCreate>();
+        ComponentFormCreate returnComponent;
+        string title;
+        switch (projectType.Id)
+        {
+            case 1:
+                title = "Create Board";
+                break;
+            case 2:
+                title = "Create Note";
+                break;
+            default:
+                title = "Create Component";
+                break;
+        }
+
+        if (projectType.Id == 2)
+        {
+            returnComponent = await FormDialog.ShowCreateObjectMenuAsync<NoteComponentFormCreate>(title);
+        } else
+        {
+            returnComponent = await FormDialog.ShowCreateObjectMenuAsync<ComponentFormCreate>(title);
+        }
+        
         if (returnComponent != null && !string.IsNullOrEmpty(returnComponent.Title))
         {
-            if (string.IsNullOrEmpty(returnComponent.Content))
+            ConceptComponent component;
+            if (returnComponent is NoteComponentFormCreate noteComponentForm)
             {
-                returnComponent.Content = string.Empty;
+                if (string.IsNullOrEmpty(noteComponentForm.Content))
+                {
+                    noteComponentForm.Content = string.Empty;
+                }
+
+                ComponentCreate componentCreate = new()
+                {
+                    IdBoard = ConceptBoard.Id,
+                    IdType = projectType.Id,
+                    Title = noteComponentForm.Title,
+                    Content = noteComponentForm.Content,
+                    PosX = 0,
+                    PosY = 0
+                };
+                component = await componentsService.Post(componentCreate);
+            } else
+            {
+                ComponentCreate componentCreate = new()
+                {
+                    IdBoard = ConceptBoard.Id,
+                    IdType = projectType.Id,
+                    Title = returnComponent.Title,
+                    Content = string.Empty,
+                    PosX = 0,
+                    PosY = 0
+                };
+                component = await componentsService.Post(componentCreate);
             }
-
-            ComponentCreate componentCreate = new()
-            {
-                IdBoard = ConceptBoard.Id,
-                IdType = projectType.Id,
-                Title = returnComponent.Title,
-                Content = returnComponent.Content,
-                PosX = 0,
-                PosY = 0
-            };
-
-            var component = await componentsService.Post(componentCreate);
+            
             component.IdParent = component.Id;
             var componentUpdate = new ComponentUpdate
             {
@@ -195,7 +243,7 @@ public partial class ConceptBoardPageModel : ObservableObject
                 PosX = component.PosX,
                 PosY = component.PosY,
                 IdBoard = component.IdBoard,
-                IdParent = component.Id
+                IdParent = component.IdParent
             };
             await componentsService.Patch(component.Id, componentUpdate);
 
@@ -207,20 +255,17 @@ public partial class ConceptBoardPageModel : ObservableObject
                     IdConcept = ConceptBoard.IdConcept,
                     IdParent = ConceptBoard.Id
                 });
-                component.Board = componentBoard;
                 component.Content = componentBoard.Id.ToString();
                 await componentsService.Patch(component.Id, new ComponentUpdate
                 {
                     Title = component.Title,
+                    Content = component.Content,
+                    IdType = component.IdType,
                     PosX = component.PosX,
                     PosY = component.PosY,
-                    Content = component.Content,
-                    IdBoard = componentBoard.Id,
+                    IdBoard = component.IdBoard,
+                    IdParent = component.IdParent
                 });
-            }
-            else
-            {
-                component.Board = ConceptBoard;
             }
             await LoadData();
         }

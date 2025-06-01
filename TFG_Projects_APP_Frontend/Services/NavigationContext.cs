@@ -4,6 +4,7 @@ namespace TFG_Projects_APP_Frontend.Services;
 
 public static class NavigationContext
 {
+    public static bool Startup { get; set; } = true;
     public static Project CurrentProject { get; set; }
     public static TaskBoard CurrentTaskBoard { get; set; }
     public static Concept CurrentConcept { get; set; }

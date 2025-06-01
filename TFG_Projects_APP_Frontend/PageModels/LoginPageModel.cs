@@ -3,7 +3,9 @@ using CommunityToolkit.Mvvm.Input;
 using System.Security.Cryptography;
 using System.Text;
 using TFG_Projects_APP_Frontend.Entities.Dtos.Users;
+using TFG_Projects_APP_Frontend.Entities.Models;
 using TFG_Projects_APP_Frontend.Rest;
+using TFG_Projects_APP_Frontend.Services;
 using TFG_Projects_APP_Frontend.Services.UsersService;
 
 namespace TFG_Projects_APP_Frontend.PageModels;
@@ -41,6 +43,9 @@ public partial class LoginPageModel : ObservableObject
     [ObservableProperty]
     private bool _apiFound = false;
 
+    [ObservableProperty]
+    private bool _rememberMe = false;
+
     public LoginPageModel(IUsersService usersService, UserSession userSession, RestClient restClient)
     {
         this.usersService = usersService;
@@ -50,13 +55,42 @@ public partial class LoginPageModel : ObservableObject
 
     public async Task OnNavigatedTo()
     {
-        int example = 0;
+        if (NavigationContext.Startup)
+        {
+            NavigationContext.Startup = false;
+            if (Preferences.Get("RememberMe", false))
+            {
+                userSession.User = new AppUser
+                {
+                    Id = Preferences.Get("UserId", 1),
+                    Username = Preferences.Get("Username", "Admin"),
+                    Email = Preferences.Get("Email", "admin@test.com")
+                };
+
+                await DirectLogin();
+            }
+        } else
+        {
+            ApiFound = true;
+            Email = string.Empty;
+            Username = string.Empty;
+            Password = string.Empty;
+            Route = string.Empty;
+            Port = string.Empty;
+
+            Preferences.Set("RememberMe", false);
+        }
+
     }
 
     [RelayCommand]
-    public async Task DebugLogin()
+    public async Task DirectLogin()
     {
-        await Shell.Current.GoToAsync("//MainPage");
+        Application.Current.Dispatcher.Dispatch(async () =>
+        {
+            await Task.Delay(50);
+            await Shell.Current.GoToAsync("//MainPage");
+        });
     }
 
 
@@ -92,6 +126,17 @@ public partial class LoginPageModel : ObservableObject
             if (result != null)
             {
                 userSession.User = result;
+                if (RememberMe)
+                {
+                    Preferences.Set("RememberMe", true);
+                    Preferences.Set("UserId", result.Id);
+                    Preferences.Set("Username", result.Username);
+                    Preferences.Set("Email", result.Email);
+                }
+                else
+                {
+                    Preferences.Set("RememberMe", false);
+                }
                 await Shell.Current.GoToAsync("//MainPage");
             }
             else
@@ -126,6 +171,17 @@ public partial class LoginPageModel : ObservableObject
         if (result != null)
         {
             userSession.User = result;
+            if (RememberMe)
+            {
+                Preferences.Set("RememberMe", true);
+                Preferences.Set("UserId", result.Id);
+                Preferences.Set("Username", result.Username);
+                Preferences.Set("Email", result.Email);
+            }
+            else
+            {
+                Preferences.Set("RememberMe", false);
+            }
             await Shell.Current.GoToAsync("//MainPage");
         }
         else

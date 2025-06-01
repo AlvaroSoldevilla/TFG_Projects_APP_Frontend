@@ -46,7 +46,6 @@ public partial class NoteComponent : ContentView
     {
         if (bindable is NoteComponent view)
         {
-            // Rebind to make sure XAML picks up the changes
             view.BindingContext = view;
         }
     }

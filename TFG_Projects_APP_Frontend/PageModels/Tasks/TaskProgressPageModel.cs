@@ -66,12 +66,14 @@ public partial class TaskProgressPageModel : ObservableObject
 
     [ObservableProperty]
     private int progressValue = 0;
+    private int initialProgressValue = 0;
 
     [ObservableProperty]
     private int taskProgressValue = 0;
 
     [ObservableProperty]
     private int unlockAtValue = 100;
+    private int initialUnlockAtValue = 100;
 
 
     [ObservableProperty]
@@ -204,7 +206,7 @@ public partial class TaskProgressPageModel : ObservableObject
     [RelayCommand]
     public async Task CreateTaskProgress()
     {
-        var taskProgress = await FormDialog.ShowCreateObjectMenuAsync<TaskProgressFormCreate>();
+        var taskProgress = await FormDialog.ShowCreateObjectMenuAsync<TaskProgressFormCreate>("Create Progress Section");
 
         if (taskProgress != null && !string.IsNullOrEmpty(taskProgress.Name))
         {
@@ -242,7 +244,7 @@ public partial class TaskProgressPageModel : ObservableObject
     [RelayCommand]
     public async Task TaskCreate(TaskProgress taskProgress)
     {
-        var task = await FormDialog.ShowCreateObjectMenuAsync<TaskFormCreate>();
+        var task = await FormDialog.ShowCreateObjectMenuAsync<TaskFormCreate>("Create Task");
         if (!string.IsNullOrEmpty(task.Title))
         {
             int progressvalue;
@@ -509,7 +511,8 @@ public partial class TaskProgressPageModel : ObservableObject
             };
 
 
-            progressValue = EditingTaskData.Progress;
+            ProgressValue = EditingTaskData.Progress;
+            initialProgressValue = EditingTaskData.Progress;
 
             IsEditingTask = true;
             SelectedTask = task;
@@ -521,7 +524,8 @@ public partial class TaskProgressPageModel : ObservableObject
     {
         if (SelectedDependency != null)
         {
-            unlockAtValue = SelectedDependency.UnlockAt;
+            UnlockAtValue = SelectedDependency.UnlockAt;
+            initialUnlockAtValue = SelectedDependency.UnlockAt;
             IsEditingTaskDependency = true;
             EditingTaskDependencyData = new TaskDependency
             {
@@ -651,6 +655,7 @@ public partial class TaskProgressPageModel : ObservableObject
             EditingTaskData.Progress = progressValue;
 
             int? idUserAsigned;
+            int? priorityId;
 
             if (EditingTaskData.Parent != null)
             {
@@ -687,6 +692,15 @@ public partial class TaskProgressPageModel : ObservableObject
                 idUserAsigned = EditingTaskData.UserAssigned.Id;
             }
 
+            if (EditingTaskData.Priority == null)
+            {
+                priorityId = null;
+            }
+            else
+            {
+                priorityId = EditingTaskData.Priority.Id;
+            }
+
             var taskUpdate = new TaskUpdate
             {
                 IdSection = EditingTaskData.IdSection,
@@ -695,7 +709,7 @@ public partial class TaskProgressPageModel : ObservableObject
                 Title = EditingTaskData.Title,
                 IdUserAssigned = idUserAsigned,
                 IdParentTask = EditingTaskData.IdParentTask,
-                IdPriority = EditingTaskData.Priority.Id,
+                IdPriority = priorityId,
                 Description = EditingTaskData.Description,
                 Progress = EditingTaskData.Progress,
                 LimitDate = EditingTaskData.LimitDate,
@@ -822,6 +836,26 @@ public partial class TaskProgressPageModel : ObservableObject
 
         EditingTaskData = null;
         IsEditingTask = false;
+    }
+
+    private bool HasChangedTaskData(ProjectTask task)
+    {
+        if (EditingTaskData == null || task == null)
+        {
+            return false;
+        }
+        if (initialProgressValue != ProgressValue || initialUnlockAtValue != UnlockAtValue)
+        {
+            return true;
+        }
+        return EditingTaskData.Id != task.Id ||
+               EditingTaskData.Title != task.Title ||
+               EditingTaskData.Description != task.Description ||
+               EditingTaskData.Progress != task.Progress ||
+               EditingTaskData.LimitDate != task.LimitDate ||
+               EditingTaskData.CompletionDate != task.CompletionDate ||
+               EditingTaskData.IdUserAssigned != task.IdUserAssigned ||
+               EditingTaskData.IdPriority != task.IdPriority;
     }
 
 }

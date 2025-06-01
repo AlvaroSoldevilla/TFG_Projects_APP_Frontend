@@ -6,7 +6,7 @@ namespace TFG_Projects_APP_Frontend.Components.ConceptComponents;
 public partial class ConceptBoardComponent : ContentView
 {
     public static readonly BindableProperty ComponentProperty =
-    BindableProperty.Create(nameof(ComponentProperty), typeof(ConceptComponent), typeof(NoteComponent), default(ConceptComponent));
+    BindableProperty.Create(nameof(Component), typeof(ConceptComponent), typeof(ConceptBoardComponent), propertyChanged: OnComponentChanged);
 
     public static readonly BindableProperty TapCommandProperty =
     BindableProperty.Create(nameof(TapCommand), typeof(ICommand), typeof(NoteComponent), default(ICommand));
@@ -50,6 +50,14 @@ public partial class ConceptBoardComponent : ContentView
 		InitializeComponent();
         BindingContext = this;
         AddGestures();
+    }
+
+    private static void OnComponentChanged(BindableObject bindable, object oldValue, object newValue)
+    {
+        if (bindable is NoteComponent view)
+        {
+            view.BindingContext = view;
+        }
     }
 
     private void AddGestures()
@@ -115,13 +123,12 @@ public partial class ConceptBoardComponent : ContentView
         else
         {
             _lastTapTime = now;
-            Device.StartTimer(TimeSpan.FromMilliseconds(300), () =>
+            Dispatcher.DispatchDelayed(TimeSpan.FromMilliseconds(150), () =>
             {
-                if ((DateTime.Now - _lastTapTime).TotalMilliseconds >= 300)
+                if ((DateTime.Now - _lastTapTime).TotalMilliseconds >= 150)
                 {
                     OnSingleTap();
                 }
-                return false;
             });
         }
     }

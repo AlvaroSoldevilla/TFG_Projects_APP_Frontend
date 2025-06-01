@@ -248,10 +248,7 @@ public partial class ProjectManagementPageModel : ObservableObject
             NavigationContext.CurrentConceptBoards.Push(conceptBoard);
             if (conceptBoard != null)
             {
-                await Shell.Current.GoToAsync("ConceptBoardPage", new Dictionary<string, object>
-            {
-                 {"ConceptBoard", conceptBoard }
-            });
+                await Shell.Current.GoToAsync("ConceptBoardPage");
             }
         }
     }
@@ -323,7 +320,7 @@ public partial class ProjectManagementPageModel : ObservableObject
     private async void CreateTaskBoard()
     {
         IsLoadingTaskBoards = true;
-        var taskBoardform = await FormDialog.ShowCreateObjectMenuAsync<TaskBoardFormCreate>();
+        var taskBoardform = await FormDialog.ShowCreateObjectMenuAsync<TaskBoardFormCreate>("Create Task Board");
         if (taskBoardform != null && !string.IsNullOrEmpty(taskBoardform.Title))
         {
             if (string.IsNullOrEmpty(taskBoardform.Description))
@@ -379,7 +376,7 @@ public partial class ProjectManagementPageModel : ObservableObject
     private async void CreateConcept()
     {
         IsLoadingConcepts = true;
-        var conceptForm = await FormDialog.ShowCreateObjectMenuAsync<ConceptFormCreate>();
+        var conceptForm = await FormDialog.ShowCreateObjectMenuAsync<ConceptFormCreate>("Create Concept");
         
         if (conceptForm != null && !string.IsNullOrEmpty(conceptForm.Title))
         {
