@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using TFG_Projects_APP_Frontend.Components.ConceptComponents;
 using TFG_Projects_APP_Frontend.Components.CreateModal;
 using TFG_Projects_APP_Frontend.Entities.Dtos.Components;
@@ -27,6 +26,8 @@ public partial class ConceptBoardPageModel : ObservableObject
 
     public ConceptBoard ConceptBoard { get; set; }
 
+    private ConceptComponent _hoveringContainer { get; set; }
+
     [ObservableProperty]
     private bool _isLoading;
 
@@ -47,6 +48,7 @@ public partial class ConceptBoardPageModel : ObservableObject
 
     [ObservableProperty]
     private ObservableCollection<ProjectType> _types;
+
 
     public ConceptBoardPageModel(
         IConceptBoardsService conceptBoardsService, 
@@ -137,6 +139,12 @@ public partial class ConceptBoardPageModel : ObservableObject
 
         foreach (var component in componentList)
         {
+            if (component.IdType == 3)
+            {
+                var allComponents = await componentsService.GetAllComponentsByBoard(ConceptBoard.Id);
+                component.Children = allComponents.Where(c => c.IdParent == component.Id).ToList();
+            }
+
             PaintComponent(component);
         }
         IsLoading = false;
@@ -158,11 +166,38 @@ public partial class ConceptBoardPageModel : ObservableObject
                 };
                 break;
             case 2: // Note
-                componentView = new NoteComponent
+
+                if (component.IdParent == null || component.IdParent == component.Id)
+                {
+                    componentView = new NoteComponent
+                    {
+                        Component = component,
+                        TapCommand = new Command<ConceptComponent>(EditNote),
+                        DragEndCommand = new Command<ConceptComponent>(DropComponent)
+                    };
+                }
+                break;
+            case 3: // Container
+                component.Children ??= new List<ConceptComponent>();
+
+                componentView = new ContainerComponent
                 {
                     Component = component,
-                    TapCommand = new Command<ConceptComponent>(EditNote),
-                    DragEndCommand = new Command<ConceptComponent>(DropComponent)
+                    TapCommand = new Command<ConceptComponent>(EditComponent),
+                    ChildTapCommand = new Command<ConceptComponent>(EditNote),
+                    DragEndCommand = new Command<ConceptComponent>(DropComponent),
+                    ChildDragEndCommand = new Command<ConceptComponent>(DropComponent),
+                    HoverEnterCommand = new Command<ConceptComponent>(HoverEnter),
+                    HoverExitCommand = new Command<ConceptComponent>(HoverExit)
+                };
+                break;
+            case 4: // Table
+                componentView = new TableComponent
+                {
+                    Component = component,
+                    TapCommand = new Command<ConceptComponent>(EditComponent),
+                    DragEndCommand = new Command<ConceptComponent>(DropComponent),
+                    UpdateContentCommand = new Command<ConceptComponent>(SaveComponent)
                 };
                 break;
         }
@@ -171,6 +206,16 @@ public partial class ConceptBoardPageModel : ObservableObject
         {
             _page.AddComponent(componentView, new Point(component.PosX ?? 0, component.PosY ?? 0));
         }
+    }
+
+    private void HoverExit(ConceptComponent component)
+    {
+        _hoveringContainer = null;
+    }
+
+    private void HoverEnter(ConceptComponent component)
+    {
+        _hoveringContainer = component;
     }
 
     [RelayCommand]
@@ -186,6 +231,12 @@ public partial class ConceptBoardPageModel : ObservableObject
                 break;
             case 2:
                 title = "Create Note";
+                break;
+            case 3:
+                title = "Create Container";
+                break;
+            case 4:
+                title = "Create Table";
                 break;
             default:
                 title = "Create Component";
@@ -266,6 +317,21 @@ public partial class ConceptBoardPageModel : ObservableObject
                     IdBoard = component.IdBoard,
                     IdParent = component.IdParent
                 });
+            } else if (component.IdType == 4)
+            {
+                component.Content = string.Join("\n", new string[] { "Column1\tColumn2\tColumn3\n" });
+                component.Content += "\t\t\n";
+                component.Content += "\t\t\n";
+                await componentsService.Patch(component.Id, new ComponentUpdate
+                {
+                    Title = component.Title,
+                    Content = component.Content,
+                    IdType = component.IdType,
+                    PosX = component.PosX,
+                    PosY = component.PosY,
+                    IdBoard = component.IdBoard,
+                    IdParent = component.IdParent
+                });
             }
             await LoadData();
         }
@@ -298,9 +364,19 @@ public partial class ConceptBoardPageModel : ObservableObject
     {
         if (component != null && component != null)
         {
+            if (component.IdType == 2 && _hoveringContainer != null)
+            {
+                component.IdParent = _hoveringContainer.Id;
+            }
+            else if (component.IdType == 2)
+            {
+                component.IdParent = component.Id;
+            }
+
             var componentUpdate = new ComponentUpdate
             {
                 IdBoard = component.IdBoard,
+                IdParent = component.IdParent,
                 IdType = component.IdType,
                 Title = component.Title,
                 PosX = component.PosX,

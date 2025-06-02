@@ -1,3 +1,4 @@
+using Microsoft.Maui.Graphics;
 using System.Windows.Input;
 using TFG_Projects_APP_Frontend.Entities.Models;
 
@@ -35,6 +36,11 @@ public partial class NoteComponent : ContentView
     private Point _startOffset;
     private Point _position;
 
+    public event EventHandler? DragStarted;
+    public event EventHandler? DragEnded;
+
+    private AbsoluteLayout? _absoluteLayout;
+
     public NoteComponent()
 	{
 		InitializeComponent();
@@ -66,24 +72,36 @@ public partial class NoteComponent : ContentView
         switch (e.StatusType)
         {
             case GestureStatus.Started:
-                var bounds = AbsoluteLayout.GetLayoutBounds(this); // "this" = the NoteComponent
-                _startOffset = new Point(bounds.X, bounds.Y);
-                _position = new Point(bounds.X, bounds.Y);
+                DragStarted?.Invoke(this, EventArgs.Empty);
+
+                _absoluteLayout = FindNearestAbsoluteLayout(this);
+                if (_absoluteLayout != null)
+                {
+                    var bounds = AbsoluteLayout.GetLayoutBounds(this);
+                    _startOffset = new Point(bounds.X, bounds.Y);
+                    _position = new Point(bounds.X, bounds.Y);
+                }
                 break;
 
             case GestureStatus.Running:
-                double runningX = _startOffset.X + e.TotalX;
-                _position.X = runningX;
-                double runningY = _startOffset.Y + e.TotalY;
-                _position.Y = runningY;
-                AbsoluteLayout.SetLayoutBounds(this, new Rect(runningX, runningY, -1, -1));
+                if (_absoluteLayout != null)
+                {
+                    double runningX = _startOffset.X + e.TotalX;
+                    double runningY = _startOffset.Y + e.TotalY;
+                    _position = new Point(runningX, runningY);
+                    AbsoluteLayout.SetLayoutBounds(this, new Rect(runningX, runningY, -1, -1));
+                }
                 break;
 
             case GestureStatus.Completed:
-                double finalX = _position.X;
-                double finalY = _position.Y;
-                AbsoluteLayout.SetLayoutBounds(this, new Rect(finalX, finalY, -1, -1));
-                OnDragEnded(finalX, finalY);
+                if (_absoluteLayout != null)
+                {
+                    double finalX = _position.X;
+                    double finalY = _position.Y;
+                    AbsoluteLayout.SetLayoutBounds(this, new Rect(finalX, finalY, -1, -1));
+                    DragEnded?.Invoke(this, EventArgs.Empty);
+                    OnDragEnded(finalX, finalY);
+                }
                 break;
         }
     }
@@ -105,5 +123,17 @@ public partial class NoteComponent : ContentView
         {
             TapCommand.Execute(Component);
         }
+    }
+
+    private AbsoluteLayout? FindNearestAbsoluteLayout(Element? current)
+    {
+        while (current != null)
+        {
+            if (current is AbsoluteLayout abs)
+                return abs;
+
+            current = current.Parent;
+        }
+        return null;
     }
 }

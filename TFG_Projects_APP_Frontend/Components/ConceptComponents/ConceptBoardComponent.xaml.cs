@@ -54,7 +54,7 @@ public partial class ConceptBoardComponent : ContentView
 
     private static void OnComponentChanged(BindableObject bindable, object oldValue, object newValue)
     {
-        if (bindable is NoteComponent view)
+        if (bindable is ConceptBoardComponent view)
         {
             view.BindingContext = view;
         }
@@ -80,7 +80,7 @@ public partial class ConceptBoardComponent : ContentView
         switch (e.StatusType)
         {
             case GestureStatus.Started:
-                var bounds = AbsoluteLayout.GetLayoutBounds(this); // "this" = the NoteComponent
+                var bounds = AbsoluteLayout.GetLayoutBounds(this);
                 _startOffset = new Point(bounds.X, bounds.Y);
                 _position = new Point(bounds.X, bounds.Y);
                 break;
@@ -123,9 +123,9 @@ public partial class ConceptBoardComponent : ContentView
         else
         {
             _lastTapTime = now;
-            Dispatcher.DispatchDelayed(TimeSpan.FromMilliseconds(150), () =>
+            Dispatcher.DispatchDelayed(TimeSpan.FromMilliseconds(200), () =>
             {
-                if ((DateTime.Now - _lastTapTime).TotalMilliseconds >= 150)
+                if ((DateTime.Now - _lastTapTime).TotalMilliseconds >= 200)
                 {
                     OnSingleTap();
                 }
