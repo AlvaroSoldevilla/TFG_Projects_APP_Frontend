@@ -13,10 +13,10 @@ public partial class ContainerComponent : ContentView
     BindableProperty.Create(nameof(Component), typeof(ConceptComponent), typeof(ConceptBoardComponent), propertyChanged: OnComponentChanged);
 
     public static readonly BindableProperty TapCommandProperty =
-    BindableProperty.Create(nameof(TapCommand), typeof(ICommand), typeof(NoteComponent), default(ICommand));
+    BindableProperty.Create(nameof(TapCommand), typeof(ICommand), typeof(ContainerComponent), default(ICommand));
 
     public static readonly BindableProperty DragEndCommandProperty =
-    BindableProperty.Create(nameof(DragEndCommandProperty), typeof(ICommand), typeof(NoteComponent), default(ICommand));
+    BindableProperty.Create(nameof(DragEndCommandProperty), typeof(ICommand), typeof(ContainerComponent), default(ICommand));
 
     public static readonly BindableProperty ChildDragEndCommandProperty =
     BindableProperty.Create(nameof(ChildDragEndCommandProperty), typeof(ICommand), typeof(NoteComponent), default(ICommand));
@@ -25,10 +25,10 @@ public partial class ContainerComponent : ContentView
     BindableProperty.Create(nameof(ChildTapCommandProperty), typeof(ICommand), typeof(NoteComponent), default(ICommand));
 
     public static readonly BindableProperty HoverEnterCommandProperty =
-    BindableProperty.Create(nameof(HoverEnterCommandProperty), typeof(ICommand), typeof(NoteComponent), default(ICommand));
+    BindableProperty.Create(nameof(HoverEnterCommandProperty), typeof(ICommand), typeof(ContainerComponent), default(ICommand));
 
     public static readonly BindableProperty HoverExitCommandProperty =
-    BindableProperty.Create(nameof(HoverExitCommandProperty), typeof(ICommand), typeof(NoteComponent), default(ICommand));
+    BindableProperty.Create(nameof(HoverExitCommandProperty), typeof(ICommand), typeof(ContainerComponent), default(ICommand));
 
     public ConceptComponent Component
     {

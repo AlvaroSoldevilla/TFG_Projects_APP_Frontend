@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="TFG_Projects_APP_Frontend.Components.TaskComponents.TaskSectionComponent"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:components="clr-namespace:TFG_Projects_APP_Frontend.Components.TaskComponents"
+    xmlns:models="clr-namespace:TFG_Projects_APP_Frontend.Entities.Models"
+    x:DataType="components:TaskSectionComponent">
+    <VerticalStackLayout>
+        <Border Padding="5">
+            <StackLayout Spacing="5">
+                <StackLayout Orientation="Horizontal" Spacing="5">
+                    <Button Clicked="Left_Clicked" Text="&lt;" />
+                    <Label Text="{Binding Section.Title}" />
+                    <Button Clicked="Right_Clicked" Text="&gt;" />
+                </StackLayout>
+                <Button Clicked="Edit_Clicked" Text="Edit" />
+                <Button Clicked="Delete_Clicked" Text="Delete" />
+                <Button Clicked="Create_Task_Clicked" Text="Create Task" />
+                <ListView ItemsSource="{Binding Section.Tasks}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="models:ProjectTask">
+                            <AbsoluteLayout>
+                                <components:TaskComponent />
+                            </AbsoluteLayout>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackLayout>
+        </Border>
+    </VerticalStackLayout>
+</ContentView>

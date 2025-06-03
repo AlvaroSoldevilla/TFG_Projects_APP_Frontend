@@ -35,6 +35,9 @@ public partial class TaskBoardPageModel : ObservableObject
     public TaskBoard TaskBoard { get; set; }
     private List<ProjectTask> AllTasks {get; set;} = new List<ProjectTask>();
 
+    private TaskSection _hoveringTaskSection {  get; set; }
+    private ProjectTask _hoveringTask {  get; set; }
+
     [ObservableProperty]
     private bool _isLoading;
 
@@ -98,9 +101,6 @@ public partial class TaskBoardPageModel : ObservableObject
 
     [ObservableProperty]
     private TaskDependency _editingTaskDependencyData;
-
-    
-
 
     public TaskBoardPageModel(
         ITaskBoardsService taskBoardsService,
@@ -881,5 +881,108 @@ public partial class TaskBoardPageModel : ObservableObject
                task.CompletionDate != EditingTaskData.CompletionDate ||
                task.Finished != EditingTaskData.Finished ||
                task.IsParent != EditingTaskData.IsParent;
+    }
+
+    [RelayCommand]
+    public async void TaskDragEnd(ProjectTask task)
+    {
+        if (task != null && task != null)
+        {
+            if (_hoveringTaskSection != null)
+            {
+                int taskSectionId = task.IdSection;
+                int? parentId = task.IdParentTask;
+
+                if (_hoveringTask != null && !task.IsParent)
+                {
+                    if (_hoveringTask.IsParent)
+                    {
+                        parentId = _hoveringTask.Id;
+                    } else if (_hoveringTask.IdParentTask == null || _hoveringTask.IdParentTask == _hoveringTask.Id) {
+                        parentId = _hoveringTask.Id;
+                    }
+                    
+                }
+                if (task.IdSection != _hoveringTaskSection.Id)
+                {
+                    taskSectionId = _hoveringTaskSection.Id;
+
+                    if (task.IsParent)
+                    {
+                        foreach (var childTask in await tasksService.GetAllTasksByTaskSection(task.IdSection))
+                        {
+                            if (childTask.IdParentTask == task.Id)
+                            {
+                                var childTaskUpdate = new TaskUpdate
+                                {
+                                    Id = childTask.Id,
+                                    IdSection = taskSectionId,
+                                    IdProgressSection = childTask.IdProgressSection,
+                                    IdUserCreated = childTask.IdUserCreated,
+                                    Title = childTask.Title,
+                                    IdUserAssigned = childTask.IdUserAssigned,
+                                    IdParentTask = childTask.IdParentTask,
+                                    IdPriority = childTask.IdPriority,
+                                    Description = childTask.Description,
+                                    Progress = childTask.Progress,
+                                    LimitDate = childTask.LimitDate,
+                                    CompletionDate = childTask.CompletionDate,
+                                    Finished = childTask.Finished,
+                                    IsParent = childTask.IsParent
+                                };
+
+                                await tasksService.Patch(EditingTaskData.Id, childTaskUpdate);
+                            }
+                            
+                        }
+                    }
+                }
+
+                var taskUpdate = new TaskUpdate
+                {
+                    Id = task.Id,
+                    IdSection = taskSectionId,
+                    IdProgressSection = task.IdProgressSection,
+                    IdUserCreated = task.IdUserCreated,
+                    Title = task.Title,
+                    IdUserAssigned = task.IdUserAssigned,
+                    IdParentTask = parentId,
+                    IdPriority = task.IdPriority,
+                    Description = task.Description,
+                    Progress = task.Progress,
+                    LimitDate = task.LimitDate,
+                    CompletionDate = task.CompletionDate,
+                    Finished = task.Finished,
+                    IsParent = task.IsParent
+                };
+
+                await tasksService.Patch(EditingTaskData.Id, taskUpdate);
+
+            }
+        }
+    }
+
+    [RelayCommand]
+    private void HoverExit(TaskSection taskSection)
+    {
+        _hoveringTaskSection = null;
+    }
+
+    [RelayCommand]
+    private void HoverEnter(TaskSection taskSection)
+    {
+        _hoveringTaskSection = taskSection;
+    }
+
+    [RelayCommand]
+    private void TaskHoverExit(ProjectTask task)
+    {
+        _hoveringTask = null;
+    }
+
+    [RelayCommand]
+    private void TaskHoverEnter(ProjectTask task)
+    {
+        _hoveringTask = task;
     }
 }
