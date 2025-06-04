@@ -57,7 +57,10 @@
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="models:TaskSection">
                         <components:TaskSectionComponent
+                            ChildDeleteCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=DeleteTakCommand}"
                             ChildDragEndCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=TaskDragEndCommand}"
+                            ChildHoverEnterCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=TaskHoverEnterCommand}"
+                            ChildHoverExitCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=TaskHoverExitCommand}"
                             ChildTapCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=EditTaskCommand}"
                             CreateTaskCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=TaskCreateCommand}"
                             DeleteCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=DeleteTaskSectionCommand}"

@@ -128,8 +128,6 @@ public partial class ContainerComponent : ContentView
 
                     if (renderedChild != null)
                     {
-                        // Pass commands if needed
-                        renderedChild.SetValue(TableComponent.DragEndCommandProperty, view.ChildDragEndCommand);
                         view.ChildrenContainer.Children.Add(renderedChild);
                     }
                 }

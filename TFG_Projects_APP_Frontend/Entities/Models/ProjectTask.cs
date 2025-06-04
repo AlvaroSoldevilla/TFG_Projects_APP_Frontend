@@ -21,7 +21,7 @@ public class ProjectTask
     public TaskSection? TaskSection { get; set; }
     public TaskProgress? ProgressSection { get; set; }
     public ProjectTask? Parent { get; set; }
-    public List<ProjectTask>? Children { get; set; }
+    public List<ProjectTask> Children { get; set; } = new List<ProjectTask>();
     public AppUser UserCreated { get; set; }
     public AppUser? UserAssigned { get; set; }
     public Priority? Priority { get; set; }

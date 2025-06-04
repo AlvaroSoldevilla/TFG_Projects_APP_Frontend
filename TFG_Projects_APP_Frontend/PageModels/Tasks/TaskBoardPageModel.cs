@@ -181,6 +181,7 @@ public partial class TaskBoardPageModel : ObservableObject
                 {
                     task.Dependecies = dependencies;
                     task.Parent = taskSection.Tasks.FirstOrDefault(x => x.Id == task.IdParentTask);
+                    task.Children = (List<ProjectTask>)taskSection.Tasks.Select(x => x.Id == task.IdParentTask);
                     foreach (var dependency in dependencies)
                     {
                         dependency.DependsOn = taskSection.Tasks.FirstOrDefault(x => x.Id == dependency.IdDependsOn);
@@ -886,14 +887,14 @@ public partial class TaskBoardPageModel : ObservableObject
     [RelayCommand]
     public async void TaskDragEnd(ProjectTask task)
     {
-        if (task != null && task != null)
+        if (task != null)
         {
             if (_hoveringTaskSection != null)
             {
                 int taskSectionId = task.IdSection;
                 int? parentId = task.IdParentTask;
 
-                if (_hoveringTask != null && !task.IsParent)
+                if (_hoveringTask != null && !task.IsParent && _hoveringTask.Id != task.Id)
                 {
                     if (_hoveringTask.IsParent)
                     {
@@ -956,7 +957,7 @@ public partial class TaskBoardPageModel : ObservableObject
                     IsParent = task.IsParent
                 };
 
-                await tasksService.Patch(EditingTaskData.Id, taskUpdate);
+                await tasksService.Patch(task.Id, taskUpdate);
 
             }
         }
