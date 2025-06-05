@@ -5,15 +5,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:components="clr-namespace:TFG_Projects_APP_Frontend.Components.TaskComponents"
     xmlns:models="clr-namespace:TFG_Projects_APP_Frontend.Entities.Models"
-    x:DataType="components:TaskSectionComponent">
+    x:DataType="models:TaskSection">
     <VerticalStackLayout>
         <Border Padding="5">
-            <Border.GestureRecognizers>
-                <DropGestureRecognizer AllowDrop="True" Drop="OnDrop" />
-            </Border.GestureRecognizers>
-
             <Grid RowSpacing="10">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -26,7 +23,7 @@
                     Orientation="Horizontal"
                     Spacing="5">
                     <Button Clicked="Left_Clicked" Text="&lt;" />
-                    <Label Text="{Binding Section.Title}" />
+                    <Label Text="{Binding Title}" />
                     <Button Clicked="Right_Clicked" Text="&gt;" />
                 </StackLayout>
                 <Button
@@ -41,7 +38,19 @@
                     Grid.Row="3"
                     Clicked="Create_Task_Clicked"
                     Text="Create Task" />
-                <ScrollView Grid.Row="4">
+                <Border
+                    Grid.Row="4"
+                    Padding="10"
+                    StrokeShape="RoundRectangle 40,0,0,40">
+                    <Border.GestureRecognizers>
+                        <DropGestureRecognizer AllowDrop="True" Drop="DroppedOnSection" />
+                    </Border.GestureRecognizers>
+                    <Label
+                        x:Name="DropZone"
+                        HorizontalOptions="Center"
+                        Text="Drop Here" />
+                </Border>
+                <ScrollView Grid.Row="5">
                     <StackLayout x:Name="TaskContainer" Padding="10" />
                 </ScrollView>
             </Grid>

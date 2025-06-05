@@ -42,11 +42,10 @@
         <StackLayout
             Grid.Row="1"
             Padding="5"
+            HorizontalOptions="FillAndExpand"
             Orientation="Horizontal"
-            Spacing="20"
-            VerticalOptions="FillAndExpand">
+            Spacing="20">
             <CollectionView
-                HorizontalOptions="StartAndExpand"
                 ItemsSource="{Binding TaskSections}"
                 SelectedItem="{Binding SelectedTaskSection}"
                 SelectionChangedCommand="{Binding TaskSectionSelectedCommand}"
@@ -57,19 +56,17 @@
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="models:TaskSection">
                         <components:TaskSectionComponent
-                            ChildDeleteCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=DeleteTakCommand}"
-                            ChildDragEndCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=TaskDragEndCommand}"
-                            ChildHoverEnterCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=TaskHoverEnterCommand}"
-                            ChildHoverExitCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=TaskHoverExitCommand}"
+                            BindingContext="{Binding .}"
+                            ChildDeleteCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=DeleteTaskCommand}"
                             ChildTapCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=EditTaskCommand}"
                             CreateTaskCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=TaskCreateCommand}"
                             DeleteCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=DeleteTaskSectionCommand}"
+                            DroppedOnSectionCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=DropOnSectionCommand}"
+                            DroppedOnTaskCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=DroppedOnTaskCommand}"
                             EditCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=EditTaskSectionCommand}"
-                            HoverEnterCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=HoverEnterCommand}"
-                            HoverExitCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=HoverExitCommand}"
                             MoveLeftCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=MoveSectionLeftCommand}"
                             MoveRightCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=MoveSectionRightCommand}"
-                            Section="{Binding .}" />
+                            TaskGrabbedCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=GrabTaskCommand}" />
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
@@ -111,20 +108,6 @@
                             Maximum="100"
                             Minimum="0"
                             Value="{Binding ProgressValue}" />
-                        <Label
-                            FontSize="20"
-                            IsVisible="{Binding EditingTaskData.IsParent, Converter={StaticResource InvertedBoolConverter}}"
-                            Text="Parent:" />
-                        <Picker
-                            Title="Select parent task"
-                            IsVisible="{Binding EditingTaskData.IsParent, Converter={StaticResource InvertedBoolConverter}}"
-                            ItemDisplayBinding="{Binding Title}"
-                            ItemsSource="{Binding PossibleParents}"
-                            SelectedItem="{Binding EditingTaskData.Parent}" />
-                        <Button
-                            Command="{Binding RemoveParentCommand}"
-                            IsVisible="{Binding EditingTaskData.IsParent, Converter={StaticResource InvertedBoolConverter}}"
-                            Text="Remove Parent" />
                         <Label FontSize="20" Text="Limit date:" />
                         <DatePicker Date="{Binding EditingTaskData.LimitDate}" Format="dd/MM/yyyy" />
 

@@ -10,6 +10,13 @@
             Margin="5"
             Padding="10"
             BackgroundColor="#f0f0f0">
+            <Border.GestureRecognizers>
+                <DragGestureRecognizer
+                    CanDrag="True"
+                    DragStarting="OnTaskGrabbed"
+                    DropCompleted="OnDroppedOnTask" />
+                <DropGestureRecognizer AllowDrop="True" Drop="OnDroppedOnTask" />
+            </Border.GestureRecognizers>
             <StackLayout Spacing="5">
                 <Label Text="{Binding ComponentTask.Title}" />
                 <Label Text="{Binding ComponentTask.Description}" />

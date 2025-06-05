@@ -6,16 +6,13 @@ namespace TFG_Projects_APP_Frontend.Components.TaskComponents;
 public partial class TaskSectionComponent : ContentView
 {
     public static readonly BindableProperty SectionProperty =
-    BindableProperty.Create(nameof(SectionProperty), typeof(TaskSection), typeof(TaskSectionComponent), propertyChanged: OnComponentChanged);
+    BindableProperty.Create(nameof(Section), typeof(TaskSection), typeof(TaskSectionComponent));
 
     public static readonly BindableProperty EditCommandProperty =
     BindableProperty.Create(nameof(EditCommandProperty), typeof(ICommand), typeof(TaskSectionComponent), default(ICommand));
 
-    public static readonly BindableProperty HoverEnterCommandProperty =
-    BindableProperty.Create(nameof(HoverEnterCommandProperty), typeof(ICommand), typeof(TaskSectionComponent), default(ICommand));
-
-    public static readonly BindableProperty HoverExitCommandProperty =
-    BindableProperty.Create(nameof(HoverExitCommandProperty), typeof(ICommand), typeof(TaskSectionComponent), default(ICommand));
+    public static readonly BindableProperty DroppedOnSectionCommandProperty =
+    BindableProperty.Create(nameof(DroppedOnSectionCommandProperty), typeof(ICommand), typeof(TaskSectionComponent), default(ICommand));
 
     public static readonly BindableProperty MoveLeftCommandProperty =
     BindableProperty.Create(nameof(MoveLeftCommandProperty), typeof(ICommand), typeof(TaskSectionComponent), default(ICommand));
@@ -27,24 +24,20 @@ public partial class TaskSectionComponent : ContentView
     BindableProperty.Create(nameof(DeleteCommandProperty), typeof(ICommand), typeof(TaskSectionComponent), default(ICommand));
 
 
-    public static readonly BindableProperty ChildDragEndCommandProperty =
-    BindableProperty.Create(nameof(ChildDragEndCommandProperty), typeof(ICommand), typeof(TaskComponent), default(ICommand));
-
     public static readonly BindableProperty ChildTapCommandProperty =
     BindableProperty.Create(nameof(ChildTapCommandProperty), typeof(ICommand), typeof(TaskComponent), default(ICommand));
 
     public static readonly BindableProperty ChildDeleteCommandProperty =
     BindableProperty.Create(nameof(ChildDeleteCommandProperty), typeof(ICommand), typeof(TaskComponent), default(ICommand));
 
-    public static readonly BindableProperty ChildHoverEnterCommandProperty =
-    BindableProperty.Create(nameof(ChildHoverEnterCommandProperty), typeof(ICommand), typeof(TaskComponent), default(ICommand));
+    public static readonly BindableProperty TaskGrabbedCommandProperty =
+    BindableProperty.Create(nameof(TaskGrabbedCommandProperty), typeof(ICommand), typeof(TaskComponent), default(ICommand));
 
-    public static readonly BindableProperty ChildHoverExitCommandProperty =
-    BindableProperty.Create(nameof(ChildHoverExitCommandProperty), typeof(ICommand), typeof(TaskComponent), default(ICommand));
+    public static readonly BindableProperty DroppedOnTaskCommandProperty =
+    BindableProperty.Create(nameof(DroppedOnTaskCommandProperty), typeof(ICommand), typeof(TaskComponent), default(ICommand));
 
     public static readonly BindableProperty CreateTaskCommandProperty =
     BindableProperty.Create(nameof(CreateTaskCommandProperty), typeof(ICommand), typeof(TaskComponent), default(ICommand));
-
 
     public TaskSection Section
     {
@@ -58,16 +51,10 @@ public partial class TaskSectionComponent : ContentView
         set => SetValue(EditCommandProperty, value);
     }
 
-    public ICommand HoverEnterCommand
+    public ICommand DroppedOnSectionCommand
     {
-        get => (ICommand)GetValue(HoverEnterCommandProperty);
-        set => SetValue(HoverEnterCommandProperty, value);
-    }
-
-    public ICommand HoverExitCommand
-    {
-        get => (ICommand)GetValue(HoverExitCommandProperty);
-        set => SetValue(HoverExitCommandProperty, value);
+        get => (ICommand)GetValue(DroppedOnSectionCommandProperty);
+        set => SetValue(DroppedOnSectionCommandProperty, value);
     }
 
     public ICommand MoveLeftCommand
@@ -101,22 +88,16 @@ public partial class TaskSectionComponent : ContentView
         set => SetValue(ChildDeleteCommandProperty, value);
     }
 
-    public ICommand ChildHoverEnterCommand
+    public ICommand DroppedOnTaskCommand
     {
-        get => (ICommand)GetValue(ChildHoverEnterCommandProperty);
-        set => SetValue(ChildHoverEnterCommandProperty, value);
+        get => (ICommand)GetValue(DroppedOnTaskCommandProperty);
+        set => SetValue(DroppedOnTaskCommandProperty, value);
     }
 
-    public ICommand ChildHoverExitCommand
+    public ICommand TaskGrabbedCommand
     {
-        get => (ICommand)GetValue(ChildHoverExitCommandProperty);
-        set => SetValue(ChildHoverExitCommandProperty, value);
-    }
-
-    public ICommand ChildDragEndCommand
-    {
-        get => (ICommand)GetValue(ChildDragEndCommandProperty);
-        set => SetValue(ChildDragEndCommandProperty, value);
+        get => (ICommand)GetValue(TaskGrabbedCommandProperty);
+        set => SetValue(TaskGrabbedCommandProperty, value);
     }
 
     public ICommand ChildTapCommand
@@ -128,83 +109,41 @@ public partial class TaskSectionComponent : ContentView
     public TaskSectionComponent()
 	{
         InitializeComponent();
-        AddGestures();
-        this.BindingContextChanged += (s, e) => OnBindingContextChanged();
+        this.BindingContextChanged += OnBindingContextChanged;
     }
 
-
-    private void OnBindingContextChanged()
+    private void OnBindingContextChanged(object sender, EventArgs e)
     {
         if (BindingContext is TaskSection section)
         {
-            Section = section;
-        }
-    }
+            Console.WriteLine($"[BindingContextChanged] Section: {section.Title}, Tasks: {section.Tasks?.Count ?? 0}");
 
-    private static void OnComponentChanged(BindableObject bindable, object oldValue, object newValue)
-    {
-        if (bindable is TaskSectionComponent view && newValue is TaskSection)
-        {
-            view.BindingContext = view;
-            view.TaskContainer.Children.Clear();
-
-            if (view.Section.Tasks != null && view.Section.Tasks.Count > 0)
+            TaskContainer.Children.Clear();
+            if (section.Tasks != null)
             {
-                foreach (var task in view.Section.Tasks)
+                foreach (var task in section.Tasks)
                 {
-                    ContentView renderedChild = new TaskComponent
+                    TaskComponent child = new()
                     {
                         ComponentTask = task,
-                        TapCommand = new Command<ProjectTask>(view.ChildTapped),
-                        DragEndCommand = new Command<ProjectTask>(view.ChildDragEnded),
-                        ChildDragEndCommand = new Command<ProjectTask>(view.ChildDragEnded),
-                        ChildTapCommand = new Command<ProjectTask>(view.ChildTapped),
-                        HoverEnterCommand = new Command<ProjectTask>(view.ChildHoverEntered),
-                        HoverExitCommand = new Command<ProjectTask>(view.ChildHoverExited),
-                        DeleteCommand = new Command<ProjectTask>(view.ChildDeleted),
-                        ChildDeleteCommand = new Command<ProjectTask>(view.ChildDeleted)
+                        TapCommand = new Command<ProjectTask>(ChildTapped),
+                        TaskGrabbedCommand = new Command<ProjectTask>(TaskGrabbed),
+                        DroppedOnTaskCommand = new Command<ProjectTask>(DroppedOnTask),
+                        DeleteCommand = new Command<ProjectTask>(ChildDeleted)
                     };
-                    view.TaskContainer.Children.Add(renderedChild);
+
+                    TaskContainer.Children.Add(child);
                 }
             }
         }
     }
 
-    private void AddGestures()
+    private void TaskGrabbed(ProjectTask task)
     {
-
-#if WINDOWS
-        this.HandlerChanged += (s, e) =>
+        if (TaskGrabbedCommand?.CanExecute(task) == true)
         {
-            if (this.Handler?.PlatformView is Microsoft.UI.Xaml.FrameworkElement frameworkElement)
-            {
-                frameworkElement.PointerEntered += (sender, args) =>
-                {
-                    OnHoverEnter();
-                };
-
-                frameworkElement.PointerExited += (sender, args) =>
-                {
-                    OnHoverExit();
-                };
-            }
-        };
-#endif
-    }
-
-    private void OnHoverExit()
-    {
-        if (HoverExitCommand?.CanExecute(Section) == true)
-        {
-            HoverExitCommand.Execute(Section);
-        }
-    }
-
-    private void OnHoverEnter()
-    {
-        if (HoverEnterCommand?.CanExecute(Section) == true)
-        {
-            HoverEnterCommand.Execute(Section);
+            DropZone.IsVisible = true;
+            TaskGrabbedCommand.Execute(task);
         }
     }
 
@@ -216,80 +155,68 @@ public partial class TaskSectionComponent : ContentView
         }
     }
 
-    private void ChildDragEnded(ProjectTask projectTask)
+    private void DroppedOnTask(ProjectTask projectTask)
     {
-        if (ChildDragEndCommand?.CanExecute(projectTask) == true)
+        if (DroppedOnTaskCommand?.CanExecute(projectTask) == true)
         {
-            ChildDragEndCommand.Execute(projectTask);
+            DropZone.IsVisible = false;
+            DroppedOnTaskCommand.Execute(projectTask);
+        }
+    }
+    private void DroppedOnSection(object sender, DropEventArgs e)
+    {
+        if (BindingContext is TaskSection section && DroppedOnSectionCommand?.CanExecute(section) == true)
+        {
+            DropZone.IsVisible = false;
+            DroppedOnSectionCommand.Execute(section);
         }
     }
 
     private void ChildDeleted(ProjectTask projectTask)
     {
-        if (ChildDeleteCommand?.CanExecute(projectTask) == true)
+        if (BindingContext is TaskSection section && ChildDeleteCommand?.CanExecute(projectTask) == true)
         {
             ChildDeleteCommand.Execute(projectTask);
         }
     }
 
-    private void ChildHoverExited(ProjectTask projectTask)
-    {
-        if (ChildHoverExitCommand?.CanExecute(projectTask) == true)
-        {
-            ChildHoverExitCommand.Execute(projectTask);
-        }
-    }
-
-    private void ChildHoverEntered(ProjectTask projectTask)
-    {
-        if (ChildHoverEnterCommand?.CanExecute(projectTask) == true)
-        {
-            ChildHoverEnterCommand.Execute(projectTask);
-        }
-    }
-
     private void Left_Clicked(object sender, EventArgs e)
     {
-        if (MoveLeftCommand?.CanExecute(Section) == true)
+        if (BindingContext is TaskSection section && MoveLeftCommand?.CanExecute(section) == true)
         {
-            MoveLeftCommand.Execute(Section);
+            MoveLeftCommand.Execute(section);
         }
     }
 
     private void Right_Clicked(object sender, EventArgs e)
     {
-        if (MoveRightCommand?.CanExecute(Section) == true)
+        if (BindingContext is TaskSection section && MoveRightCommand?.CanExecute(section) == true)
         {
-            MoveRightCommand.Execute(Section);
+            MoveRightCommand.Execute(section);
         }
     }
 
     private void Edit_Clicked(object sender, EventArgs e)
     {
-        if (EditCommand?.CanExecute(Section) == true)
+        if (BindingContext is TaskSection section && EditCommand?.CanExecute(section) == true)
         {
-            EditCommand.Execute(Section);
+            EditCommand.Execute(section);
         }
     }
 
     private void Delete_Clicked(object sender, EventArgs e)
     {
-        if (DeleteCommand?.CanExecute(Section) == true)
+        if (BindingContext is TaskSection section && DeleteCommand?.CanExecute(section) == true)
         {
-            DeleteCommand.Execute(Section);
+            DeleteCommand.Execute(section);
         }
     }
 
     private void Create_Task_Clicked(object sender, EventArgs e)
     {
-        if (CreateTaskCommand?.CanExecute(Section) == true)
+        if (BindingContext is TaskSection section && CreateTaskCommand?.CanExecute(section) == true)
         {
-            CreateTaskCommand.Execute(null);
+            CreateTaskCommand.Execute(section);
         }
-    }
-
-    private void OnDrop(object sender, DropEventArgs e)
-    {
-
     }
 }

@@ -123,4 +123,8 @@
 	  </Compile>
 	</ItemGroup>
 
+	<ItemGroup>
+		<AndroidLinkerDescriptor Include="linker.xml" />
+	</ItemGroup>
+
 </Project>

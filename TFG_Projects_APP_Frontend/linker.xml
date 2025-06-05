@@ -1,0 +1,9 @@
+﻿<linker>
+	<assembly fullname="TFG_Projects_APP_Frontend">
+		<type fullname="TFG_Projects_APP_Frontend.Components.TaskComponents.TaskComponent" preserve="all" />
+		<type fullname="TFG_Projects_APP_Frontend.Components.TaskComponents.ChildTaskComponent" preserve="all" />
+		<type fullname="TFG_Projects_APP_Frontend.Components.TaskComponents.TaskSectionComponent" preserve="all" />
+		<type fullname="TFG_Projects_APP_Frontend.Entities.Models.ProjectTask" preserve="all" />
+		<type fullname="TFG_Projects_APP_Frontend.Entities.Models.TaskSection" preserve="all" />
+	</assembly>
+</linker>

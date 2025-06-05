@@ -64,6 +64,7 @@ public partial class MainPageModel : ObservableObject
     private async void ProjectSelected(Project project)
     {
         NavigationContext.CurrentProject = SelectedProject;
+        userSession.User.ProjectPermissions = await userProjectPermissionsService.getAllUserProjectPermissionsByUserAndProject(userSession.User.Id, project.Id);
         await Shell.Current.GoToAsync("ProjectmanagementPage", new Dictionary<string, object>
         {
              {"Project", SelectedProject }
@@ -108,18 +109,26 @@ public partial class MainPageModel : ObservableObject
     [RelayCommand]
     private async void ProjectDelete(Project project)
     {
-        bool confirmed = await Application.Current.MainPage.DisplayAlert(
-            "Confirm Delete",
-            "Are you sure you want to delete this item?",
-            "Delete",
-            "Cancel"
-        );
-
-        if (confirmed)
+        userSession.User.ProjectPermissions = await userProjectPermissionsService.getAllUserProjectPermissionsByUserAndProject(userSession.User.Id, project.Id);
+        if (userSession.User.ProjectPermissions != null && userSession.User.ProjectPermissions.Find(x=> x.IdPermission == 1) != null)
         {
-            await projectsService.Delete(project.Id);
-            Projects.Remove(project);
+            bool confirmed = await Application.Current.MainPage.DisplayAlert(
+                "Confirm Delete",
+                "Are you sure you want to delete this item?",
+                "Delete",
+                "Cancel"
+            );
+
+            if (confirmed)
+            {
+                await projectsService.Delete(project.Id);
+                Projects.Remove(project);
+            }
+        } else
+        {
+            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
         }
+        
     }
 
     [RelayCommand]
