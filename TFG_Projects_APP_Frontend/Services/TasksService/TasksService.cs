@@ -51,9 +51,40 @@ public class TasksService(RestClient restClient) : ITasksService
         }).ToList());
     }
 
+    public async Task<List<ProjectTask>> GetAllTasksByParent(int id)
+    {
+        HttpResponseMessage response = await restClient.GetByIdAsync($"{route}/parent",id);
+        if (response == null)
+        {
+            return null;
+        }
+        var tasks = await response.Content.ReadFromJsonAsync<List<TaskRead>>(restClient._options);
+        return new List<ProjectTask>(tasks.Select(task =>
+        {
+            return new ProjectTask
+            {
+                Id = task.Id,
+                IdSection = task.IdSection,
+                IdProgressSection = task.IdProgressSection,
+                IdUserAssigned = task.IdUserAssigned,
+                IdParentTask = task.IdParentTask,
+                IdUserCreated = task.IdUserCreated,
+                IdPriority = task.IdPriority,
+                Title = task.Title,
+                Description = task.Description,
+                Progress = task.Progress,
+                CreationDate = task.CreationDate,
+                LimitDate = task.LimitDate,
+                CompletionDate = task.CompletionDate,
+                Finished = task.Finished,
+                IsParent = task.IsParent
+            };
+        }).ToList());
+    }
+
     public async Task<List<ProjectTask>> GetAllTasksByTaskProgress(int id)
     {
-        HttpResponseMessage response = await restClient.GetAllAsync($"{route}/progress/{id}");
+        HttpResponseMessage response = await restClient.GetByIdAsync($"{route}/progress",id);
         if (response == null)
         {
             return null;
@@ -84,7 +115,7 @@ public class TasksService(RestClient restClient) : ITasksService
 
     public async Task<List<ProjectTask>> GetAllTasksByTaskSection(int id)
     {
-        HttpResponseMessage response = await restClient.GetAllAsync($"{route}/section/{id}");
+        HttpResponseMessage response = await restClient.GetByIdAsync($"{route}/section", id);
         if (response == null)
         {
             return null;

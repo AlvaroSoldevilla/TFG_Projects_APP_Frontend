@@ -5,7 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:components="clr-namespace:TFG_Projects_APP_Frontend.Components.TaskComponents"
     xmlns:models="clr-namespace:TFG_Projects_APP_Frontend.Entities.Models"
-    x:DataType="components:TaskComponent">
+    x:DataType="models:ProjectTask">
     <Border
         Margin="5"
         Padding="10"
@@ -15,15 +15,47 @@
             <DropGestureRecognizer AllowDrop="True" Drop="OnDroppedOnTask" />
         </Border.GestureRecognizers>
         <StackLayout Spacing="5">
-            <Label Text="{Binding ComponentTask.Title}" />
-            <Label Text="{Binding ComponentTask.Description}" />
-            <Label Text="{Binding ComponentTask.Progress, StringFormat='Progress: {0:F0}'}" />
-            <Label Text="{Binding ComponentTask.LimitDate, StringFormat='Limit Date: {0:dd/MM/yyyy}'}" />
-            <Label Text="{Binding ComponentTask.UserAssigned.Username, StringFormat='Assigned to: {0}'}" />
-            <Label Text="{Binding ComponentTask.Priority.Name, StringFormat='Priority: {0}'}" />
-            <Label Text="{Binding ComponentTask.CompletionDate}" />
+            <Label Text="{Binding Title}" />
+            <Label Text="{Binding Description}" />
+            <Label Text="{Binding Progress, StringFormat='Progress: {0:F0}'}" />
+            <Label Text="{Binding LimitDate, StringFormat='Limit Date: {0:dd/MM/yyyy}'}" />
+            <Label Text="{Binding UserAssigned.Username, StringFormat='Assigned to: {0}'}" />
+            <Label Text="{Binding Priority.Name, StringFormat='Priority: {0}'}" />
+            <Label Text="{Binding CompletionDate}" />
             <Button Clicked="Delete_Clicked" Text="Delete Task" />
-            <StackLayout x:Name="TaskContainer" Padding="10" />
+            <CollectionView
+                x:Name="TaskList"
+                ItemsSource="{Binding Children}"
+                VerticalOptions="FillAndExpand">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:ProjectTask">
+                        <VerticalStackLayout>
+                            <Border
+                                Margin="5"
+                                Padding="10"
+                                BackgroundColor="#f0f0f0">
+                                <Border.GestureRecognizers>
+                                    <DragGestureRecognizer CanDrag="True" DragStarting="OnTaskGrabbed" />
+                                    <DropGestureRecognizer AllowDrop="True" Drop="OnDroppedOnTask" />
+                                </Border.GestureRecognizers>
+                                <StackLayout Spacing="5">
+                                    <Label Text="{Binding Title}" />
+                                    <Label Text="{Binding Description}" />
+                                    <Label Text="{Binding Progress, StringFormat='Progress: {0:F0}'}" />
+                                    <Label Text="{Binding LimitDate, StringFormat='Limit Date: {0:dd/MM/yyyy}'}" />
+                                    <Label Text="{Binding UserAssigned.Username, StringFormat='Assigned to: {0}'}" />
+                                    <Label Text="{Binding Priority.Name, StringFormat='Priority: {0}'}" />
+                                    <Label Text="{Binding CompletionDate}" />
+                                    <Button
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type components:TaskComponent}}, Path=ChildDeleteCommand}"
+                                        CommandParameter="{Binding .}"
+                                        Text="Delete" />
+                                </StackLayout>
+                            </Border>
+                        </VerticalStackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
         </StackLayout>
     </Border>
 </ContentView>

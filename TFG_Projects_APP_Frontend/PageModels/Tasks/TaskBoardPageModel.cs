@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using TFG_Projects_APP_Frontend.Components.CreateModal;
 using TFG_Projects_APP_Frontend.Entities.Dtos.TaskDependecies;
 using TFG_Projects_APP_Frontend.Entities.Dtos.TaskProgress;
@@ -156,11 +155,17 @@ public partial class TaskBoardPageModel : ObservableObject
 
         var taskSections = await taskSectionsService.getAllTaskSectionsByTaskBoard(TaskBoard.Id);
         taskSections = taskSections.OrderBy(x => x.Order).ToList();
+        AllTasks.Clear();
         foreach (var taskSection in taskSections)
         {
+            if (taskSection.Tasks != null)
+            {
+                taskSection.Tasks.Clear();
+            }
             taskSection.Tasks = await tasksService.GetAllTasksByTaskSection(taskSection.Id);
             foreach (var task in taskSection.Tasks)
             {
+                
                 AllTasks.Add(task);
                 if (task.IdUserAssigned != null)
                 {
@@ -173,6 +178,8 @@ public partial class TaskBoardPageModel : ObservableObject
                     task.Priority = minPriority;
                 }
             }
+
+            List<ProjectTask> showTasks = new List<ProjectTask>();
 
             foreach (var task in taskSection.Tasks)
             {
@@ -193,11 +200,19 @@ public partial class TaskBoardPageModel : ObservableObject
 
                 if (task.IsParent)
                 {
-                    task.Children = AllTasks.FindAll(x => x.IdParentTask == task.Id && x.Id != task.Id);
+                    task.Children = new(await tasksService.GetAllTasksByParent(task.Id));
+                    showTasks.Add(task);
+                } else
+                {
+                    if (task.IdParentTask == null || task.IdParentTask == task.Id)
+                    {
+                        showTasks.Add(task);
+                    }
                 }
                 
             }
-
+            taskSection.Tasks.Clear();
+            taskSection.Tasks = new(showTasks);
             taskSection.Tasks = taskSection.Tasks.OrderBy(x => x.Priority.PriorityValue).ToList();
         }
         if (TaskSections != null)
@@ -300,7 +315,7 @@ public partial class TaskBoardPageModel : ObservableObject
         {
             if (task.IdParentTask != null)
             {
-                var parentTask = AllTasks.FirstOrDefault(x => x.Id == task.IdParentTask);
+                var parentTask = await tasksService.GetById((int)task.IdParentTask);
                 task.IdParentTask = null;
                 await tasksService.Patch(task.Id, new TaskUpdate
                 {
@@ -320,8 +335,6 @@ public partial class TaskBoardPageModel : ObservableObject
                     IsParent = false
                 });
 
-                var isParent = AllTasks.Any(x => x.IdParentTask == task.Id);
-
                 await tasksService.Patch(parentTask.Id, new TaskUpdate
                 {
                     Id = parentTask.Id,
@@ -337,7 +350,7 @@ public partial class TaskBoardPageModel : ObservableObject
                     LimitDate = parentTask.LimitDate,
                     CompletionDate = parentTask.CompletionDate,
                     Finished = parentTask.Finished,
-                    IsParent = isParent
+                    IsParent = parentTask.IsParent
                 });
             }
             
@@ -901,64 +914,59 @@ public partial class TaskBoardPageModel : ObservableObject
     {
         if (_grabbedTask != null && section != null)
         {
-            if (_grabbedTask.IdSection != section.Id)
+            var taskSectionId = section.Id;
+
+            if (_grabbedTask.IsParent)
             {
-                var taskSectionId = section.Id;
-
-                if (_grabbedTask.IsParent)
+                foreach (var childTask in await tasksService.GetAllTasksByParent(_grabbedTask.Id))
                 {
-                    foreach (var childTask in await tasksService.GetAllTasksByTaskSection(_grabbedTask.IdSection))
+                    var childTaskUpdate = new TaskUpdate
                     {
-                        if (childTask.IdParentTask == _grabbedTask.Id)
-                        {
-                            var childTaskUpdate = new TaskUpdate
-                            {
-                                Id = childTask.Id,
-                                IdSection = taskSectionId,
-                                IdProgressSection = childTask.IdProgressSection,
-                                IdUserCreated = childTask.IdUserCreated,
-                                Title = childTask.Title,
-                                IdUserAssigned = childTask.IdUserAssigned,
-                                IdParentTask = childTask.IdParentTask,
-                                IdPriority = childTask.IdPriority,
-                                Description = childTask.Description,
-                                Progress = childTask.Progress,
-                                LimitDate = childTask.LimitDate,
-                                CompletionDate = childTask.CompletionDate,
-                                Finished = childTask.Finished,
-                                IsParent = childTask.IsParent
-                            };
+                        Id = childTask.Id,
+                        IdSection = taskSectionId,
+                        IdProgressSection = section.IdDefaultProgress,
+                        IdUserCreated = childTask.IdUserCreated,
+                        Title = childTask.Title,
+                        IdUserAssigned = childTask.IdUserAssigned,
+                        IdParentTask = childTask.IdParentTask,
+                        IdPriority = childTask.IdPriority,
+                        Description = childTask.Description,
+                        Progress = childTask.Progress,
+                        LimitDate = childTask.LimitDate,
+                        CompletionDate = childTask.CompletionDate,
+                        Finished = childTask.Finished,
+                        IsParent = childTask.IsParent
+                    };
 
-                            await tasksService.Patch(childTask.Id, childTaskUpdate);
-                        }
-                    }
-                    
+                    await tasksService.Patch(childTask.Id, childTaskUpdate);
                 }
-
-                var taskUpdate = new TaskUpdate
-                {
-                    Id = _grabbedTask.Id,
-                    IdSection = taskSectionId,
-                    IdProgressSection = _grabbedTask.IdProgressSection,
-                    IdUserCreated = _grabbedTask.IdUserCreated,
-                    Title = _grabbedTask.Title,
-                    IdUserAssigned = _grabbedTask.IdUserAssigned,
-                    IdParentTask = _grabbedTask.Id,
-                    IdPriority = _grabbedTask.IdPriority,
-                    Description = _grabbedTask.Description,
-                    Progress = _grabbedTask.Progress,
-                    LimitDate = _grabbedTask.LimitDate,
-                    CompletionDate = _grabbedTask.CompletionDate,
-                    Finished = _grabbedTask.Finished,
-                    IsParent = _grabbedTask.IsParent
-                };
-
-                IsLoading = true;
-                await tasksService.Patch(_grabbedTask.Id, taskUpdate);
-                await LoadData();
-                IsLoading = false;
+                    
             }
+
+            var taskUpdate = new TaskUpdate
+            {
+                Id = _grabbedTask.Id,
+                IdSection = taskSectionId,
+                IdProgressSection = section.IdDefaultProgress,
+                IdUserCreated = _grabbedTask.IdUserCreated,
+                Title = _grabbedTask.Title,
+                IdUserAssigned = _grabbedTask.IdUserAssigned,
+                IdParentTask = _grabbedTask.Id,
+                IdPriority = _grabbedTask.IdPriority,
+                Description = _grabbedTask.Description,
+                Progress = _grabbedTask.Progress,
+                LimitDate = _grabbedTask.LimitDate,
+                CompletionDate = _grabbedTask.CompletionDate,
+                Finished = _grabbedTask.Finished,
+                IsParent = _grabbedTask.IsParent
+            };
+
+            IsLoading = true;
+            await tasksService.Patch(_grabbedTask.Id, taskUpdate);
+            await LoadData();
+            IsLoading = false;
         }
+
 
         _grabbedTask = null;
     }
@@ -969,17 +977,43 @@ public partial class TaskBoardPageModel : ObservableObject
         if (_grabbedTask != null && task != null)
         {
             int taskSectionId = _grabbedTask.IdSection;
+            int progressSectionId = _grabbedTask.IdProgressSection;
             int? parentId = _grabbedTask.IdParentTask;
 
-            if (!_grabbedTask.IsParent && task.Id != parentId)
+            if (task.IdSection != taskSectionId)
+            {
+                taskSectionId = task.IdSection;
+                var taskSection = await taskSectionsService.GetById(task.IdSection);
+                progressSectionId = taskSection.IdDefaultProgress;
+            }
+
+            if (!_grabbedTask.IsParent)
             {
                 parentId = task.Id;
+
+                await tasksService.Patch(_grabbedTask.Id, new TaskUpdate
+                {
+                    Id = _grabbedTask.Id,
+                    IdSection = taskSectionId,
+                    IdProgressSection = progressSectionId,
+                    IdUserCreated = _grabbedTask.IdUserCreated,
+                    Title = _grabbedTask.Title,
+                    IdUserAssigned = _grabbedTask.IdUserAssigned,
+                    IdParentTask = parentId,
+                    IdPriority = _grabbedTask.IdPriority,
+                    Description = _grabbedTask.Description,
+                    Progress = _grabbedTask.Progress,
+                    LimitDate = _grabbedTask.LimitDate,
+                    CompletionDate = _grabbedTask.CompletionDate,
+                    Finished = _grabbedTask.Finished,
+                    IsParent = _grabbedTask.IsParent
+                });
 
                 await tasksService.Patch(task.Id,new TaskUpdate
                 {
                     Id = task.Id,
-                    IdSection = task.Id,
-                    IdProgressSection = task.IdProgressSection,
+                    IdSection = task.IdSection,
+                    IdProgressSection = progressSectionId,
                     IdUserCreated = task.IdUserCreated,
                     Title = task.Title,
                     IdUserAssigned = task.IdUserAssigned,
@@ -992,21 +1026,21 @@ public partial class TaskBoardPageModel : ObservableObject
                     Finished = task.Finished,
                     IsParent = true
                 });
+
+                await LoadData();
+                IsLoading = false;
+
+                return;
             } else if (task.Id != parentId && parentId != _grabbedTask.Id)
             {
                 await RemoveParent(_grabbedTask);
-            }
-
-            if (task.IdSection != taskSectionId)
-            {
-                taskSectionId = task.IdSection;
             }
 
             var taskUpdate = new TaskUpdate
             {
                 Id = _grabbedTask.Id,
                 IdSection = taskSectionId,
-                IdProgressSection = _grabbedTask.IdProgressSection,
+                IdProgressSection = progressSectionId,
                 IdUserCreated = _grabbedTask.IdUserCreated,
                 Title = _grabbedTask.Title,
                 IdUserAssigned = _grabbedTask.IdUserAssigned,

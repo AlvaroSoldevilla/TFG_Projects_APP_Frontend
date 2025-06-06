@@ -82,9 +82,6 @@
 	  <MauiXaml Update="Components\CreateModal\ObjectBuilder.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Components\TaskComponents\ChildTaskComponent.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
 	  <MauiXaml Update="Components\TaskComponents\ProgressSectionComponent.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -124,7 +121,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<AndroidLinkerDescriptor Include="linker.xml" />
+		<TrimmerRootDescriptor Include="linker.xml" />
 	</ItemGroup>
 
 </Project>

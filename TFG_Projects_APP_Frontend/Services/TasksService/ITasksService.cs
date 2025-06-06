@@ -6,6 +6,7 @@ public interface ITasksService : IService<ProjectTask>
 {
     Task<List<ProjectTask>> GetAllTasksByTaskSection(int id);
     Task<List<ProjectTask>> GetAllTasksByTaskProgress(int id);
+    Task<List<ProjectTask>> GetAllTasksByParent(int id);
     Task<AppUser> getUserCreated(int id);
     Task<AppUser> getUserAssigned(int id);
 }

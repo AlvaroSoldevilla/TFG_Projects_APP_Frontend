@@ -1,12 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 using TFG_Projects_APP_Frontend.Components.CreateModal;
 using TFG_Projects_APP_Frontend.Entities.Dtos.TaskDependecies;
 using TFG_Projects_APP_Frontend.Entities.Dtos.TaskProgress;
 using TFG_Projects_APP_Frontend.Entities.Dtos.Tasks;
-using TFG_Projects_APP_Frontend.Entities.Dtos.TaskSections;
 using TFG_Projects_APP_Frontend.Entities.Models;
 using TFG_Projects_APP_Frontend.Services;
 using TFG_Projects_APP_Frontend.Services.PrioritiesService;
@@ -33,6 +31,8 @@ public partial class TaskProgressPageModel : ObservableObject
 
     public TaskSection TaskSection { get; set; }
     private List<ProjectTask> AllTasks { get; set; } = new List<ProjectTask>();
+
+    private ProjectTask _grabbedTask { get; set; }
 
     [ObservableProperty]
     private bool _isLoading;
@@ -180,11 +180,10 @@ public partial class TaskProgressPageModel : ObservableObject
                     
                 } 
             }
-            taskprogress.Tasks.Clear();
-            taskprogress.Tasks = realTasks;
-            taskprogress.Tasks = realTasks.OrderBy(t => t.Priority).ToList();
 
-            foreach(var task in taskprogress.Tasks)
+            taskprogress.Tasks.Clear();
+
+            foreach (var task in realTasks)
             {
                 if (task.IdUserAssigned != null)
                 {
@@ -196,9 +195,14 @@ public partial class TaskProgressPageModel : ObservableObject
                     var minPriority = priorities.OrderBy(p => p.PriorityValue).LastOrDefault();
                     task.Priority = minPriority;
                 }
+                taskprogress.Tasks.Add(task);
             }
 
             taskprogress.Tasks = taskprogress.Tasks.OrderBy(t => t.Priority.PriorityValue).ToList();
+        }
+        if (TaskProgresses != null)
+        {
+            TaskProgresses.Clear();
         }
         TaskProgresses = new(taskProgresses);
     }
@@ -249,9 +253,9 @@ public partial class TaskProgressPageModel : ObservableObject
         {
             int progressvalue;
 
-            if (taskProgress.ModifiesProgress == true && taskProgress.ProgressValue.HasValue)
+            if (taskProgress.ModifiesProgress)
             {
-                progressvalue = taskProgress.ProgressValue.Value;
+                progressvalue = taskProgress.ProgressValue;
             }
             else
             {
@@ -349,7 +353,7 @@ public partial class TaskProgressPageModel : ObservableObject
                 IdSection = taskProgress.IdSection,
                 Title = taskProgress.Title,
                 ModifiesProgress = taskProgress.ModifiesProgress,
-                ProgressValue = taskProgress.ProgressValue ?? 0,
+                ProgressValue = taskProgress.ProgressValue,
                 Order = taskProgress.Order - 1
             };
             await taskProgressService.Patch(taskProgress.Id, taskProgressUpdate);
@@ -369,7 +373,7 @@ public partial class TaskProgressPageModel : ObservableObject
                 IdSection = taskProgress.IdSection,
                 Title = taskProgress.Title,
                 ModifiesProgress = taskProgress.ModifiesProgress,
-                ProgressValue = taskProgress.ProgressValue ?? 0,
+                ProgressValue = taskProgress.ProgressValue,
                 Order = taskProgress.Order + 1
             };
             await taskProgressService.Patch(taskProgress.Id, taskProgressUpdate);
@@ -399,7 +403,7 @@ public partial class TaskProgressPageModel : ObservableObject
         }
         if (confirmed)
         {
-            TaskProgressValue = taskProgress.ProgressValue ?? 0;
+            TaskProgressValue = taskProgress.ProgressValue;
             EditingTaskData = null;
             IsEditingTask = false;
 
@@ -778,7 +782,7 @@ public partial class TaskProgressPageModel : ObservableObject
                             IdSection = section.IdSection,
                             Title = section.Title,
                             ModifiesProgress = section.ModifiesProgress,
-                            ProgressValue = section.ProgressValue ?? 0,
+                            ProgressValue = section.ProgressValue,
                             Order = section.Order
                         });
                     }
@@ -856,6 +860,94 @@ public partial class TaskProgressPageModel : ObservableObject
                EditingTaskData.CompletionDate != task.CompletionDate ||
                EditingTaskData.IdUserAssigned != task.IdUserAssigned ||
                EditingTaskData.IdPriority != task.IdPriority;
+    }
+
+    [RelayCommand]
+    public async void DropOnProgressSection(TaskProgress taskProgress)
+    {
+        if (_grabbedTask != null && taskProgress != null)
+        {
+            var progress = _grabbedTask.Progress;
+            if (taskProgress.ModifiesProgress)
+            {
+                progress = taskProgress.ProgressValue;
+            }
+
+            var taskUpdate = new TaskUpdate
+            {
+                Id = _grabbedTask.Id,
+                IdSection = _grabbedTask.IdSection,
+                IdProgressSection = taskProgress.Id,
+                IdUserCreated = _grabbedTask.IdUserCreated,
+                Title = _grabbedTask.Title,
+                IdUserAssigned = _grabbedTask.IdUserAssigned,
+                IdParentTask = _grabbedTask.Id,
+                IdPriority = _grabbedTask.IdPriority,
+                Description = _grabbedTask.Description,
+                Progress = progress,
+                LimitDate = _grabbedTask.LimitDate,
+                CompletionDate = _grabbedTask.CompletionDate,
+                Finished = _grabbedTask.Finished,
+                IsParent = _grabbedTask.IsParent
+            };
+
+            IsLoading = true;
+            await tasksService.Patch(_grabbedTask.Id, taskUpdate);
+            await LoadData();
+            IsLoading = false;
+        }
+
+
+        _grabbedTask = null;
+    }
+
+    [RelayCommand]
+    public async void DroppedOnTask(ProjectTask task)
+    {
+        if (_grabbedTask != null && task != null)
+        {
+            int progressSectionId = _grabbedTask.IdProgressSection;
+            var progress = _grabbedTask.Progress;
+            
+
+            if (task.IdProgressSection != progressSectionId)
+            {
+                var progressSection = await taskProgressService.GetById(task.IdProgressSection);
+                progressSectionId = progressSection.Id;
+                if (progressSection.ModifiesProgress)
+                {
+                    progress = progressSection.ProgressValue;
+                }
+            }
+
+            await tasksService.Patch(_grabbedTask.Id, new TaskUpdate
+            {
+                Id = _grabbedTask.Id,
+                IdSection = _grabbedTask.IdSection,
+                IdProgressSection = progressSectionId,
+                IdUserCreated = _grabbedTask.IdUserCreated,
+                Title = _grabbedTask.Title,
+                IdUserAssigned = _grabbedTask.IdUserAssigned,
+                IdParentTask = _grabbedTask.Id,
+                IdPriority = _grabbedTask.IdPriority,
+                Description = _grabbedTask.Description,
+                Progress = progress,
+                LimitDate = _grabbedTask.LimitDate,
+                CompletionDate = _grabbedTask.CompletionDate,
+                Finished = _grabbedTask.Finished,
+                IsParent = _grabbedTask.IsParent
+            });
+
+            await LoadData();
+            IsLoading = false;
+        }
+        _grabbedTask = null;
+    }
+
+    [RelayCommand]
+    private void GrabTask(ProjectTask task)
+    {
+        _grabbedTask = task;
     }
 
 }

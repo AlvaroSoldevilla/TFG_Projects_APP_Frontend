@@ -64,7 +64,7 @@ public partial class MainPageModel : ObservableObject
     private async void ProjectSelected(Project project)
     {
         NavigationContext.CurrentProject = SelectedProject;
-        userSession.User.ProjectPermissions = await userProjectPermissionsService.getAllUserProjectPermissionsByUserAndProject(userSession.User.Id, project.Id);
+        userSession.User.ProjectPermissions = await userProjectPermissionsService.getAllUserProjectPermissionsByUserAndProject(userSession.User.Id, SelectedProject.Id);
         await Shell.Current.GoToAsync("ProjectmanagementPage", new Dictionary<string, object>
         {
              {"Project", SelectedProject }

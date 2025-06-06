@@ -1,12 +1,12 @@
+using Microsoft.Maui.Controls.Internals;
 using System.Windows.Input;
 using TFG_Projects_APP_Frontend.Entities.Models;
 
 namespace TFG_Projects_APP_Frontend.Components.TaskComponents;
 
+[Preserve(AllMembers = true)]
 public partial class TaskComponent : ContentView
 {
-    public static readonly BindableProperty ComponentTaskProperty =
-    BindableProperty.Create(nameof(ComponentTaskProperty), typeof(ProjectTask), typeof(TaskComponent), propertyChanged: OnComponentChanged);
 
     public static readonly BindableProperty TapCommandProperty =
     BindableProperty.Create(nameof(TapCommand), typeof(ICommand), typeof(TaskComponent), default(ICommand));
@@ -20,8 +20,6 @@ public partial class TaskComponent : ContentView
     public static readonly BindableProperty DeleteCommandProperty =
     BindableProperty.Create(nameof(DeleteCommandProperty), typeof(ICommand), typeof(TaskComponent), default(ICommand));
 
-
-
     public static readonly BindableProperty ChildTaskGrabbedCommandProperty =
     BindableProperty.Create(nameof(ChildTaskGrabbedCommandProperty), typeof(ICommand), typeof(TaskComponent), default(ICommand));
 
@@ -33,14 +31,6 @@ public partial class TaskComponent : ContentView
 
     public static readonly BindableProperty ChildDeleteCommandProperty =
     BindableProperty.Create(nameof(ChildDeleteCommandProperty), typeof(ICommand), typeof(TaskComponent), default(ICommand));
-
-
-
-    public ProjectTask ComponentTask
-    {
-        get => (ProjectTask)GetValue(ComponentTaskProperty);
-        set => SetValue(ComponentTaskProperty, value);
-    }
 
     public ICommand TapCommand
     {
@@ -94,43 +84,6 @@ public partial class TaskComponent : ContentView
 	{
         InitializeComponent();
         AddGestures();
-        this.BindingContextChanged += (s, e) => OnBindingContextChanged();
-    }
-
-    private void OnBindingContextChanged()
-    {
-        if (BindingContext is ProjectTask componentTask)
-        {
-            ComponentTask = componentTask;
-        }
-    }
-
-    private static void OnComponentChanged(BindableObject bindable, object oldValue, object newValue)
-    {
-        if (bindable is TaskComponent view && newValue is ProjectTask)
-        {
-            view.BindingContext = view;
-            view.TaskContainer.Children.Clear();
-
-            if (view.ComponentTask.Children != null && view.ComponentTask.Children.Count > 0)
-            {
-                foreach (var task in view.ComponentTask.Children)
-                {
-                    ContentView renderedChild = new ChildTaskComponent
-                    {
-                        ComponentTask = task,
-                        TapCommand = new Command<ProjectTask>(view.ChildTapped),
-                        DroppedOnTaskCommand = new Command<ProjectTask>(view.ChildDroppedOnTask),
-                        TaskGrabbedCommand = new Command<ProjectTask>(view.ChildTaskGrabbed),
-                        DeleteCommand = new Command<ProjectTask>(view.ChildDeleted),
-                    };
-
-                    var abs_layout = new AbsoluteLayout();
-                    abs_layout.Children.Add(renderedChild);
-                    view.TaskContainer.Children.Add(abs_layout);
-                }
-            }
-        }
     }
 
     private void AddGestures()
@@ -142,9 +95,9 @@ public partial class TaskComponent : ContentView
 
     private void OnTaskGrabbed(object sender, DragStartingEventArgs e)
     {
-        if (TaskGrabbedCommand?.CanExecute(ComponentTask) == true)
+        if (BindingContext is ProjectTask componentTask && TaskGrabbedCommand?.CanExecute(componentTask) == true)
         {
-            TaskGrabbedCommand.Execute(ComponentTask);
+            TaskGrabbedCommand.Execute(componentTask);
         }
     }
 
@@ -182,25 +135,25 @@ public partial class TaskComponent : ContentView
 
     private void OnTapped()
     {
-        if (TapCommand?.CanExecute(this) == true)
+        if (BindingContext is ProjectTask componentTask && TapCommand?.CanExecute(this) == true)
         {
-            TapCommand.Execute(ComponentTask);
+            TapCommand.Execute(componentTask);
         }
     }
 
     private void Delete_Clicked(object sender, EventArgs e)
     {
-        if (DeleteCommand?.CanExecute(ComponentTask) == true)
+        if (BindingContext is ProjectTask componentTask && DeleteCommand?.CanExecute(componentTask) == true)
         {
-            DeleteCommand.Execute(ComponentTask);
+            DeleteCommand.Execute(componentTask);
         }
     }
 
     private void OnDroppedOnTask(object sender, DropEventArgs e)
     {
-        if (DroppedOnTaskCommand?.CanExecute(ComponentTask) == true)
+        if (BindingContext is ProjectTask componentTask && DroppedOnTaskCommand?.CanExecute(componentTask) == true)
         {
-            DroppedOnTaskCommand.Execute(ComponentTask);
+            DroppedOnTaskCommand.Execute(componentTask);
         }
     }
 }

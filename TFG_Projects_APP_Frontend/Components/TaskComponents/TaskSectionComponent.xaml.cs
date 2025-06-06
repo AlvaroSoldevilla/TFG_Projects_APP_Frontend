@@ -5,8 +5,6 @@ namespace TFG_Projects_APP_Frontend.Components.TaskComponents;
 
 public partial class TaskSectionComponent : ContentView
 {
-    public static readonly BindableProperty SectionProperty =
-    BindableProperty.Create(nameof(Section), typeof(TaskSection), typeof(TaskSectionComponent));
 
     public static readonly BindableProperty EditCommandProperty =
     BindableProperty.Create(nameof(EditCommandProperty), typeof(ICommand), typeof(TaskSectionComponent), default(ICommand));
@@ -38,12 +36,6 @@ public partial class TaskSectionComponent : ContentView
 
     public static readonly BindableProperty CreateTaskCommandProperty =
     BindableProperty.Create(nameof(CreateTaskCommandProperty), typeof(ICommand), typeof(TaskComponent), default(ICommand));
-
-    public TaskSection Section
-    {
-        get => (TaskSection)GetValue(SectionProperty);
-        set => SetValue(SectionProperty, value);
-    }
 
     public ICommand EditCommand
     {
@@ -114,26 +106,32 @@ public partial class TaskSectionComponent : ContentView
 
     private void OnBindingContextChanged(object sender, EventArgs e)
     {
-        if (BindingContext is TaskSection section)
+        if (BindingContext is TaskSection taskSection)
         {
-            Console.WriteLine($"[BindingContextChanged] Section: {section.Title}, Tasks: {section.Tasks?.Count ?? 0}");
-
             TaskContainer.Children.Clear();
-            if (section.Tasks != null)
-            {
-                foreach (var task in section.Tasks)
-                {
-                    TaskComponent child = new()
-                    {
-                        ComponentTask = task,
-                        TapCommand = new Command<ProjectTask>(ChildTapped),
-                        TaskGrabbedCommand = new Command<ProjectTask>(TaskGrabbed),
-                        DroppedOnTaskCommand = new Command<ProjectTask>(DroppedOnTask),
-                        DeleteCommand = new Command<ProjectTask>(ChildDeleted)
-                    };
 
-                    TaskContainer.Children.Add(child);
-                }
+            if (BindingContext is not TaskSection section)
+                return;
+
+            if (section.Tasks == null || section.Tasks.Count == 0)
+                return;
+
+            foreach (var task in section.Tasks)
+            {
+                TaskComponent child = new()
+                {
+                    BindingContext = task,
+                    TapCommand = new Command<ProjectTask>(ChildTapped),
+                    ChildTapCommand = new Command<ProjectTask>(ChildTapped),
+                    TaskGrabbedCommand = new Command<ProjectTask>(TaskGrabbed),
+                    ChildTaskGrabbedCommand = new Command<ProjectTask>(TaskGrabbed),
+                    DroppedOnTaskCommand = new Command<ProjectTask>(DroppedOnTask),
+                    ChildDroppedOnTaskCommand = new Command<ProjectTask>(DroppedOnTask),
+                    DeleteCommand = new Command<ProjectTask>(ChildDeleted),
+                    ChildDeleteCommand = new Command<ProjectTask>(ChildDeleted)
+                };
+
+                TaskContainer.Children.Add(child);
             }
         }
     }

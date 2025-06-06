@@ -3,7 +3,7 @@
 internal class TaskCreate
 {
     public int IdSection { get; set; }
-    public int? IdProgressSection { get; set; }
+    public int IdProgressSection { get; set; }
     public int IdUserCreated { get; set; }
     public string Title { get; set; } = string.Empty;
     public int? IdUserAssigned { get; set; }

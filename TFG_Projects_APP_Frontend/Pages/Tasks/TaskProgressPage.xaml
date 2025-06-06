@@ -3,6 +3,7 @@
     x:Class="TFG_Projects_APP_Frontend.Pages.Tasks.TaskProgressPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:components="clr-namespace:TFG_Projects_APP_Frontend.Components.TaskComponents"
     xmlns:dtos="clr-namespace:TFG_Projects_APP_Frontend.Entities.Dtos.Users"
     xmlns:models="clr-namespace:TFG_Projects_APP_Frontend.Entities.Models"
     xmlns:pageModels="clr-namespace:TFG_Projects_APP_Frontend.PageModels"
@@ -48,63 +49,18 @@
                 </CollectionView.ItemsLayout>
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="models:TaskProgress">
-                        <Border Padding="5">
-                            <StackLayout Spacing="5">
-                                <StackLayout Orientation="Horizontal" Spacing="5">
-                                    <Button
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=MoveProgressLeftCommand}"
-                                        CommandParameter="{Binding .}"
-                                        Text="&lt;" />
-                                    <Label Text="{Binding Title}" />
-                                    <Button
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=MoveProgressRightCommand}"
-                                        CommandParameter="{Binding .}"
-                                        Text="&gt;" />
-                                </StackLayout>
-                                <Button
-                                    Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=EditTaskProgressCommand}"
-                                    CommandParameter="{Binding .}"
-                                    Text="Edit" />
-                                <Button
-                                    Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=DeleteTaskProgressCommand}"
-                                    CommandParameter="{Binding .}"
-                                    Text="Delete" />
-                                <Button
-                                    Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=TaskCreateCommand}"
-                                    CommandParameter="{Binding .}"
-                                    Text="Create Task" />
-                                <ListView ItemsSource="{Binding Tasks}">
-                                    <ListView.ItemTemplate>
-                                        <DataTemplate x:DataType="models:ProjectTask">
-                                            <ViewCell>
-                                                <Border
-                                                    Margin="5"
-                                                    Padding="10"
-                                                    BackgroundColor="#f0f0f0">
-                                                    <StackLayout Spacing="5">
-                                                        <Label Text="{Binding Title}" />
-                                                        <Label Text="{Binding Description}" />
-                                                        <Label Text="{Binding Progress, StringFormat='Progress: {0:F0}'}" />
-                                                        <Label Text="{Binding LimitDate, StringFormat='Limit Date: {0:dd/MM/yyyy}'}" />
-                                                        <Label Text="{Binding UserAssigned.Username, StringFormat='Assigned to: {0}'}" />
-                                                        <Label Text="{Binding Priority.Name, StringFormat='Priority: {0}'}" />
-                                                        <Label Text="{Binding CompletionDate}" />
-                                                        <Button
-                                                            Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=EditTaskCommand}"
-                                                            CommandParameter="{Binding .}"
-                                                            Text="Edit Task" />
-                                                        <Button
-                                                            Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=DeleteTaskCommand}"
-                                                            CommandParameter="{Binding .}"
-                                                            Text="Delete Task" />
-                                                    </StackLayout>
-                                                </Border>
-                                            </ViewCell>
-                                        </DataTemplate>
-                                    </ListView.ItemTemplate>
-                                </ListView>
-                            </StackLayout>
-                        </Border>
+                        <components:ProgressSectionComponent
+                            BindingContext="{Binding .}"
+                            ChildDeleteCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=DeleteTaskCommand}"
+                            ChildTapCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=EditTaskCommand}"
+                            CreateTaskCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=TaskCreateCommand}"
+                            DeleteCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=DeleteProgressSectionCommand}"
+                            DroppedOnProgressCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=DropOnProgressSectionCommand}"
+                            DroppedOnTaskCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=DroppedOnTaskCommand}"
+                            EditCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=EditTaskProgressSectionCommand}"
+                            MoveLeftCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=MoveSectionLeftCommand}"
+                            MoveRightCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=MoveSectionRightCommand}"
+                            TaskGrabbedCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=GrabTaskCommand}" />
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
@@ -201,8 +157,6 @@
                             <Button Command="{Binding SaveTaskDependencyChangesCommand}" Text="Save Dependency" />
                             <Button Command="{Binding RemoveDependencyCommand}" Text="Remove Dependency" />
                         </VerticalStackLayout>
-
-
                         <Button Command="{Binding SaveTaskChangesCommand}" Text="Save Task" />
                     </VerticalStackLayout>
                 </ScrollView>

@@ -1,10 +1,14 @@
-﻿namespace TFG_Projects_APP_Frontend.Entities.Models;
+﻿using Microsoft.Maui.Controls.Internals;
+using System.Collections.ObjectModel;
 
+namespace TFG_Projects_APP_Frontend.Entities.Models;
+
+[Preserve(AllMembers = true)]
 public class ProjectTask
 {
     public int Id { get; set; }
     public int IdSection { get; set; }
-    public int? IdProgressSection { get; set; }
+    public int IdProgressSection { get; set; }
     public int? IdUserAssigned { get; set; }
     public int? IdParentTask { get; set; }
     public int IdUserCreated { get; set; }
@@ -21,7 +25,7 @@ public class ProjectTask
     public TaskSection? TaskSection { get; set; }
     public TaskProgress? ProgressSection { get; set; }
     public ProjectTask? Parent { get; set; }
-    public List<ProjectTask> Children { get; set; } = new List<ProjectTask>();
+    public ObservableCollection<ProjectTask> Children { get; set; } = new ObservableCollection<ProjectTask>();
     public AppUser UserCreated { get; set; }
     public AppUser? UserAssigned { get; set; }
     public Priority? Priority { get; set; }
