@@ -23,6 +23,7 @@ using TFG_Projects_APP_Frontend.Services.TasksService;
 using TFG_Projects_APP_Frontend.Services.TypesService;
 using TFG_Projects_APP_Frontend.Services.UserProjectPermissionsService;
 using TFG_Projects_APP_Frontend.Services.UsersService;
+using TFG_Projects_APP_Frontend.Services.Utils;
 
 namespace TFG_Projects_APP_Frontend;
 
@@ -46,6 +47,7 @@ public static class MauiProgram
 
 		builder.Services.AddSingleton<RestClient>();
         builder.Services.AddSingleton<UserSession>();
+        builder.Services.AddSingleton<PermissionsUtils>();
 
         builder.Services.AddSingleton<IComponentsService, ComponentsService>();
         builder.Services.AddSingleton<IConceptBoardsService, ConceptBoardsService>();

@@ -31,6 +31,7 @@
                     VerticalOptions="Start"
                     WidthRequest="150" />
                 <CollectionView
+                    IsVisible="{Binding CanSeeConcepts}"
                     ItemsSource="{Binding Concepts}"
                     SelectedItem="{Binding SelectedConcept}"
                     SelectionChangedCommand="{Binding ConceptSelectedCommand}"
@@ -74,6 +75,7 @@
                     VerticalOptions="Start"
                     WidthRequest="150" />
                 <CollectionView
+                    IsVisible="{Binding CanSeeTaskBoards}"
                     ItemsSource="{Binding TaskBoards}"
                     SelectedItem="{Binding SelectedTaskBoard}"
                     SelectionChangedCommand="{Binding TaskBoardSelectedCommand}"
@@ -124,6 +126,7 @@
                 </StackLayout>
 
                 <CollectionView
+                    IsVisible="{Binding CanSeeUsers}"
                     ItemsSource="{Binding Users}"
                     SelectedItem="{Binding SelectedUser}"
                     SelectionChangedCommand="{Binding UserSelectedCommand}"

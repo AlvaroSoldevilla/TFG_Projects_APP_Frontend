@@ -7,11 +7,11 @@ using TFG_Projects_APP_Frontend.Entities.Dtos.Components;
 using TFG_Projects_APP_Frontend.Entities.Dtos.ConceptBoards;
 using TFG_Projects_APP_Frontend.Entities.Models;
 using TFG_Projects_APP_Frontend.Pages.Concepts;
-using TFG_Projects_APP_Frontend.Services;
 using TFG_Projects_APP_Frontend.Services.ComponentsService;
 using TFG_Projects_APP_Frontend.Services.ConceptBoardsService;
 using TFG_Projects_APP_Frontend.Services.TypesService;
 using TFG_Projects_APP_Frontend.Services.UsersService;
+using TFG_Projects_APP_Frontend.Services.Utils;
 
 namespace TFG_Projects_APP_Frontend.PageModels.Concepts;
 
@@ -21,6 +21,7 @@ public partial class ConceptBoardPageModel : ObservableObject
     private readonly IComponentsService componentsService;
     private readonly ITypesService typesService;
     private readonly UserSession userSession;
+    private readonly PermissionsUtils permissionsUtils;
 
     public ConceptBoardPage? _page;
 
@@ -54,13 +55,14 @@ public partial class ConceptBoardPageModel : ObservableObject
         IConceptBoardsService conceptBoardsService, 
         IComponentsService componentsService, 
         ITypesService typesService, 
-        UserSession userSession)
+        UserSession userSession,
+        PermissionsUtils permissionsUtils)
     {
         this.conceptBoardsService = conceptBoardsService;
         this.componentsService = componentsService;
         this.typesService = typesService;
         this.userSession = userSession;
-
+        this.permissionsUtils = permissionsUtils;
     }
 
     public async Task OnNavigatedTo()
@@ -104,7 +106,7 @@ public partial class ConceptBoardPageModel : ObservableObject
     {
         if (_isLoadingData)
         {
-            return; // Prevent multiple loads
+            return;
         }
         _isLoadingData = true;
         if (ConceptBoard == null)
@@ -221,187 +223,235 @@ public partial class ConceptBoardPageModel : ObservableObject
     [RelayCommand]
     public async Task TypeSelected(ProjectType projectType)
     {
-        IsLoading = true;
-        ComponentFormCreate returnComponent;
-        string title;
-        switch (projectType.Id)
+        List<PermissionsUtils.Permissions> permissions = new List<PermissionsUtils.Permissions>();
+        permissions.AddRange(PermissionsUtils.Permissions.FullPermissions, PermissionsUtils.Permissions.CreateComponents, PermissionsUtils.Permissions.FullConceptPermissions);
+        if (permissionsUtils.HasOnePermission(permissions))
         {
-            case 1:
-                title = "Create Board";
-                break;
-            case 2:
-                title = "Create Note";
-                break;
-            case 3:
-                title = "Create Container";
-                break;
-            case 4:
-                title = "Create Table";
-                break;
-            default:
-                title = "Create Component";
-                break;
-        }
-
-        if (projectType.Id == 2)
-        {
-            returnComponent = await FormDialog.ShowCreateObjectMenuAsync<NoteComponentFormCreate>(title);
-        } else
-        {
-            returnComponent = await FormDialog.ShowCreateObjectMenuAsync<ComponentFormCreate>(title);
-        }
-        
-        if (returnComponent != null && !string.IsNullOrEmpty(returnComponent.Title))
-        {
-            ConceptComponent component;
-            if (returnComponent is NoteComponentFormCreate noteComponentForm)
+            IsLoading = true;
+            ComponentFormCreate returnComponent;
+            string title;
+            switch (projectType.Id)
             {
-                if (string.IsNullOrEmpty(noteComponentForm.Content))
+                case 1:
+                    title = "Create Board";
+                    break;
+                case 2:
+                    title = "Create Note";
+                    break;
+                case 3:
+                    title = "Create Container";
+                    break;
+                case 4:
+                    title = "Create Table";
+                    break;
+                default:
+                    title = "Create Component";
+                    break;
+            }
+
+            if (projectType.Id == 2)
+            {
+                returnComponent = await FormDialog.ShowCreateObjectMenuAsync<NoteComponentFormCreate>(title);
+            }
+            else
+            {
+                returnComponent = await FormDialog.ShowCreateObjectMenuAsync<ComponentFormCreate>(title);
+            }
+
+            if (returnComponent != null && !string.IsNullOrEmpty(returnComponent.Title))
+            {
+                ConceptComponent component;
+                if (returnComponent is NoteComponentFormCreate noteComponentForm)
                 {
-                    noteComponentForm.Content = string.Empty;
+                    if (string.IsNullOrEmpty(noteComponentForm.Content))
+                    {
+                        noteComponentForm.Content = string.Empty;
+                    }
+
+                    ComponentCreate componentCreate = new()
+                    {
+                        IdBoard = ConceptBoard.Id,
+                        IdType = projectType.Id,
+                        Title = noteComponentForm.Title,
+                        Content = noteComponentForm.Content,
+                        PosX = 0,
+                        PosY = 0
+                    };
+                    component = await componentsService.Post(componentCreate);
+                }
+                else
+                {
+                    ComponentCreate componentCreate = new()
+                    {
+                        IdBoard = ConceptBoard.Id,
+                        IdType = projectType.Id,
+                        Title = returnComponent.Title,
+                        Content = string.Empty,
+                        PosX = 0,
+                        PosY = 0
+                    };
+                    component = await componentsService.Post(componentCreate);
                 }
 
-                ComponentCreate componentCreate = new()
+                component.IdParent = component.Id;
+                var componentUpdate = new ComponentUpdate
                 {
-                    IdBoard = ConceptBoard.Id,
-                    IdType = projectType.Id,
-                    Title = noteComponentForm.Title,
-                    Content = noteComponentForm.Content,
-                    PosX = 0,
-                    PosY = 0
+                    Title = component.Title,
+                    Content = component.Content,
+                    IdType = component.IdType,
+                    PosX = component.PosX,
+                    PosY = component.PosY,
+                    IdBoard = component.IdBoard,
+                    IdParent = component.IdParent
                 };
-                component = await componentsService.Post(componentCreate);
-            } else
-            {
-                ComponentCreate componentCreate = new()
-                {
-                    IdBoard = ConceptBoard.Id,
-                    IdType = projectType.Id,
-                    Title = returnComponent.Title,
-                    Content = string.Empty,
-                    PosX = 0,
-                    PosY = 0
-                };
-                component = await componentsService.Post(componentCreate);
-            }
-            
-            component.IdParent = component.Id;
-            var componentUpdate = new ComponentUpdate
-            {
-                Title = component.Title,
-                Content = component.Content,
-                IdType = component.IdType,
-                PosX = component.PosX,
-                PosY = component.PosY,
-                IdBoard = component.IdBoard,
-                IdParent = component.IdParent
-            };
-            await componentsService.Patch(component.Id, componentUpdate);
+                await componentsService.Patch(component.Id, componentUpdate);
 
-            if (component.IdType == 1)
-            {
-                var componentBoard = await conceptBoardsService.Post(new ConceptBoardCreate
+                if (component.IdType == 1)
                 {
-                    Name = component.Title,
-                    IdConcept = ConceptBoard.IdConcept,
-                    IdParent = ConceptBoard.Id
-                });
-                component.Content = componentBoard.Id.ToString();
-                await componentsService.Patch(component.Id, new ComponentUpdate
+                    var componentBoard = await conceptBoardsService.Post(new ConceptBoardCreate
+                    {
+                        Name = component.Title,
+                        IdConcept = ConceptBoard.IdConcept,
+                        IdParent = ConceptBoard.Id
+                    });
+                    component.Content = componentBoard.Id.ToString();
+                    await componentsService.Patch(component.Id, new ComponentUpdate
+                    {
+                        Title = component.Title,
+                        Content = component.Content,
+                        IdType = component.IdType,
+                        PosX = component.PosX,
+                        PosY = component.PosY,
+                        IdBoard = component.IdBoard,
+                        IdParent = component.IdParent
+                    });
+                }
+                else if (component.IdType == 4)
                 {
-                    Title = component.Title,
-                    Content = component.Content,
-                    IdType = component.IdType,
-                    PosX = component.PosX,
-                    PosY = component.PosY,
-                    IdBoard = component.IdBoard,
-                    IdParent = component.IdParent
-                });
-            } else if (component.IdType == 4)
-            {
-                component.Content = string.Join("\n", new string[] { "Column1\tColumn2\tColumn3\n" });
-                component.Content += "\t\t\n";
-                component.Content += "\t\t\n";
-                await componentsService.Patch(component.Id, new ComponentUpdate
-                {
-                    Title = component.Title,
-                    Content = component.Content,
-                    IdType = component.IdType,
-                    PosX = component.PosX,
-                    PosY = component.PosY,
-                    IdBoard = component.IdBoard,
-                    IdParent = component.IdParent
-                });
+                    component.Content = string.Join("\n", new string[] { "Column1\tColumn2\tColumn3\n" });
+                    component.Content += "\t\t\n";
+                    component.Content += "\t\t\n";
+                    await componentsService.Patch(component.Id, new ComponentUpdate
+                    {
+                        Title = component.Title,
+                        Content = component.Content,
+                        IdType = component.IdType,
+                        PosX = component.PosX,
+                        PosY = component.PosY,
+                        IdBoard = component.IdBoard,
+                        IdParent = component.IdParent
+                    });
+                }
+                await LoadData();
             }
-            await LoadData();
+            else
+            {
+                if (string.IsNullOrEmpty(returnComponent.Title))
+                {
+                    await Application.Current.MainPage.DisplayAlert("Error", "Title is required", "OK");
+                }
+            }
+            IsLoading = false;
         }
         else
         {
-            if (string.IsNullOrEmpty(returnComponent.Title))
-            {
-                await Application.Current.MainPage.DisplayAlert("Error", "Title is required", "OK");
-            }
+            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
         }
-        IsLoading = false;
     }
 
     [RelayCommand]
     public async void DeleteComponent(ConceptComponent component)
     {
-        if (EditComponentData != null)
+        List<PermissionsUtils.Permissions> permissions = new List<PermissionsUtils.Permissions>();
+        permissions.AddRange(PermissionsUtils.Permissions.FullPermissions, PermissionsUtils.Permissions.DeleteComponents, PermissionsUtils.Permissions.FullConceptPermissions);
+        if (permissionsUtils.HasOnePermission(permissions))
         {
-            var confirm = await Application.Current.MainPage.DisplayAlert("Confirm", "Are you sure you want to delete this component?", "Yes", "No");
-            if (confirm)
+            if (EditComponentData != null)
             {
-                await componentsService.Delete(EditComponentData.Id);
-                await LoadData();
+                var confirm = await Application.Current.MainPage.DisplayAlert("Confirm", "Are you sure you want to delete this component?", "Yes", "No");
+                if (confirm)
+                {
+                    await componentsService.Delete(EditComponentData.Id);
+                    await LoadData();
+                }
             }
+        }
+        else
+        {
+            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
         }
     }
 
     [RelayCommand]
     private async void DropComponent(ConceptComponent component)
     {
-        if (component != null && component != null)
+        List<PermissionsUtils.Permissions> permissions = new List<PermissionsUtils.Permissions>();
+        permissions.AddRange(PermissionsUtils.Permissions.FullPermissions, PermissionsUtils.Permissions.EditComponents, PermissionsUtils.Permissions.FullConceptPermissions);
+        if (permissionsUtils.HasOnePermission(permissions))
         {
-            if (component.IdType == 2 && _hoveringContainer != null)
+            if (component != null && component != null)
             {
-                component.IdParent = _hoveringContainer.Id;
-            }
-            else if (component.IdType == 2)
-            {
-                component.IdParent = component.Id;
-            }
+                if (component.IdType == 2 && _hoveringContainer != null)
+                {
+                    component.IdParent = _hoveringContainer.Id;
+                }
+                else if (component.IdType == 2)
+                {
+                    component.IdParent = component.Id;
+                }
 
-            var componentUpdate = new ComponentUpdate
-            {
-                IdBoard = component.IdBoard,
-                IdParent = component.IdParent,
-                IdType = component.IdType,
-                Title = component.Title,
-                PosX = component.PosX,
-                PosY = component.PosY,
-                Content = component.Content
-            };
-            await componentsService.Patch(component.Id, componentUpdate);
-            await LoadData();
+                var componentUpdate = new ComponentUpdate
+                {
+                    IdBoard = component.IdBoard,
+                    IdParent = component.IdParent,
+                    IdType = component.IdType,
+                    Title = component.Title,
+                    PosX = component.PosX,
+                    PosY = component.PosY,
+                    Content = component.Content
+                };
+                await componentsService.Patch(component.Id, componentUpdate);
+            }
         }
+        else
+        {
+            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+        }
+        await LoadData();
     }
 
     [RelayCommand]
     private async void EditNote(ConceptComponent component)
     {
-        IsEditingComponent = true;
-        IsEditingNote = true;
-        EditComponentData = component;
+        List<PermissionsUtils.Permissions> permissions = new List<PermissionsUtils.Permissions>();
+        permissions.AddRange(PermissionsUtils.Permissions.FullPermissions, PermissionsUtils.Permissions.EditComponents, PermissionsUtils.Permissions.FullConceptPermissions);
+        if (permissionsUtils.HasOnePermission(permissions))
+        {
+            IsEditingComponent = true;
+            IsEditingNote = true;
+            EditComponentData = component;
+        }
+        else
+        {
+            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+        }
     }
 
     [RelayCommand]
     private async void EditComponent(ConceptComponent component)
     {
-        IsEditingNote = false;
-        IsEditingComponent = true;
-        EditComponentData = component;
+        List<PermissionsUtils.Permissions> permissions = new List<PermissionsUtils.Permissions>();
+        permissions.AddRange(PermissionsUtils.Permissions.FullPermissions, PermissionsUtils.Permissions.EditComponents, PermissionsUtils.Permissions.FullConceptPermissions);
+        if (permissionsUtils.HasOnePermission(permissions))
+        {
+            IsEditingNote = false;
+            IsEditingComponent = true;
+            EditComponentData = component;
+        }
+        else
+        {
+            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+        }
     }
 
     [RelayCommand]

@@ -7,7 +7,6 @@ using TFG_Projects_APP_Frontend.Entities.Dtos.TaskProgress;
 using TFG_Projects_APP_Frontend.Entities.Dtos.Tasks;
 using TFG_Projects_APP_Frontend.Entities.Dtos.TaskSections;
 using TFG_Projects_APP_Frontend.Entities.Models;
-using TFG_Projects_APP_Frontend.Services;
 using TFG_Projects_APP_Frontend.Services.PrioritiesService;
 using TFG_Projects_APP_Frontend.Services.ProjectUsersService;
 using TFG_Projects_APP_Frontend.Services.TaskBoardsService;
@@ -16,6 +15,7 @@ using TFG_Projects_APP_Frontend.Services.TaskProgressService;
 using TFG_Projects_APP_Frontend.Services.TaskSectionsService;
 using TFG_Projects_APP_Frontend.Services.TasksService;
 using TFG_Projects_APP_Frontend.Services.UsersService;
+using TFG_Projects_APP_Frontend.Services.Utils;
 
 namespace TFG_Projects_APP_Frontend.PageModels.Tasks;
 
@@ -31,6 +31,7 @@ public partial class TaskBoardPageModel : ObservableObject
     private readonly IUsersService usersService;
     private readonly IPrioritiesService prioritiesService;
     private readonly UserSession userSession;
+    private readonly PermissionsUtils permissionsUtils;
 
     public TaskBoard TaskBoard { get; set; }
     private List<ProjectTask> AllTasks {get; set;} = new List<ProjectTask>();
@@ -110,7 +111,8 @@ public partial class TaskBoardPageModel : ObservableObject
         IProjectUsersService projectUsersService,
         IUsersService usersService,
         IPrioritiesService prioritiesService,
-        UserSession userSesion)
+        UserSession userSesion,
+        PermissionsUtils permissionsUtils)
     {
         this.taskBoardsService = taskBoardsService;
         this.taskSectionsService = taskSectionsService;
@@ -121,6 +123,7 @@ public partial class TaskBoardPageModel : ObservableObject
         this.usersService = usersService;
         this.prioritiesService = prioritiesService;
         this.userSession = userSesion;
+        this.permissionsUtils = permissionsUtils;
     }
 
     public async Task OnNavigatedTo()
@@ -225,87 +228,105 @@ public partial class TaskBoardPageModel : ObservableObject
     [RelayCommand]
     public async Task CreateTaskSection()
     {
-        var taskSection = await FormDialog.ShowCreateObjectMenuAsync<TaskSectionFormCreate>("Create Task Section");
-        if (taskSection != null && !string.IsNullOrEmpty(taskSection.Title))
+        List<PermissionsUtils.Permissions> permissions = new List<PermissionsUtils.Permissions>();
+        permissions.AddRange(PermissionsUtils.Permissions.FullPermissions, PermissionsUtils.Permissions.CreateTaskBoardSections, PermissionsUtils.Permissions.FullTaskPermissions);
+        if (permissionsUtils.HasOnePermission(permissions))
         {
-            var taskSectionCreate = new TaskSectionCreate()
+            var taskSection = await FormDialog.ShowCreateObjectMenuAsync<TaskSectionFormCreate>("Create Task Section");
+            if (taskSection != null && !string.IsNullOrEmpty(taskSection.Title))
             {
-                Title = taskSection.Title,
-                IdBoard = TaskBoard.Id,
-                Order = TaskSections.Count + 1
-            };
+                var taskSectionCreate = new TaskSectionCreate()
+                {
+                    Title = taskSection.Title,
+                    IdBoard = TaskBoard.Id,
+                    Order = TaskSections.Count + 1
+                };
 
-            IsLoading = true;
+                IsLoading = true;
 
-            var taskSectionReturn = await taskSectionsService.Post(taskSectionCreate);
-            var taskProgressCreate = new TaskProgressCreate()
-            {
-                IdSection = taskSectionReturn.Id,
-                Title = "Default",
-                Order = 1
-            };
-            var taskProgressReturn = await taskProgressService.Post(taskProgressCreate);
-            var taskSectionUpdate = new TaskSectionUpdate()
-            {
-                IdBoard = TaskBoard.Id,
-                IdDefaultProgress = taskProgressReturn.Id,
-                Title = taskSectionReturn.Title,
-                Order = taskSectionReturn.Order
-            };
-            if (await taskSectionsService.Patch(taskSectionReturn.Id, taskSectionUpdate) == "Task section updated")
-            {
-                taskSectionReturn.IdDefaultProgress = taskProgressReturn.Id;
-                var taskSections = TaskSections.ToList();
-                taskSections.Add(taskSectionReturn);
-                taskSections = taskSections.OrderBy(x => x.Order).ToList();
-                TaskSections.Clear();
+                var taskSectionReturn = await taskSectionsService.Post(taskSectionCreate);
+                var taskProgressCreate = new TaskProgressCreate()
+                {
+                    IdSection = taskSectionReturn.Id,
+                    Title = "Default",
+                    Order = 1
+                };
+                var taskProgressReturn = await taskProgressService.Post(taskProgressCreate);
+                var taskSectionUpdate = new TaskSectionUpdate()
+                {
+                    IdBoard = TaskBoard.Id,
+                    IdDefaultProgress = taskProgressReturn.Id,
+                    Title = taskSectionReturn.Title,
+                    Order = taskSectionReturn.Order
+                };
+                if (await taskSectionsService.Patch(taskSectionReturn.Id, taskSectionUpdate) == "Task section updated")
+                {
+                    taskSectionReturn.IdDefaultProgress = taskProgressReturn.Id;
+                    var taskSections = TaskSections.ToList();
+                    taskSections.Add(taskSectionReturn);
+                    taskSections = taskSections.OrderBy(x => x.Order).ToList();
+                    TaskSections.Clear();
+                }
             }
+            else
+            {
+                if (string.IsNullOrEmpty(taskSection.Title))
+                {
+                    await Application.Current.MainPage.DisplayAlert("Error", "Title is required", "OK");
+                }
+            }
+
+            IsLoading = false;
         }
         else
         {
-            if (string.IsNullOrEmpty(taskSection.Title))
-            {
-                await Application.Current.MainPage.DisplayAlert("Error", "Title is required", "OK");
-            }
+            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
         }
-
-        IsLoading = false;
     }
 
     [RelayCommand]
     public async Task TaskCreate(TaskSection taskSection)
     {
-        var task = await FormDialog.ShowCreateObjectMenuAsync<TaskFormCreate>("Craete Task");
-        if (!string.IsNullOrEmpty(task.Title))
+        List<PermissionsUtils.Permissions> permissions = new List<PermissionsUtils.Permissions>();
+        permissions.AddRange(PermissionsUtils.Permissions.FullPermissions, PermissionsUtils.Permissions.CreateTasks, PermissionsUtils.Permissions.FullTaskPermissions);
+        if (permissionsUtils.HasOnePermission(permissions))
         {
-            var taskCreate = new TaskCreate()
+            var task = await FormDialog.ShowCreateObjectMenuAsync<TaskFormCreate>("Craete Task");
+            if (!string.IsNullOrEmpty(task.Title))
             {
-                Title = task.Title,
-                Description = task.Description,
-                IdSection = taskSection.Id,
-                IdProgressSection = taskSection.IdDefaultProgress,
-                IdUserCreated = userSession.User.Id,
-                IdPriority = 3,
-                Progress = 0,
-                Finished = false,
-                IsParent = false
-            };
+                var taskCreate = new TaskCreate()
+                {
+                    Title = task.Title,
+                    Description = task.Description,
+                    IdSection = taskSection.Id,
+                    IdProgressSection = taskSection.IdDefaultProgress,
+                    IdUserCreated = userSession.User.Id,
+                    IdPriority = 3,
+                    Progress = 0,
+                    Finished = false,
+                    IsParent = false
+                };
 
-            IsLoading = true;
+                IsLoading = true;
 
-            await tasksService.Post(taskCreate);
+                await tasksService.Post(taskCreate);
 
-            await LoadData();
+                await LoadData();
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(task.Title))
+                {
+                    await Application.Current.MainPage.DisplayAlert("Error", "Title is required", "OK");
+                }
+            }
+
+            IsLoading = false;
         }
         else
         {
-            if (string.IsNullOrEmpty(task.Title))
-            {
-                await Application.Current.MainPage.DisplayAlert("Error", "Title is required", "OK");
-            }
+            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
         }
-
-        IsLoading = false;
     }
 
     [RelayCommand]
@@ -361,58 +382,76 @@ public partial class TaskBoardPageModel : ObservableObject
     [RelayCommand]
     public async Task MoveSectionLeft(TaskSection taskSection)
     {
-        if (taskSection.Order > 1)
+        List<PermissionsUtils.Permissions> permissions = new List<PermissionsUtils.Permissions>();
+        permissions.AddRange(PermissionsUtils.Permissions.FullPermissions, PermissionsUtils.Permissions.EditTaskBoardSections, PermissionsUtils.Permissions.FullTaskPermissions);
+        if (permissionsUtils.HasOnePermission(permissions))
         {
-            var previousSection = TaskSections.FirstOrDefault(x => x.Order == taskSection.Order - 1);
-            if (previousSection != null)
+            if (taskSection.Order > 1)
             {
-                taskSection.Order--;
-                previousSection.Order++;
-                await taskSectionsService.Patch(taskSection.Id, new TaskSectionUpdate
+                var previousSection = TaskSections.FirstOrDefault(x => x.Order == taskSection.Order - 1);
+                if (previousSection != null)
                 {
-                    IdBoard = taskSection.IdBoard,
-                    IdDefaultProgress = taskSection.IdDefaultProgress,
-                    Title = taskSection.Title,
-                    Order = taskSection.Order
-                });
-                await taskSectionsService.Patch(previousSection.Id, new TaskSectionUpdate
-                {
-                    IdBoard = previousSection.IdBoard,
-                    IdDefaultProgress = previousSection.IdDefaultProgress,
-                    Title = previousSection.Title,
-                    Order = previousSection.Order
-                });
-                await LoadData();
+                    taskSection.Order--;
+                    previousSection.Order++;
+                    await taskSectionsService.Patch(taskSection.Id, new TaskSectionUpdate
+                    {
+                        IdBoard = taskSection.IdBoard,
+                        IdDefaultProgress = taskSection.IdDefaultProgress,
+                        Title = taskSection.Title,
+                        Order = taskSection.Order
+                    });
+                    await taskSectionsService.Patch(previousSection.Id, new TaskSectionUpdate
+                    {
+                        IdBoard = previousSection.IdBoard,
+                        IdDefaultProgress = previousSection.IdDefaultProgress,
+                        Title = previousSection.Title,
+                        Order = previousSection.Order
+                    });
+                    await LoadData();
+                }
             }
+        }
+        else
+        {
+            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
         }
     }
 
     [RelayCommand]
     public async Task MoveSectionRight(TaskSection taskSection)
     {
-        if (taskSection.Order < TaskSections.Count)
+        List<PermissionsUtils.Permissions> permissions = new List<PermissionsUtils.Permissions>();
+        permissions.AddRange(PermissionsUtils.Permissions.FullPermissions, PermissionsUtils.Permissions.EditTaskBoardSections, PermissionsUtils.Permissions.FullTaskPermissions);
+        if (permissionsUtils.HasOnePermission(permissions))
         {
-            var nextSection = TaskSections.FirstOrDefault(x => x.Order == taskSection.Order + 1);
-            if (nextSection != null)
+            if (taskSection.Order < TaskSections.Count)
             {
-                taskSection.Order++;
-                nextSection.Order--;
-                await taskSectionsService.Patch(taskSection.Id, new TaskSectionUpdate
+                var nextSection = TaskSections.FirstOrDefault(x => x.Order == taskSection.Order + 1);
+                if (nextSection != null)
                 {
-                    IdBoard = taskSection.IdBoard,
-                    IdDefaultProgress = taskSection.IdDefaultProgress,
-                    Title = taskSection.Title,
-                    Order = taskSection.Order
-                });
-                await taskSectionsService.Patch(nextSection.Id, new TaskSectionUpdate
-                {
-                    IdBoard = nextSection.IdBoard,
-                    IdDefaultProgress = nextSection.IdDefaultProgress,
-                    Title = nextSection.Title,
-                    Order = nextSection.Order
-                });
-                await LoadData();
+                    taskSection.Order++;
+                    nextSection.Order--;
+                    await taskSectionsService.Patch(taskSection.Id, new TaskSectionUpdate
+                    {
+                        IdBoard = taskSection.IdBoard,
+                        IdDefaultProgress = taskSection.IdDefaultProgress,
+                        Title = taskSection.Title,
+                        Order = taskSection.Order
+                    });
+                    await taskSectionsService.Patch(nextSection.Id, new TaskSectionUpdate
+                    {
+                        IdBoard = nextSection.IdBoard,
+                        IdDefaultProgress = nextSection.IdDefaultProgress,
+                        Title = nextSection.Title,
+                        Order = nextSection.Order
+                    });
+                    await LoadData();
+                }
             }
+        }
+        else
+        {
+            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
         }
     }
 
@@ -429,166 +468,184 @@ public partial class TaskBoardPageModel : ObservableObject
     [RelayCommand]
     public async void EditTaskSection(TaskSection taskSection)
     {
-        bool confirmed = true;
-        if (EditingTaskData != null)
+        List<PermissionsUtils.Permissions> permissions = new List<PermissionsUtils.Permissions>();
+        permissions.AddRange(PermissionsUtils.Permissions.FullPermissions, PermissionsUtils.Permissions.EditTaskBoardSections, PermissionsUtils.Permissions.FullTaskPermissions);
+        if (permissionsUtils.HasOnePermission(permissions))
         {
-            if (SelectedTask != null)
+            bool confirmed = true;
+            if (EditingTaskData != null)
             {
-                if (HasChangedTaskData(SelectedTask))
+                if (SelectedTask != null)
                 {
-                    confirmed = await Application.Current.MainPage.DisplayAlert(
-                    "Change edit",
-                    "You have unsaved changes, are you sure you want to edit another task?",
-                    "Accept",
-                    "Cancel"
-                    );
+                    if (HasChangedTaskData(SelectedTask))
+                    {
+                        confirmed = await Application.Current.MainPage.DisplayAlert(
+                        "Change edit",
+                        "You have unsaved changes, are you sure you want to edit another task?",
+                        "Accept",
+                        "Cancel"
+                        );
+                    }
                 }
             }
-        }
-        if (confirmed)
-        {
-            EditingTaskData = null;
-            IsEditingTask = false;
-
-            IsEditingTaskSection = true;
-            EditingTaskSectionData = new TaskSection
+            if (confirmed)
             {
-                Id = taskSection.Id,
-                Title = taskSection.Title,
-                IdBoard = taskSection.IdBoard,
-                IdDefaultProgress = taskSection.IdDefaultProgress,
-                Order = taskSection.Order
-            };
+                EditingTaskData = null;
+                IsEditingTask = false;
+
+                IsEditingTaskSection = true;
+                EditingTaskSectionData = new TaskSection
+                {
+                    Id = taskSection.Id,
+                    Title = taskSection.Title,
+                    IdBoard = taskSection.IdBoard,
+                    IdDefaultProgress = taskSection.IdDefaultProgress,
+                    Order = taskSection.Order
+                };
+            }
+        }
+        else
+        {
+            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
         }
     }
 
     [RelayCommand]
     public async Task EditTask(ProjectTask task)
     {
-        bool confirmed = true;
-        if (EditingTaskData != null)
+        List<PermissionsUtils.Permissions> permissions = new List<PermissionsUtils.Permissions>();
+        permissions.AddRange(PermissionsUtils.Permissions.FullPermissions, PermissionsUtils.Permissions.EditTasks, PermissionsUtils.Permissions.FullTaskPermissions);
+        if (permissionsUtils.HasOnePermission(permissions))
         {
-            if (SelectedTask != null)
+            bool confirmed = true;
+            if (EditingTaskData != null)
             {
-                if (HasChangedTaskData(SelectedTask))
+                if (SelectedTask != null)
                 {
-                    confirmed = await Application.Current.MainPage.DisplayAlert(
-                    "Change edit",
-                    "You have unsaved changes, are you sure you want to edit another task?",
-                    "Accept",
-                    "Cancel"
-                    );
+                    if (HasChangedTaskData(SelectedTask))
+                    {
+                        confirmed = await Application.Current.MainPage.DisplayAlert(
+                        "Change edit",
+                        "You have unsaved changes, are you sure you want to edit another task?",
+                        "Accept",
+                        "Cancel"
+                        );
+                    }
                 }
             }
-        }
-        if (confirmed)
-        {
-            
-            EditingTaskSectionData = null;
-            IsEditingTaskSection = false;
-
-            var returnUsers = await usersService.GetUsersByProject(NavigationContext.CurrentProject.Id);
-            Users = new ObservableCollection<AppUser>(returnUsers);
-
-            List<ProjectTask> tasks = new();
-            List<ProjectTask> parentCandidates = new();
-            List<TaskDependency> dependencies = new();
-
-
-            foreach (var taskSection in TaskSections)
+            if (confirmed)
             {
-                if (taskSection.Tasks != null && taskSection.Tasks.Count != 0)
+
+                EditingTaskSectionData = null;
+                IsEditingTaskSection = false;
+
+                var returnUsers = await usersService.GetUsersByProject(NavigationContext.CurrentProject.Id);
+                Users = new ObservableCollection<AppUser>(returnUsers);
+
+                List<ProjectTask> tasks = new();
+                List<ProjectTask> parentCandidates = new();
+                List<TaskDependency> dependencies = new();
+
+
+                foreach (var taskSection in TaskSections)
                 {
-                    foreach (var t in taskSection.Tasks)
+                    if (taskSection.Tasks != null && taskSection.Tasks.Count != 0)
+                    {
+                        foreach (var t in taskSection.Tasks)
+                        {
+                            if (t.Id != task.Id)
+                            {
+                                tasks.Add(t);
+                            }
+                        }
+                    }
+                }
+
+                var currentTaskSection = TaskSections.FirstOrDefault(x => x.Id == task.IdSection);
+
+                if (currentTaskSection.Tasks != null && currentTaskSection.Tasks.Count != 0)
+                {
+                    foreach (var t in currentTaskSection.Tasks)
                     {
                         if (t.Id != task.Id)
                         {
-                            tasks.Add(t);
+                            if (t.IsParent || t.Parent == null)
+                            {
+                                parentCandidates.Add(t);
+                            }
                         }
                     }
                 }
-            }
 
-            var currentTaskSection = TaskSections.FirstOrDefault(x => x.Id == task.IdSection);
+                var currentDependencies = await taskDependenciesService.GetAllTaskDependenciesByTask(task.Id);
 
-            if (currentTaskSection.Tasks != null && currentTaskSection.Tasks.Count != 0)
-            {
-                foreach (var t in currentTaskSection.Tasks)
+                foreach (var dependency in currentDependencies)
                 {
-                    if (t.Id != task.Id)
-                    {
-                        if (t.IsParent || t.Parent == null)
-                        {
-                            parentCandidates.Add(t);
-                        }
-                    }
+                    var dependsOnTask = await tasksService.GetById(dependency.IdDependsOn);
+
+                    dependency.DisplayName = dependsOnTask.Title + "->" + task.Title;
                 }
+
+
+                PossibleDependencies = new ObservableCollection<ProjectTask>(tasks);
+                PossibleParents = new ObservableCollection<ProjectTask>(parentCandidates);
+                TaskDependencies = new ObservableCollection<TaskDependency>(currentDependencies);
+
+                AppUser? userAssigned;
+                ProjectTask? parentTask;
+
+                if (task.UserAssigned != null)
+                {
+                    userAssigned = await usersService.GetById(task.UserAssigned.Id);
+                }
+                else
+                {
+                    userAssigned = null;
+                }
+
+                if (task.IdParentTask != null)
+                {
+                    parentTask = await tasksService.GetById((int)task.IdParentTask);
+                }
+                else
+                {
+                    parentTask = null;
+                }
+
+                EditingTaskData = new ProjectTask
+                {
+                    Id = task.Id,
+                    IdSection = task.IdSection,
+                    IdProgressSection = task.IdProgressSection,
+                    IdUserAssigned = task.IdUserAssigned,
+                    IdParentTask = task.IdParentTask,
+                    IdUserCreated = task.IdUserCreated,
+                    IdPriority = task.IdPriority,
+                    Title = task.Title,
+                    Description = task.Description,
+                    Progress = task.Progress,
+                    CreationDate = task.CreationDate,
+                    LimitDate = task.LimitDate,
+                    CompletionDate = task.CompletionDate,
+
+                    Finished = task.Finished,
+                    IsParent = task.IsParent,
+                    Priority = task.Priority,
+                    UserAssigned = userAssigned,
+                    Parent = parentTask
+                };
+
+
+                ProgressValue = EditingTaskData.Progress;
+                initialProgressValue = EditingTaskData.Progress;
+
+                IsEditingTask = true;
+                SelectedTask = task;
             }
-
-            var currentDependencies = await taskDependenciesService.GetAllTaskDependenciesByTask(task.Id);
-
-            foreach (var dependency in currentDependencies)
-            {
-                var dependsOnTask = await tasksService.GetById(dependency.IdDependsOn);
-
-                dependency.DisplayName = dependsOnTask.Title + "->" + task.Title;
-            }
-
-
-            PossibleDependencies = new ObservableCollection<ProjectTask>(tasks);
-            PossibleParents = new ObservableCollection<ProjectTask>(parentCandidates);
-            TaskDependencies = new ObservableCollection<TaskDependency>(currentDependencies);
-
-            AppUser? userAssigned;
-            ProjectTask? parentTask;
-
-            if (task.UserAssigned != null)
-            {
-                userAssigned = await usersService.GetById(task.UserAssigned.Id);
-            }
-            else
-            {
-                userAssigned = null;
-            }
-
-            if (task.IdParentTask != null)
-            {
-                parentTask = await tasksService.GetById((int)task.IdParentTask);
-            }
-            else
-            {
-                parentTask = null;
-            }
-
-            EditingTaskData = new ProjectTask
-            {
-                Id = task.Id,
-                IdSection = task.IdSection,
-                IdProgressSection = task.IdProgressSection,
-                IdUserAssigned = task.IdUserAssigned,
-                IdParentTask = task.IdParentTask,
-                IdUserCreated = task.IdUserCreated,
-                IdPriority = task.IdPriority,
-                Title = task.Title,
-                Description = task.Description,
-                Progress = task.Progress,
-                CreationDate = task.CreationDate,
-                LimitDate = task.LimitDate,
-                CompletionDate = task.CompletionDate,
-
-                Finished = task.Finished,
-                IsParent = task.IsParent,
-                Priority = task.Priority,
-                UserAssigned = userAssigned,
-                Parent = parentTask
-            };
-
-
-            ProgressValue = EditingTaskData.Progress;
-            initialProgressValue = EditingTaskData.Progress;
-
-            IsEditingTask = true;
-            SelectedTask = task;
+        }
+        else
+        {
+            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
         }
     }
 
@@ -821,69 +878,85 @@ public partial class TaskBoardPageModel : ObservableObject
     [RelayCommand]
     private async void DeleteTaskSection(TaskSection taskSection)
     {
-        if (taskSection != null)
+        List<PermissionsUtils.Permissions> permissions = new List<PermissionsUtils.Permissions>();
+        permissions.AddRange(PermissionsUtils.Permissions.FullPermissions, PermissionsUtils.Permissions.DeleteTaskBoardSections, PermissionsUtils.Permissions.FullTaskPermissions);
+        if (permissionsUtils.HasOnePermission(permissions))
         {
-            var result = await Application.Current.MainPage.DisplayAlert("Confirm", "Are you sure you want to delete this section?", "Yes", "No");
-            if (result)
+            if (taskSection != null)
             {
-                IsLoading = true;
-
-                if (taskSection.Order < TaskSections.Count)
+                var result = await Application.Current.MainPage.DisplayAlert("Confirm", "Are you sure you want to delete this section?", "Yes", "No");
+                if (result)
                 {
-                    var nextSections = TaskSections.Where(x => x.Order > taskSection.Order).ToList();
-                    foreach (var section in nextSections)
+                    IsLoading = true;
+
+                    if (taskSection.Order < TaskSections.Count)
                     {
-                        section.Order--;
-                        await taskSectionsService.Patch(section.Id, new TaskSectionUpdate
+                        var nextSections = TaskSections.Where(x => x.Order > taskSection.Order).ToList();
+                        foreach (var section in nextSections)
                         {
-                            IdBoard = section.IdBoard,
-                            IdDefaultProgress = section.IdDefaultProgress,
-                            Title = section.Title,
-                            Order = section.Order
-                        });
+                            section.Order--;
+                            await taskSectionsService.Patch(section.Id, new TaskSectionUpdate
+                            {
+                                IdBoard = section.IdBoard,
+                                IdDefaultProgress = section.IdDefaultProgress,
+                                Title = section.Title,
+                                Order = section.Order
+                            });
+                        }
                     }
+
+                    await taskSectionsService.Delete(taskSection.Id);
+                    await LoadData();
+                    IsLoading = false;
+
+                    EditingTaskSectionData = null;
+                    IsEditingTaskSection = false;
+                    SelectedTaskSection = null;
+                    SelectedTask = null;
+                    EditingTaskData = null;
+                    IsEditingTask = false;
+                    SelectedDependency = null;
+                    IsEditingTaskDependency = false;
+                    EditingTaskDependencyData = null;
                 }
-
-                await taskSectionsService.Delete(taskSection.Id);
-                await LoadData();
-                IsLoading = false;
-
-                EditingTaskSectionData = null;
-                IsEditingTaskSection = false;
-                SelectedTaskSection = null;
-                SelectedTask = null;
-                EditingTaskData = null;
-                IsEditingTask = false;
-                SelectedDependency = null;
-                IsEditingTaskDependency = false;
-                EditingTaskDependencyData = null;
             }
         }
-
-        
+        else
+        {
+            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+        }
     }
 
     [RelayCommand]
     private async void DeleteTask(ProjectTask task)
     {
-        if (task != null)
+        List<PermissionsUtils.Permissions> permissions = new List<PermissionsUtils.Permissions>();
+        permissions.AddRange(PermissionsUtils.Permissions.FullPermissions, PermissionsUtils.Permissions.DeleteTasks, PermissionsUtils.Permissions.FullTaskPermissions);
+        if (permissionsUtils.HasOnePermission(permissions))
         {
-            var result = await Application.Current.MainPage.DisplayAlert("Confirm", "Are you sure you want to delete this task?", "Yes", "No");
-            if (result)
+            if (task != null)
             {
-                IsLoading = true;
-                await tasksService.Delete(task.Id);
-                await LoadData();
-                IsLoading = false;
+                var result = await Application.Current.MainPage.DisplayAlert("Confirm", "Are you sure you want to delete this task?", "Yes", "No");
+                if (result)
+                {
+                    IsLoading = true;
+                    await tasksService.Delete(task.Id);
+                    await LoadData();
+                    IsLoading = false;
 
-                SelectedTaskSection = null;
-                SelectedTask = null;
-                EditingTaskData = null;
-                IsEditingTask = false;
-                SelectedDependency = null;
-                IsEditingTaskDependency = false;
-                EditingTaskDependencyData = null;
+                    SelectedTaskSection = null;
+                    SelectedTask = null;
+                    EditingTaskData = null;
+                    IsEditingTask = false;
+                    SelectedDependency = null;
+                    IsEditingTaskDependency = false;
+                    EditingTaskDependencyData = null;
+                }
             }
+        }
+        else
+        {
+            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
         }
     }
 
@@ -912,86 +985,143 @@ public partial class TaskBoardPageModel : ObservableObject
     [RelayCommand]
     public async void DropOnSection(TaskSection section)
     {
-        if (_grabbedTask != null && section != null)
+        List<PermissionsUtils.Permissions> permissions = new List<PermissionsUtils.Permissions>();
+        permissions.AddRange(PermissionsUtils.Permissions.FullPermissions, PermissionsUtils.Permissions.EditTasks, PermissionsUtils.Permissions.FullTaskPermissions);
+        if (permissionsUtils.HasOnePermission(permissions))
         {
-            var taskSectionId = section.Id;
-
-            if (_grabbedTask.IsParent)
+            if (_grabbedTask != null && section != null)
             {
-                foreach (var childTask in await tasksService.GetAllTasksByParent(_grabbedTask.Id))
+                var taskSectionId = section.Id;
+
+                if (_grabbedTask.IsParent)
                 {
-                    var childTaskUpdate = new TaskUpdate
+                    foreach (var childTask in await tasksService.GetAllTasksByParent(_grabbedTask.Id))
                     {
-                        Id = childTask.Id,
-                        IdSection = taskSectionId,
-                        IdProgressSection = section.IdDefaultProgress,
-                        IdUserCreated = childTask.IdUserCreated,
-                        Title = childTask.Title,
-                        IdUserAssigned = childTask.IdUserAssigned,
-                        IdParentTask = childTask.IdParentTask,
-                        IdPriority = childTask.IdPriority,
-                        Description = childTask.Description,
-                        Progress = childTask.Progress,
-                        LimitDate = childTask.LimitDate,
-                        CompletionDate = childTask.CompletionDate,
-                        Finished = childTask.Finished,
-                        IsParent = childTask.IsParent
-                    };
+                        var childTaskUpdate = new TaskUpdate
+                        {
+                            Id = childTask.Id,
+                            IdSection = taskSectionId,
+                            IdProgressSection = section.IdDefaultProgress,
+                            IdUserCreated = childTask.IdUserCreated,
+                            Title = childTask.Title,
+                            IdUserAssigned = childTask.IdUserAssigned,
+                            IdParentTask = childTask.IdParentTask,
+                            IdPriority = childTask.IdPriority,
+                            Description = childTask.Description,
+                            Progress = childTask.Progress,
+                            LimitDate = childTask.LimitDate,
+                            CompletionDate = childTask.CompletionDate,
+                            Finished = childTask.Finished,
+                            IsParent = childTask.IsParent
+                        };
 
-                    await tasksService.Patch(childTask.Id, childTaskUpdate);
+                        await tasksService.Patch(childTask.Id, childTaskUpdate);
+                    }
+
                 }
-                    
+
+                var taskUpdate = new TaskUpdate
+                {
+                    Id = _grabbedTask.Id,
+                    IdSection = taskSectionId,
+                    IdProgressSection = section.IdDefaultProgress,
+                    IdUserCreated = _grabbedTask.IdUserCreated,
+                    Title = _grabbedTask.Title,
+                    IdUserAssigned = _grabbedTask.IdUserAssigned,
+                    IdParentTask = _grabbedTask.Id,
+                    IdPriority = _grabbedTask.IdPriority,
+                    Description = _grabbedTask.Description,
+                    Progress = _grabbedTask.Progress,
+                    LimitDate = _grabbedTask.LimitDate,
+                    CompletionDate = _grabbedTask.CompletionDate,
+                    Finished = _grabbedTask.Finished,
+                    IsParent = _grabbedTask.IsParent
+                };
+
+                IsLoading = true;
+                await tasksService.Patch(_grabbedTask.Id, taskUpdate);
+                await LoadData();
+                IsLoading = false;
             }
-
-            var taskUpdate = new TaskUpdate
-            {
-                Id = _grabbedTask.Id,
-                IdSection = taskSectionId,
-                IdProgressSection = section.IdDefaultProgress,
-                IdUserCreated = _grabbedTask.IdUserCreated,
-                Title = _grabbedTask.Title,
-                IdUserAssigned = _grabbedTask.IdUserAssigned,
-                IdParentTask = _grabbedTask.Id,
-                IdPriority = _grabbedTask.IdPriority,
-                Description = _grabbedTask.Description,
-                Progress = _grabbedTask.Progress,
-                LimitDate = _grabbedTask.LimitDate,
-                CompletionDate = _grabbedTask.CompletionDate,
-                Finished = _grabbedTask.Finished,
-                IsParent = _grabbedTask.IsParent
-            };
-
-            IsLoading = true;
-            await tasksService.Patch(_grabbedTask.Id, taskUpdate);
-            await LoadData();
-            IsLoading = false;
         }
-
-
+        else
+        {
+            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+        }
         _grabbedTask = null;
     }
 
     [RelayCommand]
     public async void DroppedOnTask(ProjectTask task)
     {
-        if (_grabbedTask != null && task != null)
+        List<PermissionsUtils.Permissions> permissions = new List<PermissionsUtils.Permissions>();
+        permissions.AddRange(PermissionsUtils.Permissions.FullPermissions, PermissionsUtils.Permissions.EditTasks, PermissionsUtils.Permissions.FullTaskPermissions);
+        if (permissionsUtils.HasOnePermission(permissions))
         {
-            int taskSectionId = _grabbedTask.IdSection;
-            int progressSectionId = _grabbedTask.IdProgressSection;
-            int? parentId = _grabbedTask.IdParentTask;
-
-            if (task.IdSection != taskSectionId)
+            if (_grabbedTask != null && task != null)
             {
-                taskSectionId = task.IdSection;
-                var taskSection = await taskSectionsService.GetById(task.IdSection);
-                progressSectionId = taskSection.IdDefaultProgress;
-            }
+                int taskSectionId = _grabbedTask.IdSection;
+                int progressSectionId = _grabbedTask.IdProgressSection;
+                int? parentId = _grabbedTask.IdParentTask;
 
-            if (!_grabbedTask.IsParent)
-            {
-                parentId = task.Id;
+                if (task.IdSection != taskSectionId)
+                {
+                    taskSectionId = task.IdSection;
+                    var taskSection = await taskSectionsService.GetById(task.IdSection);
+                    progressSectionId = taskSection.IdDefaultProgress;
+                }
 
-                await tasksService.Patch(_grabbedTask.Id, new TaskUpdate
+                if (!_grabbedTask.IsParent)
+                {
+                    parentId = task.Id;
+
+                    await tasksService.Patch(_grabbedTask.Id, new TaskUpdate
+                    {
+                        Id = _grabbedTask.Id,
+                        IdSection = taskSectionId,
+                        IdProgressSection = progressSectionId,
+                        IdUserCreated = _grabbedTask.IdUserCreated,
+                        Title = _grabbedTask.Title,
+                        IdUserAssigned = _grabbedTask.IdUserAssigned,
+                        IdParentTask = parentId,
+                        IdPriority = _grabbedTask.IdPriority,
+                        Description = _grabbedTask.Description,
+                        Progress = _grabbedTask.Progress,
+                        LimitDate = _grabbedTask.LimitDate,
+                        CompletionDate = _grabbedTask.CompletionDate,
+                        Finished = _grabbedTask.Finished,
+                        IsParent = _grabbedTask.IsParent
+                    });
+
+                    await tasksService.Patch(task.Id, new TaskUpdate
+                    {
+                        Id = task.Id,
+                        IdSection = task.IdSection,
+                        IdProgressSection = progressSectionId,
+                        IdUserCreated = task.IdUserCreated,
+                        Title = task.Title,
+                        IdUserAssigned = task.IdUserAssigned,
+                        IdParentTask = task.IdParentTask,
+                        IdPriority = task.IdPriority,
+                        Description = task.Description,
+                        Progress = task.Progress,
+                        LimitDate = task.LimitDate,
+                        CompletionDate = task.CompletionDate,
+                        Finished = task.Finished,
+                        IsParent = true
+                    });
+
+                    await LoadData();
+                    IsLoading = false;
+
+                    return;
+                }
+                else if (task.Id != parentId && parentId != _grabbedTask.Id)
+                {
+                    await RemoveParent(_grabbedTask);
+                }
+
+                var taskUpdate = new TaskUpdate
                 {
                     Id = _grabbedTask.Id,
                     IdSection = taskSectionId,
@@ -1007,56 +1137,16 @@ public partial class TaskBoardPageModel : ObservableObject
                     CompletionDate = _grabbedTask.CompletionDate,
                     Finished = _grabbedTask.Finished,
                     IsParent = _grabbedTask.IsParent
-                });
+                };
 
-                await tasksService.Patch(task.Id,new TaskUpdate
-                {
-                    Id = task.Id,
-                    IdSection = task.IdSection,
-                    IdProgressSection = progressSectionId,
-                    IdUserCreated = task.IdUserCreated,
-                    Title = task.Title,
-                    IdUserAssigned = task.IdUserAssigned,
-                    IdParentTask = task.IdParentTask,
-                    IdPriority = task.IdPriority,
-                    Description = task.Description,
-                    Progress = task.Progress,
-                    LimitDate = task.LimitDate,
-                    CompletionDate = task.CompletionDate,
-                    Finished = task.Finished,
-                    IsParent = true
-                });
-
+                await tasksService.Patch(_grabbedTask.Id, taskUpdate);
                 await LoadData();
                 IsLoading = false;
-
-                return;
-            } else if (task.Id != parentId && parentId != _grabbedTask.Id)
-            {
-                await RemoveParent(_grabbedTask);
             }
-
-            var taskUpdate = new TaskUpdate
-            {
-                Id = _grabbedTask.Id,
-                IdSection = taskSectionId,
-                IdProgressSection = progressSectionId,
-                IdUserCreated = _grabbedTask.IdUserCreated,
-                Title = _grabbedTask.Title,
-                IdUserAssigned = _grabbedTask.IdUserAssigned,
-                IdParentTask = parentId,
-                IdPriority = _grabbedTask.IdPriority,
-                Description = _grabbedTask.Description,
-                Progress = _grabbedTask.Progress,
-                LimitDate = _grabbedTask.LimitDate,
-                CompletionDate = _grabbedTask.CompletionDate,
-                Finished = _grabbedTask.Finished,
-                IsParent = _grabbedTask.IsParent
-            };
-            
-            await tasksService.Patch(_grabbedTask.Id, taskUpdate);
-            await LoadData();
-            IsLoading = false;
+        }
+        else
+        {
+            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
         }
         _grabbedTask = null;
     }

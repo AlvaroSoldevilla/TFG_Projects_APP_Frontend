@@ -6,11 +6,11 @@ using TFG_Projects_APP_Frontend.Entities.Dtos.Projects;
 using TFG_Projects_APP_Frontend.Entities.Dtos.ProjectUsers;
 using TFG_Projects_APP_Frontend.Entities.Dtos.UserProjectPermissions;
 using TFG_Projects_APP_Frontend.Entities.Models;
-using TFG_Projects_APP_Frontend.Services;
 using TFG_Projects_APP_Frontend.Services.ProjectsService;
 using TFG_Projects_APP_Frontend.Services.ProjectUsersService;
 using TFG_Projects_APP_Frontend.Services.UserProjectPermissionsService;
 using TFG_Projects_APP_Frontend.Services.UsersService;
+using TFG_Projects_APP_Frontend.Services.Utils;
 
 namespace TFG_Projects_APP_Frontend.PageModels;
 
@@ -20,6 +20,7 @@ public partial class MainPageModel : ObservableObject
     private readonly IUserProjectPermissionsService userProjectPermissionsService;
     private readonly IProjectUsersService projectUsersService;
     private readonly UserSession userSession;
+    private readonly PermissionsUtils permissionsUtils;
 
     [ObservableProperty]
     private bool _isloading;
@@ -39,12 +40,14 @@ public partial class MainPageModel : ObservableObject
     public MainPageModel(IProjectsService projectsService, 
         IUserProjectPermissionsService userProjectPermissionsService,
         IProjectUsersService projectUsersService, 
-        UserSession userSession)
+        UserSession userSession,
+        PermissionsUtils permissionsUtils)
     {
         this.projectsService = projectsService;
         this.userProjectPermissionsService = userProjectPermissionsService;
         this.projectUsersService = projectUsersService;
         this.userSession = userSession;
+        this.permissionsUtils = permissionsUtils;
     }
 
     public async Task OnNavigatedTo()
@@ -110,7 +113,8 @@ public partial class MainPageModel : ObservableObject
     private async void ProjectDelete(Project project)
     {
         userSession.User.ProjectPermissions = await userProjectPermissionsService.getAllUserProjectPermissionsByUserAndProject(userSession.User.Id, project.Id);
-        if (userSession.User.ProjectPermissions != null && userSession.User.ProjectPermissions.Find(x=> x.IdPermission == 1) != null)
+        List<PermissionsUtils.Permissions> requiredPermissions = [PermissionsUtils.Permissions.FullPermissions];
+        if (userSession.User.ProjectPermissions != null && permissionsUtils.HasAllPermissions(requiredPermissions))
         {
             bool confirmed = await Application.Current.MainPage.DisplayAlert(
                 "Confirm Delete",
@@ -134,13 +138,23 @@ public partial class MainPageModel : ObservableObject
     [RelayCommand]
     private async void ProjectEdit(Project project)
     {
-        IsEditingProject = true;
-        EditingProjectData = new Project
+        userSession.User.ProjectPermissions = await userProjectPermissionsService.getAllUserProjectPermissionsByUserAndProject(userSession.User.Id, project.Id);
+        List<PermissionsUtils.Permissions> requiredPermissions = [PermissionsUtils.Permissions.FullPermissions];
+
+        if (userSession.User.ProjectPermissions != null && permissionsUtils.HasAllPermissions(requiredPermissions))
         {
-            Id = project.Id,
-            Title = project.Title,
-            Description = project.Description
-        };
+            IsEditingProject = true;
+            EditingProjectData = new Project
+            {
+                Id = project.Id,
+                Title = project.Title,
+                Description = project.Description
+            };
+        }
+        else
+        {
+            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+        }
     }
 
     [RelayCommand]

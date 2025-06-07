@@ -11,7 +11,6 @@ using TFG_Projects_APP_Frontend.Entities.Dtos.TaskProgress;
 using TFG_Projects_APP_Frontend.Entities.Dtos.TaskSections;
 using TFG_Projects_APP_Frontend.Entities.Dtos.UserProjectPermissions;
 using TFG_Projects_APP_Frontend.Entities.Models;
-using TFG_Projects_APP_Frontend.Services;
 using TFG_Projects_APP_Frontend.Services.ConceptBoardsService;
 using TFG_Projects_APP_Frontend.Services.ConceptsService;
 using TFG_Projects_APP_Frontend.Services.PermissionsService;
@@ -23,6 +22,7 @@ using TFG_Projects_APP_Frontend.Services.TaskProgressService;
 using TFG_Projects_APP_Frontend.Services.TaskSectionsService;
 using TFG_Projects_APP_Frontend.Services.UserProjectPermissionsService;
 using TFG_Projects_APP_Frontend.Services.UsersService;
+using TFG_Projects_APP_Frontend.Services.Utils;
 
 namespace TFG_Projects_APP_Frontend.PageModels;
 
@@ -41,6 +41,7 @@ public partial class ProjectManagementPageModel : ObservableObject
     private readonly IUsersService usersService;
     private readonly IRolesService rolesService;
     private readonly UserSession userSession;
+    private readonly PermissionsUtils permissionsUtils;;
 
     public Project Project { get; set; }
 
@@ -69,6 +70,15 @@ public partial class ProjectManagementPageModel : ObservableObject
 
     [ObservableProperty]
     private string _adduserEmail = string.Empty;
+
+    [ObservableProperty]
+    private bool _canSeeConcepts = false;
+
+    [ObservableProperty]
+    private bool _canSeeTaskBoards = false;
+
+    [ObservableProperty]
+    private bool canSeeUsers = false;
 
     [ObservableProperty]
     private Project _currentProject;
@@ -134,7 +144,8 @@ public partial class ProjectManagementPageModel : ObservableObject
         IProjectUsersService projectUsersService,
         IUsersService usersService,
         IRolesService rolesService, 
-        UserSession userSession)
+        UserSession userSession,
+        PermissionsUtils permissionsUtils)
     {
         this.conceptsService = conceptsService;
         this.conceptBoardsService = conceptBoardsService;
@@ -148,6 +159,7 @@ public partial class ProjectManagementPageModel : ObservableObject
         this.usersService = usersService;
         this.rolesService = rolesService;
         this.userSession = userSession;
+        this.permissionsUtils = permissionsUtils;
     }
 
     public async Task OnNavigatedTo()
@@ -238,6 +250,27 @@ public partial class ProjectManagementPageModel : ObservableObject
         _isLoadingData = false;
     }
 
+    private async void CheckPermissions()
+    {
+        List<PermissionsUtils.Permissions> permissions = new List<PermissionsUtils.Permissions>();
+        permissions.AddRange(PermissionsUtils.Permissions.FullPermissions, PermissionsUtils.Permissions.ReadConcepts);
+        if (permissionsUtils.HasOnePermission(permissions))
+        {
+            CanSeeConcepts = true;
+        }
+        permissions.AddRange(PermissionsUtils.Permissions.FullPermissions, PermissionsUtils.Permissions.ReadTasksBoards);
+        if (permissionsUtils.HasOnePermission(permissions))
+        {
+            CanSeeTaskBoards = true;
+        }
+        permissions.AddRange(PermissionsUtils.Permissions.FullPermissions, PermissionsUtils.Permissions.ReadUsers);
+        if (permissionsUtils.HasOnePermission(permissions))
+        {
+            CanSeeUsers = true;
+        }
+    }
+
+
     [RelayCommand]
     private async void ConceptSelected(Concept concept)
     {
@@ -256,53 +289,63 @@ public partial class ProjectManagementPageModel : ObservableObject
     [RelayCommand]
     private async void UserSelected(AppUser user)
     {
-        IsEditingConcept = false;
-        IsEditingTaskBoard = false;
-        EditingConceptData = null;
-        EditingTaskBoardData = null;
-
-        if (SelectedUser != null)
+        List<PermissionsUtils.Permissions> permissions = new List<PermissionsUtils.Permissions>();
+        permissions.AddRange(PermissionsUtils.Permissions.FullPermissions, PermissionsUtils.Permissions.EditUsers, PermissionsUtils.Permissions.FullUserPermissions);
+        if (permissionsUtils.HasOnePermission(permissions))
         {
-            var matchingRole = Roles.FirstOrDefault(r => r.Id == SelectedUser.Role?.Id);
-            if (matchingRole != null)
-            {
-                EditingUserData = new AppUser
-                {
-                    Id = SelectedUser.Id,
-                    Username = SelectedUser.Username,
-                    Email = SelectedUser.Email,
-                    Role = matchingRole,
-                };
-            } else
-            {
-                EditingUserData = new AppUser
-                {
-                    Id = SelectedUser.Id,
-                    Username = SelectedUser.Username,
-                    Email = SelectedUser.Email,
-                    Role = null
-                };
-            }
+            IsEditingConcept = false;
+            IsEditingTaskBoard = false;
+            EditingConceptData = null;
+            EditingTaskBoardData = null;
 
-            var userPermissions = await userProjectPermissionsService.getAllUserProjectPermissionsByUserAndProject(SelectedUser.Id, Project.Id);
-
-            EditingUserData.ProjectPermissions = new(userPermissions);
-            UserRemovePermissions.Clear();
-            UserAddPermissions.Clear();
-
-            foreach (var permission in Permissions)
+            if (SelectedUser != null)
             {
-                if (userPermissions.Any(up => up.IdPermission == permission.Id))
+                var matchingRole = Roles.FirstOrDefault(r => r.Id == SelectedUser.Role?.Id);
+                if (matchingRole != null)
                 {
-                    UserRemovePermissions.Add(permission);
+                    EditingUserData = new AppUser
+                    {
+                        Id = SelectedUser.Id,
+                        Username = SelectedUser.Username,
+                        Email = SelectedUser.Email,
+                        Role = matchingRole,
+                    };
                 }
                 else
                 {
-                    UserAddPermissions.Add(permission);
+                    EditingUserData = new AppUser
+                    {
+                        Id = SelectedUser.Id,
+                        Username = SelectedUser.Username,
+                        Email = SelectedUser.Email,
+                        Role = null
+                    };
                 }
-            }
 
-            IsEditingUser = true;
+                var userPermissions = await userProjectPermissionsService.getAllUserProjectPermissionsByUserAndProject(SelectedUser.Id, Project.Id);
+
+                EditingUserData.ProjectPermissions = new(userPermissions);
+                UserRemovePermissions.Clear();
+                UserAddPermissions.Clear();
+
+                foreach (var permission in Permissions)
+                {
+                    if (userPermissions.Any(up => up.IdPermission == permission.Id))
+                    {
+                        UserRemovePermissions.Add(permission);
+                    }
+                    else
+                    {
+                        UserAddPermissions.Add(permission);
+                    }
+                }
+
+                IsEditingUser = true;
+            }
+        }
+        else
+        {
+            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
         }
     }
 
@@ -319,125 +362,154 @@ public partial class ProjectManagementPageModel : ObservableObject
     [RelayCommand]
     private async void CreateTaskBoard()
     {
-        IsLoadingTaskBoards = true;
-        var taskBoardform = await FormDialog.ShowCreateObjectMenuAsync<TaskBoardFormCreate>("Create Task Board");
-        if (taskBoardform != null && !string.IsNullOrEmpty(taskBoardform.Title))
+        List<PermissionsUtils.Permissions> permissions = new List<PermissionsUtils.Permissions>();
+        permissions.AddRange(PermissionsUtils.Permissions.FullPermissions, PermissionsUtils.Permissions.CreateTaskBoards, PermissionsUtils.Permissions.FullTaskPermissions);
+        if (permissionsUtils.HasOnePermission(permissions))
         {
-            if (string.IsNullOrEmpty(taskBoardform.Description))
+            IsLoadingTaskBoards = true;
+            var taskBoardform = await FormDialog.ShowCreateObjectMenuAsync<TaskBoardFormCreate>("Create Task Board");
+            if (taskBoardform != null && !string.IsNullOrEmpty(taskBoardform.Title))
             {
-                taskBoardform.Description = string.Empty;
+                if (string.IsNullOrEmpty(taskBoardform.Description))
+                {
+                    taskBoardform.Description = string.Empty;
+                }
+
+                var taskBoard = new TaskBoardCreate
+                {
+                    IdProject = Project.Id,
+                    Title = taskBoardform.Title,
+                    Description = taskBoardform.Description
+                };
+
+                var returnTaskBoard = await taskBoardsService.Post(taskBoard);
+                var taskSection = await taskSectionsService.Post(new TaskSectionCreate
+                {
+                    IdBoard = returnTaskBoard.Id,
+                    Title = "Default Section",
+                    Order = 1
+                });
+                var taskProgress = await taskProgressService.Post(new TaskProgressCreate
+                {
+                    IdSection = taskSection.Id,
+                    Title = "Default Progress",
+                    Order = 1,
+                    ModifiesProgress = false,
+                    ProgressValue = 0
+                });
+                await taskSectionsService.Patch(taskSection.Id, new TaskSectionUpdate
+                {
+                    IdBoard = taskSection.IdBoard,
+                    IdDefaultProgress = taskProgress.Id,
+                    Title = taskSection.Title,
+                    Order = taskSection.Order
+                });
+
+                var taskBoards = TaskBoards.ToList();
+                taskBoards.Add(returnTaskBoard);
+                TaskBoards.Clear();
+                TaskBoards = new(taskBoards);
             }
-
-            var taskBoard = new TaskBoardCreate
+            else
             {
-                IdProject = Project.Id,
-                Title = taskBoardform.Title,
-                Description = taskBoardform.Description
-            };
-
-            var returnTaskBoard = await taskBoardsService.Post(taskBoard);
-            var taskSection = await taskSectionsService.Post(new TaskSectionCreate
-            {
-                IdBoard = returnTaskBoard.Id,
-                Title = "Default Section",
-                Order = 1
-            });
-            var taskProgress = await taskProgressService.Post(new TaskProgressCreate
-            {
-                IdSection = taskSection.Id,
-                Title = "Default Progress",
-                Order = 1,
-                ModifiesProgress = false,
-                ProgressValue = 0
-            });
-            await taskSectionsService.Patch(taskSection.Id, new TaskSectionUpdate
-            {
-                IdBoard = taskSection.IdBoard,
-                IdDefaultProgress = taskProgress.Id,
-                Title = taskSection.Title,
-                Order = taskSection.Order
-            });
-
-            var taskBoards = TaskBoards.ToList();
-            taskBoards.Add(returnTaskBoard);
-            TaskBoards.Clear();
-            TaskBoards = new(taskBoards);
-        } else
-        {
-            if (string.IsNullOrEmpty(taskBoardform.Title))
-            {
-                await Application.Current.MainPage.DisplayAlert("Error", "Title is required", "OK");
+                if (string.IsNullOrEmpty(taskBoardform.Title))
+                {
+                    await Application.Current.MainPage.DisplayAlert("Error", "Title is required", "OK");
+                }
             }
+            IsLoadingTaskBoards = false;
         }
-        IsLoadingTaskBoards = false;
+        else
+        {
+            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+        }
     }
 
     [RelayCommand]
     private async void CreateConcept()
     {
-        IsLoadingConcepts = true;
-        var conceptForm = await FormDialog.ShowCreateObjectMenuAsync<ConceptFormCreate>("Create Concept");
-        
-        if (conceptForm != null && !string.IsNullOrEmpty(conceptForm.Title))
+        List<PermissionsUtils.Permissions> permissions = new List<PermissionsUtils.Permissions>();
+        permissions.AddRange(PermissionsUtils.Permissions.FullPermissions, PermissionsUtils.Permissions.CreateConcepts, PermissionsUtils.Permissions.FullConceptPermissions);
+        if (permissionsUtils.HasOnePermission(permissions))
         {
-            if (string.IsNullOrEmpty(conceptForm.Description))
-            {
-                conceptForm.Description = string.Empty;
-            }
+            IsLoadingConcepts = true;
+            var conceptForm = await FormDialog.ShowCreateObjectMenuAsync<ConceptFormCreate>("Create Concept");
 
-            var concept = new ConceptCreate
+            if (conceptForm != null && !string.IsNullOrEmpty(conceptForm.Title))
             {
-                IdProject = Project.Id,
-                Title = conceptForm.Title,
-                Description = conceptForm.Description
-            };
+                if (string.IsNullOrEmpty(conceptForm.Description))
+                {
+                    conceptForm.Description = string.Empty;
+                }
 
-            var returnConcept = await conceptsService.Post(concept);
-            var conceptBoard = await conceptBoardsService.Post(new ConceptBoardCreate
-            {
-                IdConcept = returnConcept.Id,
-                Name = "Default Board"
-            });
-            conceptBoard.IdParent = conceptBoard.Id;
-            var conceptBoardUpdate = new ConceptBoardUpdate
-            {
-                IdConcept = conceptBoard.IdConcept,
-                IdParent = conceptBoard.IdParent,
-                Name = conceptBoard.Name,
-            };
-            var conceptBoardReturn = await conceptBoardsService.Patch(conceptBoard.Id, conceptBoardUpdate);
-            returnConcept.IdFirstBoard = conceptBoard.Id;
-            
-            var conceptUpdate = new ConceptUpdate
-            {
-                IdProject = returnConcept.IdProject,
-                IdFirstBoard = returnConcept.IdFirstBoard,
-                Title = returnConcept.Title,
-                Description = returnConcept.Description
-            };
-            await conceptsService.Patch(returnConcept.Id, conceptUpdate);
+                var concept = new ConceptCreate
+                {
+                    IdProject = Project.Id,
+                    Title = conceptForm.Title,
+                    Description = conceptForm.Description
+                };
 
-            if (conceptBoardReturn == "Concept board updated")
-            {
-                var concepts = Concepts.ToList();
-                concepts.Add(returnConcept);
-                Concepts.Clear();
-                Concepts = new(concepts);
+                var returnConcept = await conceptsService.Post(concept);
+                var conceptBoard = await conceptBoardsService.Post(new ConceptBoardCreate
+                {
+                    IdConcept = returnConcept.Id,
+                    Name = "Default Board"
+                });
+                conceptBoard.IdParent = conceptBoard.Id;
+                var conceptBoardUpdate = new ConceptBoardUpdate
+                {
+                    IdConcept = conceptBoard.IdConcept,
+                    IdParent = conceptBoard.IdParent,
+                    Name = conceptBoard.Name,
+                };
+                var conceptBoardReturn = await conceptBoardsService.Patch(conceptBoard.Id, conceptBoardUpdate);
+                returnConcept.IdFirstBoard = conceptBoard.Id;
+
+                var conceptUpdate = new ConceptUpdate
+                {
+                    IdProject = returnConcept.IdProject,
+                    IdFirstBoard = returnConcept.IdFirstBoard,
+                    Title = returnConcept.Title,
+                    Description = returnConcept.Description
+                };
+                await conceptsService.Patch(returnConcept.Id, conceptUpdate);
+
+                if (conceptBoardReturn == "Concept board updated")
+                {
+                    var concepts = Concepts.ToList();
+                    concepts.Add(returnConcept);
+                    Concepts.Clear();
+                    Concepts = new(concepts);
+                }
             }
-        } else
-        {
-            if (string.IsNullOrEmpty(conceptForm.Title))
+            else
             {
-                await Application.Current.MainPage.DisplayAlert("Error", "Title is required", "OK");
+                if (string.IsNullOrEmpty(conceptForm.Title))
+                {
+                    await Application.Current.MainPage.DisplayAlert("Error", "Title is required", "OK");
+                }
             }
-        }
             IsLoadingConcepts = false;
+        }
+        else
+        {
+            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+        }
     }
 
     [RelayCommand]
     private async void LookForUser()
     {
-        IsLookingForUser = true;
+        List<PermissionsUtils.Permissions> permissions = new List<PermissionsUtils.Permissions>();
+        permissions.AddRange(PermissionsUtils.Permissions.FullPermissions, PermissionsUtils.Permissions.AddUsers, PermissionsUtils.Permissions.FullUserPermissions);
+        if (permissionsUtils.HasOnePermission(permissions))
+        {
+            IsLookingForUser = true;
+        }
+        else
+        {
+            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+        }
     }
 
     [RelayCommand]
@@ -491,104 +563,149 @@ public partial class ProjectManagementPageModel : ObservableObject
     [RelayCommand]
     private async void TaskBoardDelete(TaskBoard taskBoard)
     {
-        IsLoadingTaskBoards = true;
-        bool confirmed = await Application.Current.MainPage.DisplayAlert(
-            "Confirm Delete",
-            "Are you sure you want to delete this item?",
-            "Delete",
-            "Cancel"
-        );
-
-        if (confirmed)
+        List<PermissionsUtils.Permissions> permissions = new List<PermissionsUtils.Permissions>();
+        permissions.AddRange(PermissionsUtils.Permissions.FullPermissions, PermissionsUtils.Permissions.DeleteTasksBoards, PermissionsUtils.Permissions.FullTaskPermissions);
+        if (permissionsUtils.HasOnePermission(permissions))
         {
-            await taskBoardsService.Delete(taskBoard.Id);
-            await LoadData();
+            IsLoadingTaskBoards = true;
+            bool confirmed = await Application.Current.MainPage.DisplayAlert(
+                "Confirm Delete",
+                "Are you sure you want to delete this item?",
+                "Delete",
+                "Cancel"
+            );
+
+            if (confirmed)
+            {
+                await taskBoardsService.Delete(taskBoard.Id);
+                await LoadData();
+            }
+            IsLoadingTaskBoards = false;
         }
-        IsLoadingTaskBoards = false;
+        else
+        {
+            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+        }
     }
 
     [RelayCommand]
     private async void TaskBoardEdit(TaskBoard taskBoard)
     {
-        IsEditingTaskBoard = true;
-
-        IsEditingConcept = false;
-        IsEditingUser = false;
-        EditingConceptData = null;
-        EditingUserData = null;
-        SelectedUser = null;
-
-        EditingTaskBoardData = new TaskBoard
+        List<PermissionsUtils.Permissions> permissions = new List<PermissionsUtils.Permissions>();
+        permissions.AddRange(PermissionsUtils.Permissions.FullPermissions, PermissionsUtils.Permissions.EditTaskBoards, PermissionsUtils.Permissions.FullTaskPermissions);
+        if (permissionsUtils.HasOnePermission(permissions))
         {
-            Id = taskBoard.Id,
-            Title = taskBoard.Title,
-            Description = taskBoard.Description
-        };
+            IsEditingTaskBoard = true;
+
+            IsEditingConcept = false;
+            IsEditingUser = false;
+            EditingConceptData = null;
+            EditingUserData = null;
+            SelectedUser = null;
+
+            EditingTaskBoardData = new TaskBoard
+            {
+                Id = taskBoard.Id,
+                Title = taskBoard.Title,
+                Description = taskBoard.Description
+            };
+        }
+        else
+        {
+            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+        }
     }
 
     [RelayCommand]
     private async void ConceptDelete(Concept concept)
     {
-        IsLoadingConcepts = true;
-        bool confirmed = await Application.Current.MainPage.DisplayAlert(
-            "Confirm Delete",
-            "Are you sure you want to delete this item?",
-            "Delete",
-            "Cancel"
-        );
-
-        if (confirmed)
+        List<PermissionsUtils.Permissions> permissions = new List<PermissionsUtils.Permissions>();
+        permissions.AddRange(PermissionsUtils.Permissions.FullPermissions, PermissionsUtils.Permissions.DeleteConcepts, PermissionsUtils.Permissions.FullConceptPermissions);
+        if (permissionsUtils.HasOnePermission(permissions))
         {
-            await conceptsService.Delete(concept.Id);
-            await LoadData();
+            IsLoadingConcepts = true;
+            bool confirmed = await Application.Current.MainPage.DisplayAlert(
+                "Confirm Delete",
+                "Are you sure you want to delete this item?",
+                "Delete",
+                "Cancel"
+            );
+
+            if (confirmed)
+            {
+                await conceptsService.Delete(concept.Id);
+                await LoadData();
+            }
+            IsLoadingConcepts = false;
         }
-        IsLoadingConcepts = false;
+        else
+        {
+            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+        }
     }
 
     [RelayCommand]
     private async void ConceptEdit(Concept concept)
     {
-        IsEditingConcept = true;
-
-        IsEditingTaskBoard = false;
-        IsEditingUser = false;
-        EditingTaskBoardData = null;
-        EditingUserData = null;
-        SelectedUser = null;
-
-        EditingConceptData = new Concept
+        List<PermissionsUtils.Permissions> permissions = new List<PermissionsUtils.Permissions>();
+        permissions.AddRange(PermissionsUtils.Permissions.FullPermissions, PermissionsUtils.Permissions.EditConcepts, PermissionsUtils.Permissions.FullConceptPermissions);
+        if (permissionsUtils.HasOnePermission(permissions))
         {
-            Id = concept.Id,
-            IdProject = concept.IdProject,
-            IdFirstBoard = concept.IdFirstBoard,
-            Title = concept.Title,
-            Description = concept.Description
-        };
+            IsEditingConcept = true;
+
+            IsEditingTaskBoard = false;
+            IsEditingUser = false;
+            EditingTaskBoardData = null;
+            EditingUserData = null;
+            SelectedUser = null;
+
+            EditingConceptData = new Concept
+            {
+                Id = concept.Id,
+                IdProject = concept.IdProject,
+                IdFirstBoard = concept.IdFirstBoard,
+                Title = concept.Title,
+                Description = concept.Description
+            };
+        }
+        else
+        {
+            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+        }
     }
 
     [RelayCommand]
     private async void UserRemove(AppUser user)
     {
-        IsLoadingUsers = true;
-
-        bool confirmed = await Application.Current.MainPage.DisplayAlert(
-            "Confirm Remove User",
-            "Are you sure you want to remove this user from the project?",
-            "Remove",
-            "Cancel"
-        );
-
-        if (confirmed)
+        List<PermissionsUtils.Permissions> permissions = new List<PermissionsUtils.Permissions>();
+        permissions.AddRange(PermissionsUtils.Permissions.FullPermissions, PermissionsUtils.Permissions.RemoveUsers, PermissionsUtils.Permissions.FullUserPermissions);
+        if (permissionsUtils.HasOnePermission(permissions))
         {
-            var projectUser = await projectUsersService.GetProjectUserByUserAndProject(user.Id, Project.Id);
-            if (projectUser != null)
-            {
-                await projectUsersService.Delete(projectUser.Id);
-            }
-            Users.Remove(user);
-        }
+            IsLoadingUsers = true;
 
-        IsLoadingUsers = false;
+            bool confirmed = await Application.Current.MainPage.DisplayAlert(
+                "Confirm Remove User",
+                "Are you sure you want to remove this user from the project?",
+                "Remove",
+                "Cancel"
+            );
+
+            if (confirmed)
+            {
+                var projectUser = await projectUsersService.GetProjectUserByUserAndProject(user.Id, Project.Id);
+                if (projectUser != null)
+                {
+                    await projectUsersService.Delete(projectUser.Id);
+                }
+                Users.Remove(user);
+            }
+
+            IsLoadingUsers = false;
+        }
+        else
+        {
+            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+        }
     }
 
     [RelayCommand]
