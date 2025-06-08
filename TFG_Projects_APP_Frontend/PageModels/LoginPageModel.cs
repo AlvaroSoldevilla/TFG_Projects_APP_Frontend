@@ -4,9 +4,10 @@ using System.Security.Cryptography;
 using System.Text;
 using TFG_Projects_APP_Frontend.Entities.Dtos.Users;
 using TFG_Projects_APP_Frontend.Entities.Models;
+using TFG_Projects_APP_Frontend.Properties;
 using TFG_Projects_APP_Frontend.Rest;
 using TFG_Projects_APP_Frontend.Services.UsersService;
-using TFG_Projects_APP_Frontend.Services.Utils;
+using TFG_Projects_APP_Frontend.Utils;
 
 namespace TFG_Projects_APP_Frontend.PageModels;
 
@@ -99,13 +100,13 @@ public partial class LoginPageModel : ObservableObject
     {
         if (ApiFound == false)
         {
-            await Application.Current.MainPage.DisplayAlert("Error", "Please test the connection first", "OK");
+            await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.ConnectionTestMessage, Resources.ConfirmButton);
             return;
         }
         IsLoading = true;
         if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password) || string.IsNullOrWhiteSpace(Username))
         {
-            await Application.Current.MainPage.DisplayAlert("Error", "Please enter all data", "OK");
+            await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.EnterAllDataMessage, Resources.ConfirmButton);
             IsLoading = false;
             
         } else
@@ -141,7 +142,7 @@ public partial class LoginPageModel : ObservableObject
             }
             else
             {
-                await Application.Current.MainPage.DisplayAlert("Error", "Invalid credentials", "OK");
+                await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.InvalidCredentialsMessage, Resources.ConfirmButton);
             }
         }
         IsLoading = false;
@@ -152,7 +153,7 @@ public partial class LoginPageModel : ObservableObject
     {
         if (ApiFound == false)
         {
-            await Application.Current.MainPage.DisplayAlert("Error", "Please test the connection first", "OK");
+            await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.ConnectionTestMessage, Resources.ConfirmButton);
             return;
         }
         IsLoading = true;
@@ -186,7 +187,7 @@ public partial class LoginPageModel : ObservableObject
         }
         else
         {
-            await Application.Current.MainPage.DisplayAlert("Error", "Invalid credentials", "OK");
+            await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.InvalidCredentialsMessage, Resources.ConfirmButton);
         }
         IsLoading = false;
     }
@@ -199,24 +200,24 @@ public partial class LoginPageModel : ObservableObject
         ApiFound = false;
         if (string.IsNullOrWhiteSpace(Route) || string.IsNullOrWhiteSpace(Port))
         {
-            await Application.Current.MainPage.DisplayAlert("Error", "Please enter a valid route and port", "OK");
+            await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.APIValidationMessage, Resources.ConfirmButton);
         } else
         {
             var testUrl = $"http://{Route}:{Port}/connection/test";
             var result = await restClient.TestConnection(testUrl);
             if (result == null)
             {
-                await Application.Current.MainPage.DisplayAlert("Error", "API not found", "OK");
+                await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.APINotFoundMessage, Resources.ConfirmButton);
             } else
             {
                 if (result.IsSuccessStatusCode)
                 {
-                    await Application.Current.MainPage.DisplayAlert("Success", "API found", "OK");
+                    await Application.Current.MainPage.DisplayAlert(Resources.SuccessMessageTitle, Resources.APIFoundMessage, Resources.ConfirmButton);
                     ApiFound = true;
                 }
                 else
                 {
-                    await Application.Current.MainPage.DisplayAlert("Error", "Could not connect", "OK");
+                    await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.CouldNotConnectMessage, Resources.ConfirmButton);
                 }
             }
         }   
@@ -230,10 +231,10 @@ public partial class LoginPageModel : ObservableObject
         if (ApiFound)
         {
             Preferences.Set("APIurl", $"http://{Route}:{Port}");
-            await Application.Current.MainPage.DisplayAlert("Success", "API URL updated successfully", "OK");
+            await Application.Current.MainPage.DisplayAlert(Resources.SuccessMessageTitle, Resources.APIUpdatedMessage, Resources.ConfirmButton);
         } else
         {
-            await Application.Current.MainPage.DisplayAlert("Error", "API not found, please test the connection first", "OK");
+            await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.APINotFoundTestConnectionMessage, Resources.ConfirmButton);
         }
     }
 }

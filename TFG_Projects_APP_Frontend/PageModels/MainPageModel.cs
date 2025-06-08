@@ -6,11 +6,12 @@ using TFG_Projects_APP_Frontend.Entities.Dtos.Projects;
 using TFG_Projects_APP_Frontend.Entities.Dtos.ProjectUsers;
 using TFG_Projects_APP_Frontend.Entities.Dtos.UserProjectPermissions;
 using TFG_Projects_APP_Frontend.Entities.Models;
+using TFG_Projects_APP_Frontend.Properties;
 using TFG_Projects_APP_Frontend.Services.ProjectsService;
 using TFG_Projects_APP_Frontend.Services.ProjectUsersService;
 using TFG_Projects_APP_Frontend.Services.UserProjectPermissionsService;
 using TFG_Projects_APP_Frontend.Services.UsersService;
-using TFG_Projects_APP_Frontend.Services.Utils;
+using TFG_Projects_APP_Frontend.Utils;
 
 namespace TFG_Projects_APP_Frontend.PageModels;
 
@@ -78,7 +79,7 @@ public partial class MainPageModel : ObservableObject
     private async void CreateProject()
     {
         Isloading = true;
-        var project = await FormDialog.ShowCreateObjectMenuAsync<ProjectCreate>("Create Project");
+        var project = await FormDialog.ShowCreateObjectMenuAsync<ProjectCreate>(Resources.CreateProjectTitle);
         if (project != null && !string.IsNullOrEmpty(project.Title))
         {
             if (string.IsNullOrEmpty(project.Description))
@@ -103,7 +104,7 @@ public partial class MainPageModel : ObservableObject
         {
             if (string.IsNullOrEmpty(project.Title))
             {
-                await Application.Current.MainPage.DisplayAlert("Error", "Title is required", "OK");
+                await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.TitleIsRequiredMessage, Resources.ConfirmButton);
             }
         }
         Isloading = false;
@@ -117,10 +118,10 @@ public partial class MainPageModel : ObservableObject
         if (userSession.User.ProjectPermissions != null && permissionsUtils.HasAllPermissions(requiredPermissions))
         {
             bool confirmed = await Application.Current.MainPage.DisplayAlert(
-                "Confirm Delete",
-                "Are you sure you want to delete this item?",
-                "Delete",
-                "Cancel"
+                Resources.ConfirmDeleteMessageTitle,
+                Resources.DeletionConfirmationMessage,
+                Resources.DeleteButton,
+                Resources.CancelButton
             );
 
             if (confirmed)
@@ -130,7 +131,7 @@ public partial class MainPageModel : ObservableObject
             }
         } else
         {
-            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+            await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.NoPermissionMessage, Resources.ConfirmButton);
         }
         
     }
@@ -153,7 +154,7 @@ public partial class MainPageModel : ObservableObject
         }
         else
         {
-            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+            await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.NoPermissionMessage, Resources.ConfirmButton);
         }
     }
 
@@ -170,7 +171,7 @@ public partial class MainPageModel : ObservableObject
         Isloading = true;
         if (string.IsNullOrEmpty(EditingProjectData.Title))
         {
-            await Application.Current.MainPage.DisplayAlert("Error", "Title is required", "OK");
+            await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.TitleIsRequiredMessage, Resources.ConfirmButton);
             Isloading = false;
             return;
         }

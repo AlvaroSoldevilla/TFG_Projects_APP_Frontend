@@ -1,0 +1,420 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AcceptButton" xml:space="preserve">
+    <value>Accept</value>
+  </data>
+  <data name="AddButton" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="AddDependencyLabel" xml:space="preserve">
+    <value>Add Dependency</value>
+  </data>
+  <data name="AddPermissionsLabel" xml:space="preserve">
+    <value>Add permissions:</value>
+  </data>
+  <data name="AddUserButton" xml:space="preserve">
+    <value>Add User</value>
+  </data>
+  <data name="APIFoundMessage" xml:space="preserve">
+    <value>API found</value>
+  </data>
+  <data name="APINotFoundMessage" xml:space="preserve">
+    <value>API not found</value>
+  </data>
+  <data name="APINotFoundTestConnectionMessage" xml:space="preserve">
+    <value>API not found, please test the connection first</value>
+  </data>
+  <data name="APIUpdatedMessage" xml:space="preserve">
+    <value>API URL updated successfully</value>
+  </data>
+  <data name="APIValidationMessage" xml:space="preserve">
+    <value>Please enter a valid route and port</value>
+  </data>
+  <data name="AssignedToLabel" xml:space="preserve">
+    <value>Assigned to:</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="ChangeEditMessage" xml:space="preserve">
+    <value>You have unsaved changes, are you sure you want to edit another item?</value>
+  </data>
+  <data name="ChangeEditMessageTitle" xml:space="preserve">
+    <value>Change Edit</value>
+  </data>
+  <data name="ConfirmButton" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="ConfirmDeleteMessageTitle" xml:space="preserve">
+    <value>Confirm deletion</value>
+  </data>
+  <data name="ConfirmRemoveUserMessage" xml:space="preserve">
+    <value>Are you sure you want to remove this user from the project?</value>
+  </data>
+  <data name="ConfirmRemoveUserTitle" xml:space="preserve">
+    <value>Confirm Removing User</value>
+  </data>
+  <data name="ConnectionTestMessage" xml:space="preserve">
+    <value>Please test the connection first</value>
+  </data>
+  <data name="ContentLabel" xml:space="preserve">
+    <value>Content:</value>
+  </data>
+  <data name="CouldNotConnectMessage" xml:space="preserve">
+    <value>Could not connect</value>
+  </data>
+  <data name="CreateBoardTitle" xml:space="preserve">
+    <value>Create Concept Board</value>
+  </data>
+  <data name="CreateComponentTitle" xml:space="preserve">
+    <value>Create Component</value>
+  </data>
+  <data name="CreateConceptButton" xml:space="preserve">
+    <value>Create Concept</value>
+  </data>
+  <data name="CreateConceptTitle" xml:space="preserve">
+    <value>Create Concept</value>
+  </data>
+  <data name="CreateContainerTitle" xml:space="preserve">
+    <value>Create Container</value>
+  </data>
+  <data name="CreateNoteTitle" xml:space="preserve">
+    <value>Create Note</value>
+  </data>
+  <data name="CreateProgressSectionButton" xml:space="preserve">
+    <value>Create Progress Section</value>
+  </data>
+  <data name="CreateProgressSectionTitle" xml:space="preserve">
+    <value>Create Progress Section</value>
+  </data>
+  <data name="CreateProjectButton" xml:space="preserve">
+    <value>Create Project</value>
+  </data>
+  <data name="CreateProjectTitle" xml:space="preserve">
+    <value>Create Project</value>
+  </data>
+  <data name="CreateTableTitle" xml:space="preserve">
+    <value>Create Table</value>
+  </data>
+  <data name="CreateTaskBoardButton" xml:space="preserve">
+    <value>Create Task Board</value>
+  </data>
+  <data name="CreateTaskBoardTitle" xml:space="preserve">
+    <value>Create Task Board</value>
+  </data>
+  <data name="CreateTaskProgressButton" xml:space="preserve">
+    <value>Create Progress Section</value>
+  </data>
+  <data name="CreateTaskSectionButton" xml:space="preserve">
+    <value>Create Task Section</value>
+  </data>
+  <data name="CreateTaskSectionTitle" xml:space="preserve">
+    <value>Create Task Section</value>
+  </data>
+  <data name="CreateTaskTitle" xml:space="preserve">
+    <value>Create Task</value>
+  </data>
+  <data name="DefaultColumnTitle" xml:space="preserve">
+    <value>Column</value>
+  </data>
+  <data name="DefaultConceptBoardName" xml:space="preserve">
+    <value>Concept Board</value>
+  </data>
+  <data name="DefaultProgressSectionDeletionMessage" xml:space="preserve">
+    <value>You cannot delete the default progress section</value>
+  </data>
+  <data name="DefaultProgressTitle" xml:space="preserve">
+    <value>Progress Section</value>
+  </data>
+  <data name="DefaultSectionTitle" xml:space="preserve">
+    <value>Section</value>
+  </data>
+  <data name="DeleteButton" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="DeletionConfirmationMessage" xml:space="preserve">
+    <value>Are you sure you want to delete this item?</value>
+  </data>
+  <data name="DescriptionLabel" xml:space="preserve">
+    <value>Description:</value>
+  </data>
+  <data name="DescriptionText" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="EditButton" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="EditComponentLabel" xml:space="preserve">
+    <value>Edit Component</value>
+  </data>
+  <data name="EditConceptLabel" xml:space="preserve">
+    <value>Edit Concept</value>
+  </data>
+  <data name="EditProgressSectionLabel" xml:space="preserve">
+    <value>Edit Progress Section</value>
+  </data>
+  <data name="EditProjectLabel" xml:space="preserve">
+    <value>Edit Project</value>
+  </data>
+  <data name="EditTaskBoardLabel" xml:space="preserve">
+    <value>Edit TaskBoard</value>
+  </data>
+  <data name="EditTaskLabel" xml:space="preserve">
+    <value>Edit Task</value>
+  </data>
+  <data name="EditTaskSectionLabel" xml:space="preserve">
+    <value>Edit Task Section</value>
+  </data>
+  <data name="EditUserLabel" xml:space="preserve">
+    <value>Edit User</value>
+  </data>
+  <data name="EmailInputMessage" xml:space="preserve">
+    <value>Input an email</value>
+  </data>
+  <data name="EmailLabel" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="EnterAllDataMessage" xml:space="preserve">
+    <value>Please enter all data</value>
+  </data>
+  <data name="ErrorMessageTitle" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="InvalidCredentialsMessage" xml:space="preserve">
+    <value>Invalid credentials</value>
+  </data>
+  <data name="LanguageLabel" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="LimitDateLabel" xml:space="preserve">
+    <value>Limit Date:</value>
+  </data>
+  <data name="LoginButton" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="LoginPageMessage" xml:space="preserve">
+    <value>Welcome!</value>
+  </data>
+  <data name="ModifiesValueLabel" xml:space="preserve">
+    <value>Modifies Progress Value:</value>
+  </data>
+  <data name="NameIsRequiredMessage" xml:space="preserve">
+    <value>Name is required</value>
+  </data>
+  <data name="NoButton" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="NoPermissionMessage" xml:space="preserve">
+    <value>You don't have permission to do that</value>
+  </data>
+  <data name="PasswordLabel" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="PortLabel" xml:space="preserve">
+    <value>Port</value>
+  </data>
+  <data name="PriorityLabel" xml:space="preserve">
+    <value>Priority</value>
+  </data>
+  <data name="ProgressLabel" xml:space="preserve">
+    <value>Progress</value>
+  </data>
+  <data name="ProgressValidationMessage" xml:space="preserve">
+    <value>Progress value must be between 0 and 100</value>
+  </data>
+  <data name="RegisterButton" xml:space="preserve">
+    <value>Register</value>
+  </data>
+  <data name="RememberMeLabel" xml:space="preserve">
+    <value>Remember me</value>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="RemoveDependencyButton" xml:space="preserve">
+    <value>Remove Dependency</value>
+  </data>
+  <data name="RemovePermissionsLabel" xml:space="preserve">
+    <value>Remove permissions:</value>
+  </data>
+  <data name="RestartMessage" xml:space="preserve">
+    <value>You need to restart the app to apply the changes</value>
+  </data>
+  <data name="RoleLabel" xml:space="preserve">
+    <value>Role:</value>
+  </data>
+  <data name="SaveApiLocationButton" xml:space="preserve">
+    <value>Save API location</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="SaveDependencyChangesButton" xml:space="preserve">
+    <value>Save changes</value>
+  </data>
+  <data name="SearchUserByEmailLabel" xml:space="preserve">
+    <value>Search user by email</value>
+  </data>
+  <data name="SelectRoleLabel" xml:space="preserve">
+    <value>Select a role</value>
+  </data>
+  <data name="ServerIPLabel" xml:space="preserve">
+    <value>Server IP</value>
+  </data>
+  <data name="SuccessMessageTitle" xml:space="preserve">
+    <value>Success</value>
+  </data>
+  <data name="TaskAlreadyADependencyMessage" xml:space="preserve">
+    <value>This task is already a dependency</value>
+  </data>
+  <data name="TaskNotSelectedMessage" xml:space="preserve">
+    <value>You need to select a task</value>
+  </data>
+  <data name="TestConnectionButton" xml:space="preserve">
+    <value>Test Connection</value>
+  </data>
+  <data name="TitleAppSettingsPage" xml:space="preserve">
+    <value>App settings</value>
+  </data>
+  <data name="TitleIsRequiredMessage" xml:space="preserve">
+    <value>Title is required</value>
+  </data>
+  <data name="TitleLabel" xml:space="preserve">
+    <value>Title:</value>
+  </data>
+  <data name="TitleText" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="UnlockAtLabel" xml:space="preserve">
+    <value>Unlock at:</value>
+  </data>
+  <data name="UserAddedToProjectMessage" xml:space="preserve">
+    <value>User added to project</value>
+  </data>
+  <data name="UserAlreadyInProjectMessage" xml:space="preserve">
+    <value>User already exists in the project</value>
+  </data>
+  <data name="UserNotFoundMessage" xml:space="preserve">
+    <value>User not found</value>
+  </data>
+  <data name="YesButton" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+</root>

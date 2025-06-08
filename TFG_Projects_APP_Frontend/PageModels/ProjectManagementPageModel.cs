@@ -11,6 +11,7 @@ using TFG_Projects_APP_Frontend.Entities.Dtos.TaskProgress;
 using TFG_Projects_APP_Frontend.Entities.Dtos.TaskSections;
 using TFG_Projects_APP_Frontend.Entities.Dtos.UserProjectPermissions;
 using TFG_Projects_APP_Frontend.Entities.Models;
+using TFG_Projects_APP_Frontend.Properties;
 using TFG_Projects_APP_Frontend.Services.ConceptBoardsService;
 using TFG_Projects_APP_Frontend.Services.ConceptsService;
 using TFG_Projects_APP_Frontend.Services.PermissionsService;
@@ -22,7 +23,7 @@ using TFG_Projects_APP_Frontend.Services.TaskProgressService;
 using TFG_Projects_APP_Frontend.Services.TaskSectionsService;
 using TFG_Projects_APP_Frontend.Services.UserProjectPermissionsService;
 using TFG_Projects_APP_Frontend.Services.UsersService;
-using TFG_Projects_APP_Frontend.Services.Utils;
+using TFG_Projects_APP_Frontend.Utils;
 
 namespace TFG_Projects_APP_Frontend.PageModels;
 
@@ -41,7 +42,7 @@ public partial class ProjectManagementPageModel : ObservableObject
     private readonly IUsersService usersService;
     private readonly IRolesService rolesService;
     private readonly UserSession userSession;
-    private readonly PermissionsUtils permissionsUtils;;
+    private readonly PermissionsUtils permissionsUtils;
 
     public Project Project { get; set; }
 
@@ -178,7 +179,6 @@ public partial class ProjectManagementPageModel : ObservableObject
         SelectedTaskBoard = null;
         SelectedUser = null;
 
-        Debug.WriteLine("OnNavigatedTo called in ProjectManagementPageModel");
         await LoadData();
 
         IsLoadingConcepts = false;
@@ -247,10 +247,13 @@ public partial class ProjectManagementPageModel : ObservableObject
         {
             Permissions.Add(item);
         }
+
+        CheckPermissions();
+
         _isLoadingData = false;
     }
 
-    private async void CheckPermissions()
+    private void CheckPermissions()
     {
         List<PermissionsUtils.Permissions> permissions = new List<PermissionsUtils.Permissions>();
         permissions.AddRange(PermissionsUtils.Permissions.FullPermissions, PermissionsUtils.Permissions.ReadConcepts);
@@ -345,7 +348,7 @@ public partial class ProjectManagementPageModel : ObservableObject
         }
         else
         {
-            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+            await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.NoPermissionMessage, Resources.ConfirmButton);
         }
     }
 
@@ -367,7 +370,7 @@ public partial class ProjectManagementPageModel : ObservableObject
         if (permissionsUtils.HasOnePermission(permissions))
         {
             IsLoadingTaskBoards = true;
-            var taskBoardform = await FormDialog.ShowCreateObjectMenuAsync<TaskBoardFormCreate>("Create Task Board");
+            var taskBoardform = await FormDialog.ShowCreateObjectMenuAsync<TaskBoardFormCreate>(Resources.CreateTaskBoardTitle);
             if (taskBoardform != null && !string.IsNullOrEmpty(taskBoardform.Title))
             {
                 if (string.IsNullOrEmpty(taskBoardform.Description))
@@ -386,13 +389,13 @@ public partial class ProjectManagementPageModel : ObservableObject
                 var taskSection = await taskSectionsService.Post(new TaskSectionCreate
                 {
                     IdBoard = returnTaskBoard.Id,
-                    Title = "Default Section",
+                    Title = Resources.DefaultSectionTitle,
                     Order = 1
                 });
                 var taskProgress = await taskProgressService.Post(new TaskProgressCreate
                 {
                     IdSection = taskSection.Id,
-                    Title = "Default Progress",
+                    Title = Resources.DefaultProgressTitle,
                     Order = 1,
                     ModifiesProgress = false,
                     ProgressValue = 0
@@ -414,14 +417,14 @@ public partial class ProjectManagementPageModel : ObservableObject
             {
                 if (string.IsNullOrEmpty(taskBoardform.Title))
                 {
-                    await Application.Current.MainPage.DisplayAlert("Error", "Title is required", "OK");
+                    await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.TitleIsRequiredMessage, Resources.ConfirmButton);
                 }
             }
             IsLoadingTaskBoards = false;
         }
         else
         {
-            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+            await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.NoPermissionMessage, Resources.ConfirmButton);
         }
     }
 
@@ -433,7 +436,7 @@ public partial class ProjectManagementPageModel : ObservableObject
         if (permissionsUtils.HasOnePermission(permissions))
         {
             IsLoadingConcepts = true;
-            var conceptForm = await FormDialog.ShowCreateObjectMenuAsync<ConceptFormCreate>("Create Concept");
+            var conceptForm = await FormDialog.ShowCreateObjectMenuAsync<ConceptFormCreate>(Resources.CreateConceptTitle);
 
             if (conceptForm != null && !string.IsNullOrEmpty(conceptForm.Title))
             {
@@ -453,7 +456,7 @@ public partial class ProjectManagementPageModel : ObservableObject
                 var conceptBoard = await conceptBoardsService.Post(new ConceptBoardCreate
                 {
                     IdConcept = returnConcept.Id,
-                    Name = "Default Board"
+                    Name = Resources.DefaultConceptBoardName
                 });
                 conceptBoard.IdParent = conceptBoard.Id;
                 var conceptBoardUpdate = new ConceptBoardUpdate
@@ -486,14 +489,14 @@ public partial class ProjectManagementPageModel : ObservableObject
             {
                 if (string.IsNullOrEmpty(conceptForm.Title))
                 {
-                    await Application.Current.MainPage.DisplayAlert("Error", "Title is required", "OK");
+                    await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.TitleIsRequiredMessage, Resources.ConfirmButton);
                 }
             }
             IsLoadingConcepts = false;
         }
         else
         {
-            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+            await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.NoPermissionMessage, Resources.ConfirmButton);
         }
     }
 
@@ -508,7 +511,7 @@ public partial class ProjectManagementPageModel : ObservableObject
         }
         else
         {
-            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+            await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.NoPermissionMessage, Resources.ConfirmButton);
         }
     }
 
@@ -522,7 +525,7 @@ public partial class ProjectManagementPageModel : ObservableObject
         {
             if (Users.Any(user => user.Email == AdduserEmail))
             {
-                await Application.Current.MainPage.DisplayAlert("Error", "User already exists in the project", "OK");
+                await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.UserAlreadyInProjectMessage, Resources.ConfirmButton);
                 return;
             } else
             {
@@ -541,7 +544,7 @@ public partial class ProjectManagementPageModel : ObservableObject
 
                 if (userFound)
                 {
-                    await Application.Current.MainPage.DisplayAlert("Success", "User added to project", "OK");
+                    await Application.Current.MainPage.DisplayAlert(Resources.SuccessMessageTitle, Resources.UserAddedToProjectMessage, Resources.ConfirmButton);
                     IsLookingForUser = false;
 
                     IsLoadingUsers = true;
@@ -550,12 +553,12 @@ public partial class ProjectManagementPageModel : ObservableObject
                 }
                 else
                 {
-                    await Application.Current.MainPage.DisplayAlert("Error", "User not found", "OK");
+                    await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.UserNotFoundMessage, Resources.ConfirmButton);
                 }
             }
         } else
         {
-            await Application.Current.MainPage.DisplayAlert("Error", "Input an email", "OK");
+            await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.EmailInputMessage, Resources.ConfirmButton);
         }
         IsLoadingUsers = false;
     }
@@ -569,10 +572,10 @@ public partial class ProjectManagementPageModel : ObservableObject
         {
             IsLoadingTaskBoards = true;
             bool confirmed = await Application.Current.MainPage.DisplayAlert(
-                "Confirm Delete",
-                "Are you sure you want to delete this item?",
-                "Delete",
-                "Cancel"
+                Resources.ConfirmDeleteMessageTitle,
+                Resources.DeletionConfirmationMessage,
+                Resources.DeleteButton,
+                Resources.CancelButton
             );
 
             if (confirmed)
@@ -584,7 +587,7 @@ public partial class ProjectManagementPageModel : ObservableObject
         }
         else
         {
-            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+            await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.NoPermissionMessage, Resources.ConfirmButton);
         }
     }
 
@@ -612,7 +615,7 @@ public partial class ProjectManagementPageModel : ObservableObject
         }
         else
         {
-            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+            await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.NoPermissionMessage, Resources.ConfirmButton);
         }
     }
 
@@ -625,10 +628,10 @@ public partial class ProjectManagementPageModel : ObservableObject
         {
             IsLoadingConcepts = true;
             bool confirmed = await Application.Current.MainPage.DisplayAlert(
-                "Confirm Delete",
-                "Are you sure you want to delete this item?",
-                "Delete",
-                "Cancel"
+                Resources.ConfirmDeleteMessageTitle,
+                Resources.DeletionConfirmationMessage,
+                Resources.DeleteButton,
+                Resources.CancelButton
             );
 
             if (confirmed)
@@ -640,7 +643,7 @@ public partial class ProjectManagementPageModel : ObservableObject
         }
         else
         {
-            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+            await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.NoPermissionMessage, Resources.ConfirmButton);
         }
     }
 
@@ -670,7 +673,7 @@ public partial class ProjectManagementPageModel : ObservableObject
         }
         else
         {
-            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+            await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.NoPermissionMessage, Resources.ConfirmButton);
         }
     }
 
@@ -684,10 +687,10 @@ public partial class ProjectManagementPageModel : ObservableObject
             IsLoadingUsers = true;
 
             bool confirmed = await Application.Current.MainPage.DisplayAlert(
-                "Confirm Remove User",
-                "Are you sure you want to remove this user from the project?",
-                "Remove",
-                "Cancel"
+                Resources.ConfirmRemoveUserMessage,
+                Resources.ConfirmRemoveUserMessage,
+                Resources.RemoveButton,
+                Resources.CancelButton
             );
 
             if (confirmed)
@@ -704,7 +707,7 @@ public partial class ProjectManagementPageModel : ObservableObject
         }
         else
         {
-            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+            await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.NoPermissionMessage, Resources.ConfirmButton);
         }
     }
 

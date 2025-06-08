@@ -1,4 +1,5 @@
-﻿using TFG_Projects_APP_Frontend.Pages;
+﻿using System.Globalization;
+using TFG_Projects_APP_Frontend.Pages;
 
 namespace TFG_Projects_APP_Frontend
 {
@@ -11,6 +12,10 @@ namespace TFG_Projects_APP_Frontend
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
+            string savedLanguage = Preferences.Get("AppLanguage", "en");
+            var culture = new CultureInfo(savedLanguage);
+            CultureInfo.DefaultThreadCurrentCulture = culture;
+            CultureInfo.DefaultThreadCurrentUICulture = culture;
             var window = new Window(new AppShell());
             window.MinimumWidth = 500;
             window.MinimumHeight = 600;

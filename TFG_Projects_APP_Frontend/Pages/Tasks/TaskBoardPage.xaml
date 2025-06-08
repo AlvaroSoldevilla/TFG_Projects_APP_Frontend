@@ -7,6 +7,7 @@
     xmlns:dtos="clr-namespace:TFG_Projects_APP_Frontend.Entities.Dtos.Users"
     xmlns:models="clr-namespace:TFG_Projects_APP_Frontend.Entities.Models"
     xmlns:pageModels="clr-namespace:TFG_Projects_APP_Frontend.PageModels"
+    xmlns:properties="clr-namespace:TFG_Projects_APP_Frontend.Properties"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     Title="TaskBoardPage"
     x:DataType="pageModels:Tasks.TaskBoardPageModel"
@@ -29,7 +30,7 @@
                 Command="{Binding CreateTaskSectionCommand}"
                 HeightRequest="40"
                 HorizontalOptions="Start"
-                Text="Create Task Section"
+                Text="{x:Static properties:Resources.CreateTaskSectionButton}"
                 VerticalOptions="Start"
                 WidthRequest="200" />
             <ActivityIndicator
@@ -74,13 +75,13 @@
 
             <VerticalStackLayout IsVisible="{Binding IsEditingTaskSection}" Spacing="5">
                 <StackLayout Orientation="Horizontal" Spacing="5">
-                    <Label FontSize="30" Text="Edit Task Section" />
+                    <Label FontSize="30" Text="{x:Static properties:Resources.EditTaskSectionLabel}" />
                     <Button Command="{Binding CloseEditingtTaskSectionCommand}" Text="X" />
                 </StackLayout>
 
-                <Label FontSize="20" Text="Title:" />
-                <Entry Placeholder="Enter section title" Text="{Binding EditingTaskSectionData.Title}" />
-                <Button Command="{Binding SaveTaskSectionChangesCommand}" Text="Save Changes" />
+                <Label FontSize="20" Text="{x:Static properties:Resources.TitleLabel}" />
+                <Entry Placeholder="{x:Static properties:Resources.TitleText}" Text="{Binding EditingTaskSectionData.Title}" />
+                <Button Command="{Binding SaveTaskSectionChangesCommand}" Text="{x:Static properties:Resources.SaveButton}" />
             </VerticalStackLayout>
 
             <Grid IsVisible="{Binding IsEditingTask}" VerticalOptions="FillAndExpand">
@@ -92,44 +93,48 @@
                     Grid.Row="0"
                     Orientation="Horizontal"
                     Spacing="5">
-                    <Label FontSize="30" Text="Edit task" />
+                    <Label FontSize="30" Text="{x:Static properties:Resources.EditTaskLabel}" />
                     <Button Command="{Binding CloseEditingtTaskCommand}" Text="X" />
                 </StackLayout>
                 <ScrollView Grid.Row="1" VerticalOptions="FillAndExpand">
                     <VerticalStackLayout Padding="10" Spacing="5">
-                        <Label FontSize="20" Text="Title:" />
-                        <Entry Placeholder="Enter task title" Text="{Binding EditingTaskData.Title}" />
-                        <Label FontSize="20" Text="Description:" />
+                        <Label FontSize="20" Text="{x:Static properties:Resources.TitleLabel}" />
+                        <Entry Placeholder="{x:Static properties:Resources.TitleText}" Text="{Binding EditingTaskData.Title}" />
+                        <Label FontSize="20" Text="{x:Static properties:Resources.DescriptionLabel}" />
                         <Editor
                             HeightRequest="100"
-                            Placeholder="Enter task description"
+                            Placeholder="{x:Static properties:Resources.DescriptionText}"
                             Text="{Binding EditingTaskData.Description}" />
-                        <Label Text="{Binding ProgressValue, StringFormat='Progress: {0:F0}'}" />
+                        <HorizontalStackLayout>
+                            <Label Text="{x:Static properties:Resources.ProgressLabel}" />
+                            <Label Text="{Binding ProgressValue, StringFormat='{0:F0}'}" />
+                        </HorizontalStackLayout>
+
                         <Slider
                             Maximum="100"
                             Minimum="0"
                             Value="{Binding ProgressValue}" />
-                        <Label FontSize="20" Text="Limit date:" />
+                        <Label FontSize="20" Text="{x:Static properties:Resources.LimitDateLabel}" />
                         <DatePicker Date="{Binding EditingTaskData.LimitDate}" Format="dd/MM/yyyy" />
 
-                        <Label FontSize="20" Text="Assigned To:" />
+                        <Label FontSize="20" Text="{x:Static properties:Resources.AssignedToLabel}" />
                         <Picker
-                            Title="Assigned to:"
+                            Title="{x:Static properties:Resources.LimitDateLabel}"
                             ItemDisplayBinding="{Binding Username}"
                             ItemsSource="{Binding Users}"
                             SelectedItem="{Binding EditingTaskData.UserAssigned}" />
                         <Picker
-                            Title="Priority"
+                            Title="{x:Static properties:Resources.PriorityLabel}"
                             ItemDisplayBinding="{Binding Name}"
                             ItemsSource="{Binding Priorities}"
                             SelectedItem="{Binding EditingTaskData.Priority}" />
-                        <Label FontSize="20" Text="Add dependency:" />
+                        <Label FontSize="20" Text="{x:Static properties:Resources.AddDependencyLabel}" />
                         <StackLayout Orientation="Horizontal">
                             <Picker
                                 ItemDisplayBinding="{Binding Title}"
                                 ItemsSource="{Binding PossibleDependencies}"
                                 SelectedItem="{Binding DependencyTaskSelected}" />
-                            <Button Command="{Binding AddDependencyCommand}" Text="Add" />
+                            <Button Command="{Binding AddDependencyCommand}" Text="{x:Static properties:Resources.AddButton}" />
                         </StackLayout>
 
 
@@ -149,17 +154,20 @@
                             </CollectionView.ItemTemplate>
                         </CollectionView>
                         <VerticalStackLayout IsVisible="{Binding IsEditingTaskDependency}">
-                            <Label Text="{Binding UnlockAtValue, StringFormat='Unlock at: {0:F0}'}" />
+                            <HorizontalStackLayout>
+                                <Label Text="{x:Static properties:Resources.UnlockAtLabel}" />
+                                <Label Text="{Binding UnlockAtValue, StringFormat='{0:F0}'}" />
+                            </HorizontalStackLayout>
                             <Slider
                                 Maximum="100"
                                 Minimum="0"
                                 Value="{Binding UnlockAtValue}" />
-                            <Button Command="{Binding SaveTaskDependencyChangesCommand}" Text="Save Dependency" />
-                            <Button Command="{Binding RemoveDependencyCommand}" Text="Remove Dependency" />
+                            <Button Command="{Binding SaveTaskDependencyChangesCommand}" Text="{x:Static properties:Resources.SaveDependencyChangesButton}" />
+                            <Button Command="{Binding RemoveDependencyCommand}" Text="{x:Static properties:Resources.RemoveDependencyButton}" />
                         </VerticalStackLayout>
 
 
-                        <Button Command="{Binding SaveTaskChangesCommand}" Text="Save Task" />
+                        <Button Command="{Binding SaveTaskChangesCommand}" Text="{x:Static properties:Resources.SaveButton}" />
                     </VerticalStackLayout>
                 </ScrollView>
             </Grid>

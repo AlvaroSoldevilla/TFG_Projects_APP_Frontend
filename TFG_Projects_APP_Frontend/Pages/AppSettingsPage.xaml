@@ -1,17 +1,48 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="TFG_Projects_APP_Frontend.Pages.AppSettingsPage"
-             xmlns:models="clr-namespace:TFG_Projects_APP_Frontend.Entities.Models"
-             xmlns:pageModels="clr-namespace:TFG_Projects_APP_Frontend.PageModels"
-             x:DataType="pageModels:AppSettingsPageModel"
-             Title="AppSettingsPage"
-             Shell.NavBarIsVisible="False"
-             NavigationPage.HasNavigationBar="False">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+<ContentPage
+    x:Class="TFG_Projects_APP_Frontend.Pages.AppSettingsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:models="clr-namespace:TFG_Projects_APP_Frontend.Entities.Models"
+    xmlns:pageModels="clr-namespace:TFG_Projects_APP_Frontend.PageModels"
+    xmlns:properties="clr-namespace:TFG_Projects_APP_Frontend.Properties"
+    xmlns:utils="clr-namespace:TFG_Projects_APP_Frontend.Utils"
+    Title="AppSettingsPage"
+    x:DataType="pageModels:AppSettingsPageModel"
+    NavigationPage.HasNavigationBar="False"
+    Shell.NavBarIsVisible="False">
+    <ScrollView>
+        <VerticalStackLayout Padding="30,0" Spacing="25">
+
+            <Label
+                SemanticProperties.HeadingLevel="Level1"
+                Style="{StaticResource Headline}"
+                Text="{x:Static properties:Resources.TitleAppSettingsPage}" />
+            <Label Text="{x:StaticResource properties:Resources.LanguageLabel}"/>
+            <CollectionView
+                ItemsSource="{Binding Languages}"
+                SelectedItem="{Binding SelectedLanguage}"
+                SelectionChangedCommand="{Binding LanguageSelectedCommand}"
+                SelectionMode="Single">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout
+                        HorizontalItemSpacing="5"
+                        Orientation="Vertical"
+                        Span="10"
+                        VerticalItemSpacing="5" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="utils:Language">
+                        <Border Padding="3">
+                            <Label
+                                HeightRequest="50"
+                                HorizontalTextAlignment="Center"
+                                Text="{Binding DisplayName}"
+                                VerticalTextAlignment="Center" />
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

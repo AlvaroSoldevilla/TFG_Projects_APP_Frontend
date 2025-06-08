@@ -23,7 +23,7 @@ using TFG_Projects_APP_Frontend.Services.TasksService;
 using TFG_Projects_APP_Frontend.Services.TypesService;
 using TFG_Projects_APP_Frontend.Services.UserProjectPermissionsService;
 using TFG_Projects_APP_Frontend.Services.UsersService;
-using TFG_Projects_APP_Frontend.Services.Utils;
+using TFG_Projects_APP_Frontend.Utils;
 
 namespace TFG_Projects_APP_Frontend;
 

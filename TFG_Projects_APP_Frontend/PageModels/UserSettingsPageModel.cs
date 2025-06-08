@@ -6,5 +6,6 @@ public class UserSettingsPageModel : ObservableObject
 {
     public UserSettingsPageModel()
     {
+
     }
 }

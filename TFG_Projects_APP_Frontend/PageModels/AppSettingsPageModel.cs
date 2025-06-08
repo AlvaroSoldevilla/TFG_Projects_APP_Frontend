@@ -1,10 +1,47 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using System.Collections.ObjectModel;
+using System.Globalization;
+using System.Threading.Tasks;
+using TFG_Projects_APP_Frontend.Properties;
+using TFG_Projects_APP_Frontend.Utils;
 
 namespace TFG_Projects_APP_Frontend.PageModels;
 
-public class AppSettingsPageModel : ObservableObject
+public partial class AppSettingsPageModel : ObservableObject
 {
-    public AppSettingsPageModel()
+
+    [ObservableProperty]
+    Language _selectedLanguage;
+
+    [ObservableProperty]
+    string _aPIUrl;
+
+    [ObservableProperty]
+    string _aPIPort;
+
+    [ObservableProperty]
+    string _savedMessage = "";
+
+    [ObservableProperty]
+    ObservableCollection<Language> languages = new ObservableCollection<Language>
     {
+        new Language {DisplayName = "English", LanguageCode = "en"},
+        new Language {DisplayName = "Español", LanguageCode = "es"}
+    };
+
+    [RelayCommand]
+    private async Task LanguageSelected()
+    {
+        var culture = new CultureInfo(SelectedLanguage.LanguageCode);
+        CultureInfo.DefaultThreadCurrentCulture = culture;
+        CultureInfo.DefaultThreadCurrentUICulture = culture;
+
+        Thread.CurrentThread.CurrentCulture = culture;
+        Thread.CurrentThread.CurrentUICulture = culture;
+
+        Preferences.Set("AppLanguage", SelectedLanguage.LanguageCode);
+
+        await Application.Current.MainPage.DisplayAlert("Error", Resources.RestartMessage, "OK");
     }
 }

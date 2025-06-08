@@ -7,11 +7,12 @@ using TFG_Projects_APP_Frontend.Entities.Dtos.Components;
 using TFG_Projects_APP_Frontend.Entities.Dtos.ConceptBoards;
 using TFG_Projects_APP_Frontend.Entities.Models;
 using TFG_Projects_APP_Frontend.Pages.Concepts;
+using TFG_Projects_APP_Frontend.Properties;
 using TFG_Projects_APP_Frontend.Services.ComponentsService;
 using TFG_Projects_APP_Frontend.Services.ConceptBoardsService;
 using TFG_Projects_APP_Frontend.Services.TypesService;
 using TFG_Projects_APP_Frontend.Services.UsersService;
-using TFG_Projects_APP_Frontend.Services.Utils;
+using TFG_Projects_APP_Frontend.Utils;
 
 namespace TFG_Projects_APP_Frontend.PageModels.Concepts;
 
@@ -233,19 +234,19 @@ public partial class ConceptBoardPageModel : ObservableObject
             switch (projectType.Id)
             {
                 case 1:
-                    title = "Create Board";
+                    title = Resources.CreateBoardTitle;
                     break;
                 case 2:
-                    title = "Create Note";
+                    title = Resources.CreateNoteTitle;
                     break;
                 case 3:
-                    title = "Create Container";
+                    title = Resources.CreateContainerTitle;
                     break;
                 case 4:
-                    title = "Create Table";
+                    title = Resources.CreateTableTitle;
                     break;
                 default:
-                    title = "Create Component";
+                    title = Resources.CreateComponentTitle;
                     break;
             }
 
@@ -328,7 +329,7 @@ public partial class ConceptBoardPageModel : ObservableObject
                 }
                 else if (component.IdType == 4)
                 {
-                    component.Content = string.Join("\n", new string[] { "Column1\tColumn2\tColumn3\n" });
+                    component.Content = string.Join("\n", new string[] { $"{Resources.DefaultColumnTitle}1\t{Resources.DefaultColumnTitle}2\t{Resources.DefaultColumnTitle}3\n" });
                     component.Content += "\t\t\n";
                     component.Content += "\t\t\n";
                     await componentsService.Patch(component.Id, new ComponentUpdate
@@ -348,14 +349,14 @@ public partial class ConceptBoardPageModel : ObservableObject
             {
                 if (string.IsNullOrEmpty(returnComponent.Title))
                 {
-                    await Application.Current.MainPage.DisplayAlert("Error", "Title is required", "OK");
+                    await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.TitleIsRequiredMessage, Resources.ConfirmButton);
                 }
             }
             IsLoading = false;
         }
         else
         {
-            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+            await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.NoPermissionMessage, Resources.ConfirmButton);
         }
     }
 
@@ -368,7 +369,7 @@ public partial class ConceptBoardPageModel : ObservableObject
         {
             if (EditComponentData != null)
             {
-                var confirm = await Application.Current.MainPage.DisplayAlert("Confirm", "Are you sure you want to delete this component?", "Yes", "No");
+                var confirm = await Application.Current.MainPage.DisplayAlert(Resources.ConfirmDeleteMessageTitle, Resources.DeletionConfirmationMessage, Resources.YesButton, Resources.NoButton);
                 if (confirm)
                 {
                     await componentsService.Delete(EditComponentData.Id);
@@ -378,7 +379,7 @@ public partial class ConceptBoardPageModel : ObservableObject
         }
         else
         {
-            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+            await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.NoPermissionMessage, Resources.ConfirmButton);
         }
     }
 
@@ -415,7 +416,7 @@ public partial class ConceptBoardPageModel : ObservableObject
         }
         else
         {
-            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+            await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.NoPermissionMessage, Resources.ConfirmButton);
         }
         await LoadData();
     }
@@ -433,7 +434,7 @@ public partial class ConceptBoardPageModel : ObservableObject
         }
         else
         {
-            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+            await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.NoPermissionMessage, Resources.ConfirmButton);
         }
     }
 
@@ -450,7 +451,7 @@ public partial class ConceptBoardPageModel : ObservableObject
         }
         else
         {
-            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+            await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.NoPermissionMessage, Resources.ConfirmButton);
         }
     }
 
@@ -484,7 +485,7 @@ public partial class ConceptBoardPageModel : ObservableObject
         }
         else
         {
-            await Application.Current.MainPage.DisplayAlert("Error", "Title is required", "OK");
+            await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.TitleIsRequiredMessage, Resources.ConfirmButton);
         }
     }
 

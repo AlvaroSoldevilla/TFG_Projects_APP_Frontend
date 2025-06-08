@@ -6,6 +6,7 @@
     xmlns:dtos="clr-namespace:TFG_Projects_APP_Frontend.Entities.Dtos.Users"
     xmlns:models="clr-namespace:TFG_Projects_APP_Frontend.Entities.Models"
     xmlns:pageModels="clr-namespace:TFG_Projects_APP_Frontend.PageModels"
+    xmlns:properties="clr-namespace:TFG_Projects_APP_Frontend.Properties"
     x:DataType="pageModels:MainPageModel"
     NavigationPage.HasNavigationBar="False"
     Shell.NavBarIsVisible="False">
@@ -19,7 +20,7 @@
                     Command="{Binding CreateProjectCommand}"
                     HeightRequest="40"
                     HorizontalOptions="Start"
-                    Text="Create project"
+                    Text="{x:Static properties:Resources.CreateProjectButton}"
                     VerticalOptions="Start"
                     WidthRequest="150" />
                 <CollectionView
@@ -42,12 +43,12 @@
                                         Command="{Binding ProjectDeleteCommand, Source={RelativeSource AncestorType={x:Type pageModels:MainPageModel}}}"
                                         CommandParameter="{Binding .}"
                                         HorizontalOptions="End"
-                                        Text="Delete" />
+                                        Text="{x:Static properties:Resources.DeleteButton}" />
                                     <Button
                                         Command="{Binding ProjectEditCommand, Source={RelativeSource AncestorType={x:Type pageModels:MainPageModel}}}"
                                         CommandParameter="{Binding .}"
                                         HorizontalOptions="End"
-                                        Text="Edit" />
+                                        Text="{x:Static properties:Resources.EditButton}" />
                                 </StackLayout>
                             </Border>
                         </DataTemplate>
@@ -63,18 +64,18 @@
             </VerticalStackLayout>
             <VerticalStackLayout IsVisible="{Binding IsEditingProject}">
                 <StackLayout Orientation="Horizontal">
-                    <Label FontSize="30" Text="Edit Project" />
+                    <Label FontSize="30" Text="{x:Static properties:Resources.EditProjectLabel}" />
                     <Button Command="{Binding CloseEditingCommand}" Text="X" />
                 </StackLayout>
 
-                <Label FontSize="20" Text="Title:" />
+                <Label FontSize="20" Text="{x:Static properties:Resources.TitleLabel}" />
                 <Entry x:Name="ProjectTitle" Text="{Binding EditingProjectData.Title, Mode=TwoWay}" />
-                <Label FontSize="20" Text="Description:" />
+                <Label FontSize="20" Text="{x:Static properties:Resources.DescriptionLabel}" />
                 <Editor
                     x:Name="ProjectDescription"
                     HeightRequest="100"
                     Text="{Binding EditingProjectData.Description, Mode=TwoWay}" />
-                <Button Command="{Binding SaveProjectCommand}" Text="Save" />
+                <Button Command="{Binding SaveProjectCommand}" Text="{x:Static properties:Resources.SaveButton}" />
             </VerticalStackLayout>
         </StackLayout>
     </ScrollView>

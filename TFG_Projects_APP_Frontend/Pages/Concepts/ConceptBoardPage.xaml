@@ -6,6 +6,7 @@
     xmlns:dtos="clr-namespace:TFG_Projects_APP_Frontend.Entities.Dtos.Users"
     xmlns:models="clr-namespace:TFG_Projects_APP_Frontend.Entities.Models"
     xmlns:pageModels="clr-namespace:TFG_Projects_APP_Frontend.PageModels"
+    xmlns:properties="clr-namespace:TFG_Projects_APP_Frontend.Properties"
     Title="ConceptBoardPage"
     x:DataType="pageModels:Concepts.ConceptBoardPageModel"
     NavigationPage.HasNavigationBar="False"
@@ -59,17 +60,20 @@
                 IsVisible="{Binding IsEditingComponent}"
                 Spacing="5">
                 <StackLayout Orientation="Horizontal" Spacing="5">
-                    <Label FontSize="30" Text="Edit Component" />
+                    <Label FontSize="30" Text="{x:Static properties:Resources.EditComponentLabel}" />
                     <Button Command="{Binding CloseEditingComponentCommand}" Text="X" />
                 </StackLayout>
 
-                <Label FontSize="20" Text="Title:" />
-                <Entry Placeholder="Enter section title" Text="{Binding EditComponentData.Title}" />
-                <Label FontSize="20" Text="Content:" />
+                <Label FontSize="20" Text="{x:Static properties:Resources.TitleLabel}" />
+                <Entry Placeholder="{x:Static properties:Resources.TitleText}" Text="{Binding EditComponentData.Title}" />
+                <Label
+                    FontSize="20"
+                    IsVisible="{Binding IsEditingNote}"
+                    Text="{x:Static properties:Resources.ContentLabel}" />
                 <Editor IsVisible="{Binding IsEditingNote}" Text="{Binding EditComponentData.Content}" />
 
-                <Button Command="{Binding DeleteComponentCommand}" Text="Delete" />
-                <Button Command="{Binding SaveComponentCommand}" Text="Save" />
+                <Button Command="{Binding DeleteComponentCommand}" Text="{x:Static properties:Resources.DeleteButton}" />
+                <Button Command="{Binding SaveComponentCommand}" Text="{x:Static properties:Resources.SaveButton}" />
             </VerticalStackLayout>
         </Grid>
 

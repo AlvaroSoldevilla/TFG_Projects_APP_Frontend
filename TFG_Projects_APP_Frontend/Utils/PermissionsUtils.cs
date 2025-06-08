@@ -1,6 +1,6 @@
 ﻿using TFG_Projects_APP_Frontend.Services.UsersService;
 
-namespace TFG_Projects_APP_Frontend.Services.Utils;
+namespace TFG_Projects_APP_Frontend.Utils;
 
 public class PermissionsUtils(UserSession userSession)
 {

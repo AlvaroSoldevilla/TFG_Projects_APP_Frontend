@@ -6,6 +6,7 @@ using TFG_Projects_APP_Frontend.Entities.Dtos.TaskDependecies;
 using TFG_Projects_APP_Frontend.Entities.Dtos.TaskProgress;
 using TFG_Projects_APP_Frontend.Entities.Dtos.Tasks;
 using TFG_Projects_APP_Frontend.Entities.Models;
+using TFG_Projects_APP_Frontend.Properties;
 using TFG_Projects_APP_Frontend.Services.PrioritiesService;
 using TFG_Projects_APP_Frontend.Services.ProjectUsersService;
 using TFG_Projects_APP_Frontend.Services.TaskDependeciesService;
@@ -13,7 +14,7 @@ using TFG_Projects_APP_Frontend.Services.TaskProgressService;
 using TFG_Projects_APP_Frontend.Services.TaskSectionsService;
 using TFG_Projects_APP_Frontend.Services.TasksService;
 using TFG_Projects_APP_Frontend.Services.UsersService;
-using TFG_Projects_APP_Frontend.Services.Utils;
+using TFG_Projects_APP_Frontend.Utils;
 
 namespace TFG_Projects_APP_Frontend.PageModels.Tasks;
 
@@ -217,13 +218,13 @@ public partial class TaskProgressPageModel : ObservableObject
         permissions.AddRange(PermissionsUtils.Permissions.FullPermissions, PermissionsUtils.Permissions.CreateTaskBoardSections, PermissionsUtils.Permissions.FullTaskPermissions);
         if (permissionsUtils.HasOnePermission(permissions))
         {
-            var taskProgress = await FormDialog.ShowCreateObjectMenuAsync<TaskProgressFormCreate>("Create Progress Section");
+            var taskProgress = await FormDialog.ShowCreateObjectMenuAsync<TaskProgressFormCreate>(Resources.CreateProgressSectionTitle);
 
             if (taskProgress != null && !string.IsNullOrEmpty(taskProgress.Name))
             {
                 if (taskProgress.ProgressValue < 0 || taskProgress.ProgressValue > 100)
                 {
-                    await Application.Current.MainPage.DisplayAlert("Error", "Progress value must be between 0 and 100", "OK");
+                    await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.ProgressValidationMessage, Resources.ConfirmButton);
                     return;
                 }
 
@@ -245,7 +246,7 @@ public partial class TaskProgressPageModel : ObservableObject
             {
                 if (string.IsNullOrEmpty(taskProgress.Name))
                 {
-                    await Application.Current.MainPage.DisplayAlert("Error", "Name is required", "OK");
+                    await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.NameIsRequiredMessage, Resources.ConfirmButton);
                 }
             }
 
@@ -253,7 +254,7 @@ public partial class TaskProgressPageModel : ObservableObject
         }
         else
         {
-            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+            await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.NoPermissionMessage, Resources.ConfirmButton);
         }
     }
 
@@ -264,7 +265,7 @@ public partial class TaskProgressPageModel : ObservableObject
         permissions.AddRange(PermissionsUtils.Permissions.FullPermissions, PermissionsUtils.Permissions.CreateTasks, PermissionsUtils.Permissions.FullTaskPermissions);
         if (permissionsUtils.HasOnePermission(permissions))
         {
-            var task = await FormDialog.ShowCreateObjectMenuAsync<TaskFormCreate>("Create Task");
+            var task = await FormDialog.ShowCreateObjectMenuAsync<TaskFormCreate>(Resources.CreateTaskTitle);
             if (!string.IsNullOrEmpty(task.Title))
             {
                 int progressvalue;
@@ -301,7 +302,7 @@ public partial class TaskProgressPageModel : ObservableObject
             {
                 if (string.IsNullOrEmpty(task.Title))
                 {
-                    await Application.Current.MainPage.DisplayAlert("Error", "Title is required", "OK");
+                    await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.TitleIsRequiredMessage, Resources.ConfirmButton);
                 }
             }
 
@@ -309,7 +310,7 @@ public partial class TaskProgressPageModel : ObservableObject
         }
         else
         {
-            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+            await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.NoPermissionMessage, Resources.ConfirmButton);
         }
     }
 
@@ -388,7 +389,7 @@ public partial class TaskProgressPageModel : ObservableObject
         }
         else
         {
-            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+            await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.NoPermissionMessage, Resources.ConfirmButton);
         }
     }
 
@@ -417,12 +418,12 @@ public partial class TaskProgressPageModel : ObservableObject
         }
         else
         {
-            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+            await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.NoPermissionMessage, Resources.ConfirmButton);
         }
     }
 
     [RelayCommand]
-    public async void EditTaskProgress(TaskProgress taskProgress)
+    public async void EditTaskProgressSection(TaskProgress taskProgress)
     {
         List<PermissionsUtils.Permissions> permissions = new List<PermissionsUtils.Permissions>();
         permissions.AddRange(PermissionsUtils.Permissions.FullPermissions, PermissionsUtils.Permissions.EditTaskBoardSections, PermissionsUtils.Permissions.FullTaskPermissions);
@@ -436,10 +437,10 @@ public partial class TaskProgressPageModel : ObservableObject
                     if (HasChangedTaskData(SelectedTask))
                     {
                         confirmed = await Application.Current.MainPage.DisplayAlert(
-                        "Change edit",
-                        "You have unsaved changes, are you sure you want to edit another task?",
-                        "Accept",
-                        "Cancel"
+                        Resources.ChangeEditMessageTitle,
+                        Resources.ChangeEditMessage,
+                        Resources.AcceptButton,
+                        Resources.CancelButton
                         );
                     }
                 }
@@ -464,7 +465,7 @@ public partial class TaskProgressPageModel : ObservableObject
         }
         else
         {
-            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+            await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.NoPermissionMessage, Resources.ConfirmButton);
         }
     }
 
@@ -483,10 +484,10 @@ public partial class TaskProgressPageModel : ObservableObject
                     if (HasChangedTaskData(SelectedTask))
                     {
                         confirmed = await Application.Current.MainPage.DisplayAlert(
-                        "Change edit",
-                        "You have unsaved changes, are you sure you want to edit another task?",
-                        "Accept",
-                        "Cancel"
+                        Resources.ChangeEditMessageTitle,
+                        Resources.ChangeEditMessage,
+                        Resources.AcceptButton,
+                        Resources.CancelButton
                         );
                     }
                 }
@@ -576,7 +577,7 @@ public partial class TaskProgressPageModel : ObservableObject
         }
         else
         {
-            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+            await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.NoPermissionMessage, Resources.ConfirmButton);
         }
     }
 
@@ -625,14 +626,14 @@ public partial class TaskProgressPageModel : ObservableObject
         {
             if (DependencyTaskSelected == null)
             {
-                await Application.Current.MainPage.DisplayAlert("Error", "You need to select a task", "OK");
+                await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.TaskNotSelectedMessage, Resources.ConfirmButton);
             }
             else
             {
                 var currentDependencies = await taskDependenciesService.GetAllTaskDependenciesByTask(EditingTaskData.Id);
                 if (currentDependencies.Any(x => x.IdDependsOn == DependencyTaskSelected.Id))
                 {
-                    await Application.Current.MainPage.DisplayAlert("Error", "This task is already a dependency", "OK");
+                    await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.TaskAlreadyADependencyMessage, Resources.ConfirmButton);
                 }
                 else
                 {
@@ -664,7 +665,7 @@ public partial class TaskProgressPageModel : ObservableObject
     {
         if (SelectedDependency != null)
         {
-            var result = await Application.Current.MainPage.DisplayAlert("Confirm", "Are you sure you want to remove this dependency?", "Yes", "No");
+            var result = await Application.Current.MainPage.DisplayAlert(Resources.ConfirmDeleteMessageTitle, Resources.DeletionConfirmationMessage, Resources.YesButton, Resources.NoButton);
             if (result)
             {
                 IsLoading = true;
@@ -708,7 +709,7 @@ public partial class TaskProgressPageModel : ObservableObject
 
             if (string.IsNullOrEmpty(EditingTaskData.Title))
             {
-                await Application.Current.MainPage.DisplayAlert("Error", "Title is required", "OK");
+                await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.TitleIsRequiredMessage, Resources.ConfirmButton);
                 return;
             }
 
@@ -811,7 +812,7 @@ public partial class TaskProgressPageModel : ObservableObject
     }
 
     [RelayCommand]
-    private async void DeleteTaskProgress(TaskProgress taskProgress)
+    private async void DeleteTaskProgressSection(TaskProgress taskProgress)
     {
         List<PermissionsUtils.Permissions> permissions = new List<PermissionsUtils.Permissions>();
         permissions.AddRange(PermissionsUtils.Permissions.FullPermissions, PermissionsUtils.Permissions.DeleteTaskBoardSections, PermissionsUtils.Permissions.FullTaskPermissions);
@@ -819,7 +820,7 @@ public partial class TaskProgressPageModel : ObservableObject
         {
             if (taskProgress != null)
             {
-                var result = await Application.Current.MainPage.DisplayAlert("Confirm", "Are you sure you want to delete this section?", "Yes", "No");
+                var result = await Application.Current.MainPage.DisplayAlert(Resources.ConfirmDeleteMessageTitle, Resources.DeletionConfirmationMessage, Resources.YesButton, Resources.NoButton);
                 if (result)
                 {
                     IsLoading = true;
@@ -827,7 +828,7 @@ public partial class TaskProgressPageModel : ObservableObject
                     var taskSection = await taskSectionService.GetById(taskProgress.IdSection);
                     if (taskSection.IdDefaultProgress == taskProgress.Id)
                     {
-                        await Application.Current.MainPage.DisplayAlert("Error", "You cannot delete the default progress section", "OK");
+                        await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.DefaultProgressSectionDeletionMessage, Resources.ConfirmButton);
                         IsLoading = false;
                         return;
                     }
@@ -885,7 +886,7 @@ public partial class TaskProgressPageModel : ObservableObject
         }
         else
         {
-            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+            await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.NoPermissionMessage, Resources.ConfirmButton);
         }
     }
 
@@ -898,7 +899,7 @@ public partial class TaskProgressPageModel : ObservableObject
         {
             if (task != null)
             {
-                var result = await Application.Current.MainPage.DisplayAlert("Confirm", "Are you sure you want to delete this task?", "Yes", "No");
+                var result = await Application.Current.MainPage.DisplayAlert(Resources.ConfirmDeleteMessageTitle, Resources.DeletionConfirmationMessage, Resources.YesButton, Resources.NoButton);
                 if (result)
                 {
                     IsLoading = true;
@@ -913,7 +914,7 @@ public partial class TaskProgressPageModel : ObservableObject
         }
         else
         {
-            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+            await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.NoPermissionMessage, Resources.ConfirmButton);
         }
     }
 
@@ -978,7 +979,7 @@ public partial class TaskProgressPageModel : ObservableObject
         }
         else
         {
-            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+            await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.NoPermissionMessage, Resources.ConfirmButton);
         }
         _grabbedTask = null;
     }
@@ -1030,7 +1031,7 @@ public partial class TaskProgressPageModel : ObservableObject
         }
         else
         {
-            await Application.Current.MainPage.DisplayAlert("Error", "You don't have permission to do that", "OK");
+            await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.NoPermissionMessage, Resources.ConfirmButton);
         }
 
         _grabbedTask = null;
