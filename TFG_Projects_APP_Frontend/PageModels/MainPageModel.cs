@@ -7,6 +7,7 @@ using TFG_Projects_APP_Frontend.Entities.Dtos.ProjectUsers;
 using TFG_Projects_APP_Frontend.Entities.Dtos.UserProjectPermissions;
 using TFG_Projects_APP_Frontend.Entities.Models;
 using TFG_Projects_APP_Frontend.Properties;
+using TFG_Projects_APP_Frontend.Rest;
 using TFG_Projects_APP_Frontend.Services.ProjectsService;
 using TFG_Projects_APP_Frontend.Services.ProjectUsersService;
 using TFG_Projects_APP_Frontend.Services.UserProjectPermissionsService;
@@ -22,6 +23,7 @@ public partial class MainPageModel : ObservableObject
     private readonly IProjectUsersService projectUsersService;
     private readonly UserSession userSession;
     private readonly PermissionsUtils permissionsUtils;
+    private readonly RestClient restClient;
 
     [ObservableProperty]
     private bool _isloading;
@@ -42,18 +44,60 @@ public partial class MainPageModel : ObservableObject
         IUserProjectPermissionsService userProjectPermissionsService,
         IProjectUsersService projectUsersService, 
         UserSession userSession,
-        PermissionsUtils permissionsUtils)
+        PermissionsUtils permissionsUtils,
+        RestClient restClient)
     {
         this.projectsService = projectsService;
         this.userProjectPermissionsService = userProjectPermissionsService;
         this.projectUsersService = projectUsersService;
         this.userSession = userSession;
         this.permissionsUtils = permissionsUtils;
+        this.restClient = restClient;
+
     }
 
     public async Task OnNavigatedTo()
     {
-        await LoadData();
+        if (NavigationContext.Startup)
+        {
+            NavigationContext.Startup = false;
+            if (Preferences.Get("RememberMe", false))
+            {
+                var testUrl = Preferences.Get("APIurl", "http://localhost:8080");
+                var result = await restClient.TestConnection(testUrl);
+                if (result.IsSuccessStatusCode)
+                {
+                    userSession.User = new AppUser
+                    {
+                        Id = Preferences.Get("UserId", 1),
+                        Username = Preferences.Get("Username", "Admin"),
+                        Email = Preferences.Get("Email", "admin@test.com")
+                    };
+
+                    userSession.Token = Preferences.Get("Token", "");
+                    await LoadData();
+                }
+                else
+                {
+                    await GoToLogin();
+                }
+            } else
+            {
+                await GoToLogin();
+            }
+        } else
+        {
+            await LoadData();
+        }
+    }
+
+    private async Task GoToLogin()
+    {
+        Application.Current.Dispatcher.Dispatch(async () =>
+        {
+            await Task.Delay(50);
+            await Shell.Current.GoToAsync("//LoginPage");
+        });
     }
 
     private async Task LoadData()

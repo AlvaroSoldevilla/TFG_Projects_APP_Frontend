@@ -5,26 +5,27 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:TFG_Projects_APP_Frontend"
     xmlns:pages="clr-namespace:TFG_Projects_APP_Frontend.Pages"
-    Shell.FlyoutBehavior="Flyout"
-    Title="Project Design APP">
+    xmlns:properties="clr-namespace:TFG_Projects_APP_Frontend.Properties"
+    Title="Project Design APP"
+    Shell.FlyoutBehavior="Flyout">
 
     <ShellContent
-    Title="Log Out"
-    ContentTemplate="{DataTemplate pages:LoginPage}"
-    Route="LoginPage" />
-
-    <ShellContent
-        Title="Home"
+        Title="{x:Static properties:Resources.HomeNavigationTitle}"
         ContentTemplate="{DataTemplate pages:MainPage}"
         Route="MainPage" />
 
     <ShellContent
-        Title="User Settings"
+        Title="{x:Static properties:Resources.UserSettingsNavigationTitle}"
         ContentTemplate="{DataTemplate pages:UserSettingsPage}"
         Route="UserSettingsPage" />
 
     <ShellContent
-        Title="App Settings"
+        Title="{x:Static properties:Resources.AppSettingsNavigationTitle}"
         ContentTemplate="{DataTemplate pages:AppSettingsPage}"
         Route="AppSettingsPage" />
+
+    <ShellContent
+        Title="{x:Static properties:Resources.LogOutNavigationTitle}"
+        ContentTemplate="{DataTemplate pages:LoginPage}"
+        Route="LoginPage" />
 </Shell>

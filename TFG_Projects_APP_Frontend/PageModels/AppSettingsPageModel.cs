@@ -2,14 +2,15 @@
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using System.Globalization;
-using System.Threading.Tasks;
 using TFG_Projects_APP_Frontend.Properties;
+using TFG_Projects_APP_Frontend.Services.UsersService;
 using TFG_Projects_APP_Frontend.Utils;
 
 namespace TFG_Projects_APP_Frontend.PageModels;
 
 public partial class AppSettingsPageModel : ObservableObject
 {
+    private readonly UserSession userSession;
 
     [ObservableProperty]
     Language _selectedLanguage;
@@ -26,9 +27,16 @@ public partial class AppSettingsPageModel : ObservableObject
     [ObservableProperty]
     ObservableCollection<Language> languages = new ObservableCollection<Language>
     {
-        new Language {DisplayName = "English", LanguageCode = "en"},
-        new Language {DisplayName = "Español", LanguageCode = "es"}
+        new() {DisplayName = "English", LanguageCode = "en"},
+        new() {DisplayName = "Español", LanguageCode = "es"}
     };
+
+    public AppSettingsPageModel(UserSession userSession)
+    {
+
+        this.userSession = userSession;
+    }
+
 
     [RelayCommand]
     private async Task LanguageSelected()

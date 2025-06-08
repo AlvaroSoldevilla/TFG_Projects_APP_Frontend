@@ -147,11 +147,17 @@
   <data name="APIValidationMessage" xml:space="preserve">
     <value>Please enter a valid route and port</value>
   </data>
+  <data name="AppSettingsNavigationTitle" xml:space="preserve">
+    <value>App Settings</value>
+  </data>
   <data name="AssignedToLabel" xml:space="preserve">
     <value>Assigned to:</value>
   </data>
   <data name="CancelButton" xml:space="preserve">
     <value>Cancel</value>
+  </data>
+  <data name="ChangeButton" xml:space="preserve">
+    <value>Change</value>
   </data>
   <data name="ChangeEditMessage" xml:space="preserve">
     <value>You have unsaved changes, are you sure you want to edit another item?</value>
@@ -159,11 +165,23 @@
   <data name="ChangeEditMessageTitle" xml:space="preserve">
     <value>Change Edit</value>
   </data>
+  <data name="ChangeEmailLabel" xml:space="preserve">
+    <value>Change Email</value>
+  </data>
+  <data name="ChangePasswordLabel" xml:space="preserve">
+    <value>Change Password</value>
+  </data>
+  <data name="ChangeUsernameLabel" xml:space="preserve">
+    <value>Change Username</value>
+  </data>
   <data name="ConfirmButton" xml:space="preserve">
     <value>OK</value>
   </data>
   <data name="ConfirmDeleteMessageTitle" xml:space="preserve">
     <value>Confirm deletion</value>
+  </data>
+  <data name="ConfirmPasswordLabel" xml:space="preserve">
+    <value>Confirm Password:</value>
   </data>
   <data name="ConfirmRemoveUserMessage" xml:space="preserve">
     <value>Are you sure you want to remove this user from the project?</value>
@@ -291,11 +309,23 @@
   <data name="EmailLabel" xml:space="preserve">
     <value>Email</value>
   </data>
+  <data name="EmailNotIntroducedMessage" xml:space="preserve">
+    <value>You need to input an email</value>
+  </data>
+  <data name="EmailNotUpdatedMessage" xml:space="preserve">
+    <value>Couldn't update the email</value>
+  </data>
+  <data name="EmailUpdatedMessage" xml:space="preserve">
+    <value>Email successfully updated</value>
+  </data>
   <data name="EnterAllDataMessage" xml:space="preserve">
     <value>Please enter all data</value>
   </data>
   <data name="ErrorMessageTitle" xml:space="preserve">
     <value>Error</value>
+  </data>
+  <data name="HomeNavigationTitle" xml:space="preserve">
+    <value>Home</value>
   </data>
   <data name="InvalidCredentialsMessage" xml:space="preserve">
     <value>Invalid credentials</value>
@@ -312,11 +342,23 @@
   <data name="LoginPageMessage" xml:space="preserve">
     <value>Welcome!</value>
   </data>
+  <data name="LogOutNavigationTitle" xml:space="preserve">
+    <value>Log Out</value>
+  </data>
   <data name="ModifiesValueLabel" xml:space="preserve">
     <value>Modifies Progress Value:</value>
   </data>
   <data name="NameIsRequiredMessage" xml:space="preserve">
     <value>Name is required</value>
+  </data>
+  <data name="NewEmailLabel" xml:space="preserve">
+    <value>New Email:</value>
+  </data>
+  <data name="NewPasswordLabel" xml:space="preserve">
+    <value>New Password:</value>
+  </data>
+  <data name="NewUsernameLabel" xml:space="preserve">
+    <value>New Username</value>
   </data>
   <data name="NoButton" xml:space="preserve">
     <value>No</value>
@@ -326,6 +368,18 @@
   </data>
   <data name="PasswordLabel" xml:space="preserve">
     <value>Password</value>
+  </data>
+  <data name="PasswordNotIntroducedMessage" xml:space="preserve">
+    <value>You need to input a password and confirm it</value>
+  </data>
+  <data name="PasswordNotUpdatedMessage" xml:space="preserve">
+    <value>Couldn't update the password</value>
+  </data>
+  <data name="PasswordsMustMatchMessage" xml:space="preserve">
+    <value>The passwords must match</value>
+  </data>
+  <data name="PasswordUpdatedMessage" xml:space="preserve">
+    <value>Password successfully updated</value>
   </data>
   <data name="PortLabel" xml:space="preserve">
     <value>Port</value>
@@ -411,8 +465,26 @@
   <data name="UserAlreadyInProjectMessage" xml:space="preserve">
     <value>User already exists in the project</value>
   </data>
+  <data name="UsernameNotIntroducedMessage" xml:space="preserve">
+    <value>You need to input a username</value>
+  </data>
+  <data name="UsernameNotUpdatedMessage" xml:space="preserve">
+    <value>Couldn't update the username</value>
+  </data>
+  <data name="UsernameUpdatedMessage" xml:space="preserve">
+    <value>Username successfully updated</value>
+  </data>
   <data name="UserNotFoundMessage" xml:space="preserve">
     <value>User not found</value>
+  </data>
+  <data name="UserSettingsMessage" xml:space="preserve">
+    <value>You have to confirm your identity to modify your user settings</value>
+  </data>
+  <data name="UserSettingsMessageTitle" xml:space="preserve">
+    <value>Log In</value>
+  </data>
+  <data name="UserSettingsNavigationTitle" xml:space="preserve">
+    <value>User Settings</value>
   </data>
   <data name="YesButton" xml:space="preserve">
     <value>Yes</value>

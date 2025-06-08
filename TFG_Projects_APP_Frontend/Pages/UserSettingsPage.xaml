@@ -6,14 +6,107 @@
     xmlns:models="clr-namespace:TFG_Projects_APP_Frontend.Entities.Models"
     xmlns:pageModels="clr-namespace:TFG_Projects_APP_Frontend.PageModels"
     xmlns:properties="clr-namespace:TFG_Projects_APP_Frontend.Properties"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     Title="UserSettingsPage"
     x:DataType="pageModels:UserSettingsPageModel"
     NavigationPage.HasNavigationBar="False"
     Shell.NavBarIsVisible="False">
-    <VerticalStackLayout>
-        <Label
-            HorizontalOptions="Center"
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" />
-    </VerticalStackLayout>
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ScrollView
+        Padding="30"
+        HorizontalOptions="Center"
+        VerticalOptions="Center">
+        <VerticalStackLayout WidthRequest="400">
+            <VerticalStackLayout IsVisible="{Binding IsLoggedIn, Converter={StaticResource InvertedBoolConverter}}" Spacing="20">
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="32"
+                    HorizontalOptions="Center"
+                    Text="{x:Static properties:Resources.UserSettingsMessageTitle}" />
+                <Label HorizontalOptions="Center" Text="{x:Static properties:Resources.UserSettingsMessage}" />
+                <Entry
+                    x:Name="Username"
+                    BackgroundColor="White"
+                    Placeholder="Username"
+                    Text="{Binding Username, Mode=TwoWay}" />
+
+                <Entry
+                    x:Name="Email"
+                    BackgroundColor="White"
+                    Keyboard="Email"
+                    Placeholder="{x:Static properties:Resources.EmailLabel}"
+                    Text="{Binding Email, Mode=TwoWay}" />
+
+                <Entry
+                    x:Name="Password"
+                    BackgroundColor="White"
+                    IsPassword="True"
+                    Placeholder="{x:Static properties:Resources.PasswordLabel}"
+                    Text="{Binding Password, Mode=TwoWay}" />
+
+                <Button
+                    Padding="10"
+                    BackgroundColor="#4CAF50"
+                    Command="{Binding LoginCommand}"
+                    CornerRadius="10"
+                    FontAttributes="Bold"
+                    Text="{x:Static properties:Resources.LoginButton}"
+                    TextColor="White" />
+
+                <ActivityIndicator
+                    HorizontalOptions="Center"
+                    IsRunning="{Binding IsLoading}"
+                    IsVisible="{Binding IsLoading}"
+                    VerticalOptions="Center"
+                    Color="Gray" />
+            </VerticalStackLayout>
+            <VerticalStackLayout IsVisible="{Binding IsLoggedIn}" Spacing="20">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+
+                    <VerticalStackLayout
+                        Grid.Row="0"
+                        Grid.RowSpan="2"
+                        Grid.Column="0">
+                        <Label Text="{x:Static properties:Resources.ChangePasswordLabel}" />
+                        <Label Text="{x:Static properties:Resources.NewPasswordLabel}" />
+                        <Entry
+                            IsPassword="True"
+                            Keyboard="Password"
+                            Text="{Binding NewPassword}" />
+                        <Label Text="{x:Static properties:Resources.ConfirmPasswordLabel}" />
+                        <Entry
+                            IsPassword="True"
+                            Keyboard="Password"
+                            Text="{Binding NewPasswordConfirm}" />
+                        <Button Command="{Binding ChangePasswordCommand}" Text="{x:Static properties:Resources.ChangeButton}" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Row="0" Grid.Column="1">
+                        <Label Text="{x:Static properties:Resources.ChangeEmailLabel}" />
+                        <Label Text="{x:Static properties:Resources.NewEmailLabel}" />
+                        <Entry Keyboard="Email" Text="{Binding NewEmail}" />
+                        <Button Command="{Binding ChangeEmailCommand}" Text="{x:Static properties:Resources.ChangeButton}" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Row="1" Grid.Column="1">
+                        <Label Text="{x:Static properties:Resources.ChangeUsernameLabel}" />
+                        <Label Text="{x:Static properties:Resources.NewUsernameLabel}" />
+                        <Entry Text="{Binding NewUsername}" />
+                        <Button Command="{Binding ChangeUsernameCommand}" Text="{x:Static properties:Resources.ChangeButton}" />
+                    </VerticalStackLayout>
+                </Grid>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

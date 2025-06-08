@@ -3,11 +3,9 @@ using CommunityToolkit.Mvvm.Input;
 using System.Security.Cryptography;
 using System.Text;
 using TFG_Projects_APP_Frontend.Entities.Dtos.Users;
-using TFG_Projects_APP_Frontend.Entities.Models;
 using TFG_Projects_APP_Frontend.Properties;
 using TFG_Projects_APP_Frontend.Rest;
 using TFG_Projects_APP_Frontend.Services.UsersService;
-using TFG_Projects_APP_Frontend.Utils;
 
 namespace TFG_Projects_APP_Frontend.PageModels;
 
@@ -56,32 +54,14 @@ public partial class LoginPageModel : ObservableObject
 
     public async Task OnNavigatedTo()
     {
-        if (NavigationContext.Startup)
-        {
-            NavigationContext.Startup = false;
-            if (Preferences.Get("RememberMe", false))
-            {
-                userSession.User = new AppUser
-                {
-                    Id = Preferences.Get("UserId", 1),
-                    Username = Preferences.Get("Username", "Admin"),
-                    Email = Preferences.Get("Email", "admin@test.com")
-                };
+        ApiFound = true;
+        Email = string.Empty;
+        Username = string.Empty;
+        Password = string.Empty;
+        Route = string.Empty;
+        Port = string.Empty;
 
-                await DirectLogin();
-            }
-        } else
-        {
-            ApiFound = true;
-            Email = string.Empty;
-            Username = string.Empty;
-            Password = string.Empty;
-            Route = string.Empty;
-            Port = string.Empty;
-
-            Preferences.Set("RememberMe", false);
-        }
-
+        Preferences.Set("RememberMe", false);
     }
 
     [RelayCommand]
@@ -133,6 +113,7 @@ public partial class LoginPageModel : ObservableObject
                     Preferences.Set("UserId", result.Id);
                     Preferences.Set("Username", result.Username);
                     Preferences.Set("Email", result.Email);
+                    Preferences.Set("Token", userSession.Token);
                 }
                 else
                 {
@@ -178,6 +159,7 @@ public partial class LoginPageModel : ObservableObject
                 Preferences.Set("UserId", result.Id);
                 Preferences.Set("Username", result.Username);
                 Preferences.Set("Email", result.Email);
+                Preferences.Set("Token", userSession.Token);
             }
             else
             {

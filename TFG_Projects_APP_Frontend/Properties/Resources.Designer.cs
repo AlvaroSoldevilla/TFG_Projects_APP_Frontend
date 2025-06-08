@@ -151,6 +151,15 @@ namespace TFG_Projects_APP_Frontend.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to App Settings.
+        /// </summary>
+        public static string AppSettingsNavigationTitle {
+            get {
+                return ResourceManager.GetString("AppSettingsNavigationTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Assigned to:.
         /// </summary>
         public static string AssignedToLabel {
@@ -165,6 +174,15 @@ namespace TFG_Projects_APP_Frontend.Properties {
         public static string CancelButton {
             get {
                 return ResourceManager.GetString("CancelButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change.
+        /// </summary>
+        public static string ChangeButton {
+            get {
+                return ResourceManager.GetString("ChangeButton", resourceCulture);
             }
         }
         
@@ -187,6 +205,33 @@ namespace TFG_Projects_APP_Frontend.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Change Email.
+        /// </summary>
+        public static string ChangeEmailLabel {
+            get {
+                return ResourceManager.GetString("ChangeEmailLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change Password.
+        /// </summary>
+        public static string ChangePasswordLabel {
+            get {
+                return ResourceManager.GetString("ChangePasswordLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change Username.
+        /// </summary>
+        public static string ChangeUsernameLabel {
+            get {
+                return ResourceManager.GetString("ChangeUsernameLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to OK.
         /// </summary>
         public static string ConfirmButton {
@@ -201,6 +246,15 @@ namespace TFG_Projects_APP_Frontend.Properties {
         public static string ConfirmDeleteMessageTitle {
             get {
                 return ResourceManager.GetString("ConfirmDeleteMessageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Confirm Password:.
+        /// </summary>
+        public static string ConfirmPasswordLabel {
+            get {
+                return ResourceManager.GetString("ConfirmPasswordLabel", resourceCulture);
             }
         }
         
@@ -583,6 +637,33 @@ namespace TFG_Projects_APP_Frontend.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You need to input an email.
+        /// </summary>
+        public static string EmailNotIntroducedMessage {
+            get {
+                return ResourceManager.GetString("EmailNotIntroducedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Couldn&apos;t update the email.
+        /// </summary>
+        public static string EmailNotUpdatedMessage {
+            get {
+                return ResourceManager.GetString("EmailNotUpdatedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Email successfully updated.
+        /// </summary>
+        public static string EmailUpdatedMessage {
+            get {
+                return ResourceManager.GetString("EmailUpdatedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please enter all data.
         /// </summary>
         public static string EnterAllDataMessage {
@@ -597,6 +678,15 @@ namespace TFG_Projects_APP_Frontend.Properties {
         public static string ErrorMessageTitle {
             get {
                 return ResourceManager.GetString("ErrorMessageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Home.
+        /// </summary>
+        public static string HomeNavigationTitle {
+            get {
+                return ResourceManager.GetString("HomeNavigationTitle", resourceCulture);
             }
         }
         
@@ -646,6 +736,15 @@ namespace TFG_Projects_APP_Frontend.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Log Out.
+        /// </summary>
+        public static string LogOutNavigationTitle {
+            get {
+                return ResourceManager.GetString("LogOutNavigationTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Modifies Progress Value:.
         /// </summary>
         public static string ModifiesValueLabel {
@@ -660,6 +759,33 @@ namespace TFG_Projects_APP_Frontend.Properties {
         public static string NameIsRequiredMessage {
             get {
                 return ResourceManager.GetString("NameIsRequiredMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New Email:.
+        /// </summary>
+        public static string NewEmailLabel {
+            get {
+                return ResourceManager.GetString("NewEmailLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New Password:.
+        /// </summary>
+        public static string NewPasswordLabel {
+            get {
+                return ResourceManager.GetString("NewPasswordLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New Username.
+        /// </summary>
+        public static string NewUsernameLabel {
+            get {
+                return ResourceManager.GetString("NewUsernameLabel", resourceCulture);
             }
         }
         
@@ -687,6 +813,42 @@ namespace TFG_Projects_APP_Frontend.Properties {
         public static string PasswordLabel {
             get {
                 return ResourceManager.GetString("PasswordLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You need to input a password and confirm it.
+        /// </summary>
+        public static string PasswordNotIntroducedMessage {
+            get {
+                return ResourceManager.GetString("PasswordNotIntroducedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Couldn&apos;t update the password.
+        /// </summary>
+        public static string PasswordNotUpdatedMessage {
+            get {
+                return ResourceManager.GetString("PasswordNotUpdatedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The passwords must match.
+        /// </summary>
+        public static string PasswordsMustMatchMessage {
+            get {
+                return ResourceManager.GetString("PasswordsMustMatchMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password successfully updated.
+        /// </summary>
+        public static string PasswordUpdatedMessage {
+            get {
+                return ResourceManager.GetString("PasswordUpdatedMessage", resourceCulture);
             }
         }
         
@@ -943,11 +1105,65 @@ namespace TFG_Projects_APP_Frontend.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You need to input a username.
+        /// </summary>
+        public static string UsernameNotIntroducedMessage {
+            get {
+                return ResourceManager.GetString("UsernameNotIntroducedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Couldn&apos;t update the username.
+        /// </summary>
+        public static string UsernameNotUpdatedMessage {
+            get {
+                return ResourceManager.GetString("UsernameNotUpdatedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Username successfully updated.
+        /// </summary>
+        public static string UsernameUpdatedMessage {
+            get {
+                return ResourceManager.GetString("UsernameUpdatedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to User not found.
         /// </summary>
         public static string UserNotFoundMessage {
             get {
                 return ResourceManager.GetString("UserNotFoundMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You have to confirm your identity to modify your user settings.
+        /// </summary>
+        public static string UserSettingsMessage {
+            get {
+                return ResourceManager.GetString("UserSettingsMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Log In.
+        /// </summary>
+        public static string UserSettingsMessageTitle {
+            get {
+                return ResourceManager.GetString("UserSettingsMessageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User Settings.
+        /// </summary>
+        public static string UserSettingsNavigationTitle {
+            get {
+                return ResourceManager.GetString("UserSettingsNavigationTitle", resourceCulture);
             }
         }
         
