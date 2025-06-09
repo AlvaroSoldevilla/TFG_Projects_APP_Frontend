@@ -25,6 +25,7 @@
         </Grid.RowDefinitions>
         <StackLayout Grid.Row="0" Orientation="Horizontal">
             <Button
+                BackgroundColor="{DynamicResource Create}"
                 Command="{Binding CreateTaskProgressCommand}"
                 HeightRequest="40"
                 HorizontalOptions="Start"
@@ -37,39 +38,47 @@
                 IsRunning="{Binding IsLoading}"
                 IsVisible="{Binding IsLoading}"
                 VerticalOptions="Center"
-                WidthRequest="50" />
+                WidthRequest="50"
+                Color="{DynamicResource ActivityIndicator}" />
         </StackLayout>
         <StackLayout
             Grid.Row="1"
             Padding="5"
             Orientation="Horizontal"
             Spacing="20">
-            <CollectionView HorizontalOptions="StartAndExpand" ItemsSource="{Binding TaskProgresses}">
-                <CollectionView.ItemsLayout>
-                    <GridItemsLayout Orientation="Horizontal" Span="1" />
-                </CollectionView.ItemsLayout>
-                <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="models:TaskProgress">
-                        <components:ProgressSectionComponent
-                            BindingContext="{Binding .}"
-                            ChildDeleteCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=DeleteTaskCommand}"
-                            ChildTapCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=EditTaskCommand}"
-                            CreateTaskCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=TaskCreateCommand}"
-                            DeleteCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=DeleteProgressSectionCommand}"
-                            DroppedOnProgressCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=DropOnProgressSectionCommand}"
-                            DroppedOnTaskCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=DroppedOnTaskCommand}"
-                            EditCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=EditTaskProgressSectionCommand}"
-                            MoveLeftCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=MoveSectionLeftCommand}"
-                            MoveRightCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=MoveSectionRightCommand}"
-                            TaskGrabbedCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=GrabTaskCommand}" />
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+            <ScrollView Orientation="Horizontal">
+                <CollectionView HorizontalOptions="StartAndExpand" ItemsSource="{Binding TaskProgresses}">
+                    <CollectionView.ItemsLayout>
+                        <GridItemsLayout Orientation="Horizontal" Span="1" />
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:TaskProgress">
+                            <components:ProgressSectionComponent
+                                BindingContext="{Binding .}"
+                                ChildDeleteCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=DeleteTaskCommand}"
+                                ChildTapCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=EditTaskCommand}"
+                                CreateTaskCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=TaskCreateCommand}"
+                                DeleteCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=DeleteProgressSectionCommand}"
+                                DroppedOnProgressCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=DropOnProgressSectionCommand}"
+                                DroppedOnTaskCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=DroppedOnTaskCommand}"
+                                EditCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=EditTaskProgressSectionCommand}"
+                                MoveLeftCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=MoveSectionLeftCommand}"
+                                MoveRightCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=MoveSectionRightCommand}"
+                                TaskGrabbedCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskProgressPageModel}}, Path=GrabTaskCommand}" />
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </ScrollView>
+
 
             <VerticalStackLayout IsVisible="{Binding IsEditingTaskProgress}" Spacing="5">
                 <StackLayout Orientation="Horizontal" Spacing="5">
                     <Label FontSize="30" Text="{x:Static properties:Resources.EditProgressSectionLabel}" />
-                    <Button Command="{Binding CloseEditingtTaskProgressCommand}" Text="X" />
+                    <Button
+                        BackgroundColor="{DynamicResource Transparent}"
+                        Command="{Binding CloseEditingtTaskProgressCommand}"
+                        Text="X"
+                        TextColor="{StaticResource Gray500}" />
                 </StackLayout>
 
                 <Label FontSize="20" Text="{x:Static properties:Resources.TitleLabel}" />
@@ -78,10 +87,16 @@
                 <Switch IsToggled="{Binding EditingTaskProgressData.ModifiesProgress}" />
                 <Label Text="{Binding TaskProgressValue, StringFormat='Progress: {0:F0}'}" />
                 <Slider
+                    BackgroundColor="{DynamicResource ProgressBarTrack}"
                     Maximum="100"
                     Minimum="0"
+                    MinimumTrackColor="{DynamicResource ProgressBarColor}"
+                    ThumbColor="{DynamicResource Controls}"
                     Value="{Binding TaskProgressValue}" />
-                <Button Command="{Binding SaveTaskProgressChangesCommand}" Text="{x:Static properties:Resources.SaveButton}" />
+                <Button
+                    BackgroundColor="{DynamicResource Save}"
+                    Command="{Binding SaveTaskProgressChangesCommand}"
+                    Text="{x:Static properties:Resources.SaveButton}" />
             </VerticalStackLayout>
 
             <Grid IsVisible="{Binding IsEditingTask}" VerticalOptions="FillAndExpand">
@@ -94,7 +109,11 @@
                     Orientation="Horizontal"
                     Spacing="5">
                     <Label FontSize="30" Text="{x:Static properties:Resources.EditTaskLabel}" />
-                    <Button Command="{Binding CloseEditingtTaskCommand}" Text="X" />
+                    <Button
+                        BackgroundColor="{DynamicResource Transparent}"
+                        Command="{Binding CloseEditingtTaskCommand}"
+                        Text="X"
+                        TextColor="{StaticResource Gray500}" />
                 </StackLayout>
                 <ScrollView Grid.Row="1" VerticalOptions="FillAndExpand">
                     <VerticalStackLayout Padding="10" Spacing="5">
@@ -110,8 +129,11 @@
                             <Label Text="{Binding ProgressValue, StringFormat='{0:F0}'}" />
                         </HorizontalStackLayout>
                         <Slider
+                            BackgroundColor="{DynamicResource ProgressBarTrack}"
                             Maximum="100"
                             Minimum="0"
+                            MinimumTrackColor="{DynamicResource ProgressBarColor}"
+                            ThumbColor="{DynamicResource Controls}"
                             Value="{Binding ProgressValue}" />
                         <Label FontSize="20" Text="{x:Static properties:Resources.LimitDateLabel}" />
                         <DatePicker Date="{Binding EditingTaskData.LimitDate}" Format="dd/MM/yyyy" />
@@ -133,7 +155,10 @@
                                 ItemDisplayBinding="{Binding Title}"
                                 ItemsSource="{Binding PossibleDependencies}"
                                 SelectedItem="{Binding DependencyTaskSelected}" />
-                            <Button Command="{Binding AddDependencyCommand}" Text="{x:Static properties:Resources.AddButton}" />
+                            <Button
+                                BackgroundColor="{DynamicResource Create}"
+                                Command="{Binding AddDependencyCommand}"
+                                Text="{x:Static properties:Resources.AddButton}" />
                         </StackLayout>
 
 
@@ -161,10 +186,19 @@
                                 Maximum="100"
                                 Minimum="0"
                                 Value="{Binding UnlockAtValue}" />
-                            <Button Command="{Binding SaveTaskDependencyChangesCommand}" Text="{x:Static properties:Resources.SaveDependencyChangesButton}" />
-                            <Button Command="{Binding RemoveDependencyCommand}" Text="{x:Static properties:Resources.RemoveDependencyButton}" />
+                            <Button
+                                BackgroundColor="{DynamicResource Save}"
+                                Command="{Binding SaveTaskDependencyChangesCommand}"
+                                Text="{x:Static properties:Resources.SaveDependencyChangesButton}" />
+                            <Button
+                                BackgroundColor="{DynamicResource Delete}"
+                                Command="{Binding RemoveDependencyCommand}"
+                                Text="{x:Static properties:Resources.RemoveDependencyButton}" />
                         </VerticalStackLayout>
-                        <Button Command="{Binding SaveTaskChangesCommand}" Text="{x:Static properties:Resources.SaveButton}" />
+                        <Button
+                            BackgroundColor="{DynamicResource Save}"
+                            Command="{Binding SaveTaskChangesCommand}"
+                            Text="{x:Static properties:Resources.SaveButton}" />
                     </VerticalStackLayout>
                 </ScrollView>
             </Grid>

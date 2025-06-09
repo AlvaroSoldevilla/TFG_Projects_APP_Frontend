@@ -9,7 +9,6 @@
     xmlns:properties="clr-namespace:TFG_Projects_APP_Frontend.Properties"
     Title="Login"
     x:DataType="pageModels:LoginPageModel"
-    BackgroundColor="#f5f5f5"
     NavigationPage.HasNavigationBar="False"
     Shell.FlyoutBehavior="Disabled"
     Shell.NavBarIsVisible="False">
@@ -18,60 +17,79 @@
         Padding="30"
         HorizontalOptions="Center"
         VerticalOptions="Center"
-        WidthRequest="350">
-        <VerticalStackLayout Spacing="20">
+        WidthRequest="500">
+        <Grid RowSpacing="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
 
             <Label
+                Grid.Row="0"
                 FontAttributes="Bold"
                 FontSize="32"
                 HorizontalOptions="Center"
                 Text="{x:Static properties:Resources.LoginPageMessage}" />
 
-            <Button Command="{Binding DirectLoginCommand}" Text="Debug Login" />
+            <Button
+                Grid.Row="1"
+                BackgroundColor="{DynamicResource Misc}"
+                Command="{Binding DirectLoginCommand}"
+                Text="Debug Login" />
 
-            <HorizontalStackLayout Spacing="10">
+            <HorizontalStackLayout Grid.Row="2" Spacing="10">
                 <Entry
                     x:Name="IP"
                     BackgroundColor="White"
                     Placeholder="{x:Static properties:Resources.ServerIPLabel}"
-                    Text="{Binding Route, Mode=TwoWay}"
-                    WidthRequest="80" />
+                    Text="{Binding Route, Mode=TwoWay}" />
 
                 <Entry
                     x:Name="Port"
                     BackgroundColor="White"
                     Placeholder="{x:Static properties:Resources.PortLabel}"
-                    Text="{Binding Port, Mode=TwoWay}"
-                    WidthRequest="60" />
+                    Text="{Binding Port, Mode=TwoWay}" />
                 <Button
                     Padding="10"
-                    BackgroundColor="#4CAF50"
+                    BackgroundColor="{DynamicResource Create}"
                     Command="{Binding TestConnectionCommand}"
                     CornerRadius="10"
                     FontAttributes="Bold"
                     IsVisible="{Binding ShowTestButton}"
                     Text="{x:Static properties:Resources.TestConnectionButton}"
-                    TextColor="White"
-                    WidthRequest="130" />
+                    TextColor="White" />
                 <VerticalStackLayout
                     HorizontalOptions="Center"
                     IsVisible="{Binding IsTesting}"
                     Spacing="0"
-                    VerticalOptions="Center"
-                    WidthRequest="130">
+                    VerticalOptions="Center">
                     <ActivityIndicator
                         HorizontalOptions="Center"
                         IsRunning="{Binding IsTesting}"
                         IsVisible="{Binding IsTesting}"
                         VerticalOptions="Center"
-                        Color="Gray" />
+                        Color="{DynamicResource ActivityIndicator}" />
                 </VerticalStackLayout>
 
             </HorizontalStackLayout>
 
             <Button
+                Grid.Row="3"
                 Padding="10"
-                BackgroundColor="#2196F3"
+                BackgroundColor="{DynamicResource Save}"
                 Command="{Binding ChangeRouteCommand}"
                 CornerRadius="10"
                 FontAttributes="Bold"
@@ -79,12 +97,14 @@
                 TextColor="White" />
             <Entry
                 x:Name="Username"
+                Grid.Row="4"
                 BackgroundColor="White"
                 Placeholder="Username"
                 Text="{Binding Username, Mode=TwoWay}" />
 
             <Entry
                 x:Name="Email"
+                Grid.Row="5"
                 BackgroundColor="White"
                 Keyboard="Email"
                 Placeholder="{x:Static properties:Resources.EmailLabel}"
@@ -92,23 +112,30 @@
 
             <Entry
                 x:Name="Password"
+                Grid.Row="6"
                 BackgroundColor="White"
                 IsPassword="True"
                 Placeholder="{x:Static properties:Resources.PasswordLabel}"
                 Text="{Binding Password, Mode=TwoWay}" />
 
-            <HorizontalStackLayout Spacing="-13" VerticalOptions="Center">
-                <CheckBox IsChecked="{Binding RememberMe}" VerticalOptions="Center" />
+            <HorizontalStackLayout
+                Grid.Row="7"
+                Spacing="-13"
+                VerticalOptions="Center">
+                <CheckBox
+                    IsChecked="{Binding RememberMe}"
+                    VerticalOptions="Center"
+                    Color="{DynamicResource Controls}" />
                 <Label
                     FontSize="14"
                     Text="{x:Static properties:Resources.RememberMeLabel}"
-                    TextColor="Black"
                     VerticalOptions="Center" />
             </HorizontalStackLayout>
 
             <Button
+                Grid.Row="8"
                 Padding="10"
-                BackgroundColor="#4CAF50"
+                BackgroundColor="{DynamicResource Save}"
                 Command="{Binding LoginCommand}"
                 CornerRadius="10"
                 FontAttributes="Bold"
@@ -116,8 +143,9 @@
                 TextColor="White" />
 
             <Button
+                Grid.Row="9"
                 Padding="10"
-                BackgroundColor="#2196F3"
+                BackgroundColor="{DynamicResource Create}"
                 Command="{Binding RegisterCommand}"
                 CornerRadius="10"
                 FontAttributes="Bold"
@@ -125,11 +153,12 @@
                 TextColor="White" />
 
             <ActivityIndicator
+                Grid.Row="10"
                 HorizontalOptions="Center"
                 IsRunning="{Binding IsLoading}"
                 IsVisible="{Binding IsLoading}"
                 VerticalOptions="Center"
-                Color="Gray" />
-        </VerticalStackLayout>
+                Color="{DynamicResource ActivityIndicator}" />
+        </Grid>
     </ScrollView>
 </ContentPage>

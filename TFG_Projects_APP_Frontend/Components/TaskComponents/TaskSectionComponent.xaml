@@ -21,20 +21,31 @@
                 Grid.Row="0"
                 Orientation="Horizontal"
                 Spacing="5">
-                <Button Clicked="Left_Clicked" Text="&lt;" />
+                <Button
+                    BackgroundColor="{DynamicResource Transparent}"
+                    TextColor="{StaticResource Gray500}"
+                    Clicked="Left_Clicked"
+                    Text="&lt;" />
                 <Label Text="{Binding Title}" />
-                <Button Clicked="Right_Clicked" Text="&gt;" />
+                <Button
+                    BackgroundColor="{DynamicResource Transparent}"
+                    TextColor="{StaticResource Gray500}"
+                    Clicked="Right_Clicked"
+                    Text="&gt;" />
             </StackLayout>
             <Button
                 Grid.Row="1"
+                BackgroundColor="{DynamicResource Edit}"
                 Clicked="Edit_Clicked"
                 Text="Edit" />
             <Button
                 Grid.Row="2"
+                BackgroundColor="{DynamicResource Delete}"
                 Clicked="Delete_Clicked"
                 Text="Delete" />
             <Button
                 Grid.Row="3"
+                BackgroundColor="{DynamicResource Create}"
                 Clicked="Create_Task_Clicked"
                 Text="Create Task" />
             <Border

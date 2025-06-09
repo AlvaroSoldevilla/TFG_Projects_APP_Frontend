@@ -871,7 +871,7 @@ namespace TFG_Projects_APP_Frontend.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Progress.
+        ///   Looks up a localized string similar to Progress: .
         /// </summary>
         public static string ProgressLabel {
             get {

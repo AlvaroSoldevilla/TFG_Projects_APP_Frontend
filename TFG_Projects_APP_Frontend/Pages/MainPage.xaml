@@ -17,6 +17,7 @@
                 HorizontalOptions="StartAndExpand"
                 Spacing="25">
                 <Button
+                    BackgroundColor="{DynamicResource Create}"
                     Command="{Binding CreateProjectCommand}"
                     HeightRequest="40"
                     HorizontalOptions="Start"
@@ -40,15 +41,17 @@
                                         <Label FontSize="12" Text="{Binding Description}" />
                                     </StackLayout>
                                     <Button
-                                        Command="{Binding ProjectDeleteCommand, Source={RelativeSource AncestorType={x:Type pageModels:MainPageModel}}}"
-                                        CommandParameter="{Binding .}"
-                                        HorizontalOptions="End"
-                                        Text="{x:Static properties:Resources.DeleteButton}" />
-                                    <Button
+                                        BackgroundColor="{DynamicResource Edit}"
                                         Command="{Binding ProjectEditCommand, Source={RelativeSource AncestorType={x:Type pageModels:MainPageModel}}}"
                                         CommandParameter="{Binding .}"
                                         HorizontalOptions="End"
                                         Text="{x:Static properties:Resources.EditButton}" />
+                                    <Button
+                                        BackgroundColor="{DynamicResource Delete}"
+                                        Command="{Binding ProjectDeleteCommand, Source={RelativeSource AncestorType={x:Type pageModels:MainPageModel}}}"
+                                        CommandParameter="{Binding .}"
+                                        HorizontalOptions="End"
+                                        Text="{x:Static properties:Resources.DeleteButton}" />
                                 </StackLayout>
                             </Border>
                         </DataTemplate>
@@ -60,12 +63,17 @@
                     IsRunning="{Binding Isloading}"
                     IsVisible="{Binding Isloading}"
                     VerticalOptions="Center"
-                    WidthRequest="50" />
+                    WidthRequest="50"
+                    Color="{DynamicResource ActivityIndicator}" />
             </VerticalStackLayout>
             <VerticalStackLayout IsVisible="{Binding IsEditingProject}">
                 <StackLayout Orientation="Horizontal">
                     <Label FontSize="30" Text="{x:Static properties:Resources.EditProjectLabel}" />
-                    <Button Command="{Binding CloseEditingCommand}" Text="X" />
+                    <Button
+                        BackgroundColor="{DynamicResource Transparent}"
+                        Command="{Binding CloseEditingCommand}"
+                        Text="X"
+                        TextColor="{StaticResource Gray500}" />
                 </StackLayout>
 
                 <Label FontSize="20" Text="{x:Static properties:Resources.TitleLabel}" />
@@ -75,7 +83,10 @@
                     x:Name="ProjectDescription"
                     HeightRequest="100"
                     Text="{Binding EditingProjectData.Description, Mode=TwoWay}" />
-                <Button Command="{Binding SaveProjectCommand}" Text="{x:Static properties:Resources.SaveButton}" />
+                <Button
+                    Background="{DynamicResource Save}"
+                    Command="{Binding SaveProjectCommand}"
+                    Text="{x:Static properties:Resources.SaveButton}" />
             </VerticalStackLayout>
         </StackLayout>
     </ScrollView>

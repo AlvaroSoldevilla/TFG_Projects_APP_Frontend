@@ -25,12 +25,12 @@
                 <Label FontSize="30" Text="{Binding CurrentProject.Title}" />
                 <Label FontSize="20" Text="{Binding CurrentProject.Description}" />
                 <Button
+                    BackgroundColor="{DynamicResource Create}"
                     Command="{Binding CreateConceptCommand}"
                     HeightRequest="40"
                     HorizontalOptions="Start"
                     Text="{x:Static properties:Resources.CreateConceptButton}"
-                    VerticalOptions="Start"
-                    WidthRequest="150" />
+                    VerticalOptions="Start" />
                 <CollectionView
                     IsVisible="{Binding CanSeeConcepts}"
                     ItemsSource="{Binding Concepts}"
@@ -48,13 +48,15 @@
                                     <Label FontSize="12" Text="{Binding Description}" />
                                     <StackLayout Orientation="Horizontal">
                                         <Button
-                                            Command="{Binding ConceptDeleteCommand, Source={RelativeSource AncestorType={x:Type pageModels:ProjectManagementPageModel}}}"
-                                            CommandParameter="{Binding .}"
-                                            Text="{x:Static properties:Resources.DeleteButton}" />
-                                        <Button
+                                            BackgroundColor="{DynamicResource Edit}"
                                             Command="{Binding ConceptEditCommand, Source={RelativeSource AncestorType={x:Type pageModels:ProjectManagementPageModel}}}"
                                             CommandParameter="{Binding .}"
                                             Text="{x:Static properties:Resources.EditButton}" />
+                                        <Button
+                                            BackgroundColor="{DynamicResource Delete}"
+                                            Command="{Binding ConceptDeleteCommand, Source={RelativeSource AncestorType={x:Type pageModels:ProjectManagementPageModel}}}"
+                                            CommandParameter="{Binding .}"
+                                            Text="{x:Static properties:Resources.DeleteButton}" />
                                     </StackLayout>
                                 </StackLayout>
                             </Border>
@@ -67,14 +69,15 @@
                     IsRunning="{Binding IsLoadingConcepts}"
                     IsVisible="{Binding IsLoadingConcepts}"
                     VerticalOptions="Center"
-                    WidthRequest="50" />
+                    WidthRequest="50"
+                    Color="{DynamicResource ActivityIndicator}" />
                 <Button
+                    BackgroundColor="{DynamicResource Create}"
                     Command="{Binding CreateTaskBoardCommand}"
                     HeightRequest="40"
                     HorizontalOptions="Start"
                     Text="{x:Static properties:Resources.CreateTaskBoardButton}"
-                    VerticalOptions="Start"
-                    WidthRequest="150" />
+                    VerticalOptions="Start" />
                 <CollectionView
                     IsVisible="{Binding CanSeeTaskBoards}"
                     ItemsSource="{Binding TaskBoards}"
@@ -92,13 +95,15 @@
                                     <Label FontSize="12" Text="{Binding Description}" />
                                     <StackLayout Orientation="Horizontal">
                                         <Button
-                                            Command="{Binding TaskBoardDeleteCommand, Source={RelativeSource AncestorType={x:Type pageModels:ProjectManagementPageModel}}}"
-                                            CommandParameter="{Binding .}"
-                                            Text="{x:Static properties:Resources.DeleteButton}" />
-                                        <Button
+                                            BackgroundColor="{DynamicResource Edit}"
                                             Command="{Binding TaskBoardEditCommand, Source={RelativeSource AncestorType={x:Type pageModels:ProjectManagementPageModel}}}"
                                             CommandParameter="{Binding .}"
                                             Text="{x:Static properties:Resources.EditButton}" />
+                                        <Button
+                                            BackgroundColor="{DynamicResource Delete}"
+                                            Command="{Binding TaskBoardDeleteCommand, Source={RelativeSource AncestorType={x:Type pageModels:ProjectManagementPageModel}}}"
+                                            CommandParameter="{Binding .}"
+                                            Text="{x:Static properties:Resources.DeleteButton}" />
                                     </StackLayout>
                                 </StackLayout>
                             </Border>
@@ -111,19 +116,23 @@
                     IsRunning="{Binding IsLoadingTaskBoards}"
                     IsVisible="{Binding IsLoadingTaskBoards}"
                     VerticalOptions="Center"
-                    WidthRequest="50" />
+                    WidthRequest="50"
+                    Color="{DynamicResource ActivityIndicator}" />
                 <Button
+                    BackgroundColor="{DynamicResource Create}"
                     Command="{Binding LookForUserCommand}"
                     HeightRequest="40"
                     HorizontalOptions="Start"
                     IsVisible="{Binding IsLookingForUser, Converter={StaticResource InvertedBoolConverter}}"
                     Text="{x:Static properties:Resources.AddUserButton}"
-                    VerticalOptions="Start"
-                    WidthRequest="150" />
+                    VerticalOptions="Start" />
 
                 <StackLayout IsVisible="{Binding IsLookingForUser}" Orientation="Horizontal">
                     <Entry Placeholder="{x:Static properties:Resources.SearchUserByEmailLabel}" Text="{Binding AdduserEmail, Mode=TwoWay}" />
-                    <Button Command="{Binding AddUserToProjectCommand}" Text="{x:Static properties:Resources.AddUserButton}" />
+                    <Button
+                        BackgroundColor="{DynamicResource Save}"
+                        Command="{Binding AddUserToProjectCommand}"
+                        Text="{x:Static properties:Resources.AddUserButton}" />
                 </StackLayout>
 
                 <CollectionView
@@ -142,6 +151,7 @@
                                         <Label FontSize="12" Text="{Binding Role.Name}" />
                                     </StackLayout>
                                     <Button
+                                        BackgroundColor="{DynamicResource Delete}"
                                         Command="{Binding UserRemoveCommand, Source={RelativeSource AncestorType={x:Type pageModels:ProjectManagementPageModel}}}"
                                         CommandParameter="{Binding .}"
                                         Text="{x:Static properties:Resources.RemoveButton}" />
@@ -156,13 +166,18 @@
                     IsRunning="{Binding IsLoadingUsers}"
                     IsVisible="{Binding IsLoadingUsers}"
                     VerticalOptions="Center"
-                    WidthRequest="50" />
+                    WidthRequest="50"
+                    Color="{DynamicResource ActivityIndicator}" />
             </VerticalStackLayout>
 
             <VerticalStackLayout IsVisible="{Binding IsEditingConcept}">
                 <StackLayout Orientation="Horizontal">
                     <Label FontSize="30" Text="{x:Static properties:Resources.EditConceptLabel}" />
-                    <Button Command="{Binding CloseEditingConceptCommand}" Text="X" />
+                    <Button
+                        BackgroundColor="{DynamicResource Transparent}"
+                        Command="{Binding CloseEditingConceptCommand}"
+                        Text="X"
+                        TextColor="{StaticResource Gray500}" />
                 </StackLayout>
                 <Label FontSize="20" Text="{x:Static properties:Resources.TitleLabel}" />
                 <Entry Placeholder="{x:Static properties:Resources.TitleText}" Text="{Binding EditingConceptData.Title}" />
@@ -171,7 +186,10 @@
                     HeightRequest="100"
                     Placeholder="{x:Static properties:Resources.DescriptionText}"
                     Text="{Binding EditingConceptData.Description}" />
-                <Button Command="{Binding SaveConceptChangesCommand}" Text="{x:Static properties:Resources.SaveButton}" />
+                <Button
+                    BackgroundColor="{DynamicResource Save}"
+                    Command="{Binding SaveConceptChangesCommand}"
+                    Text="{x:Static properties:Resources.SaveButton}" />
             </VerticalStackLayout>
 
             <VerticalStackLayout IsVisible="{Binding IsEditingTaskBoard}">
@@ -187,14 +205,21 @@
                         HeightRequest="100"
                         Placeholder="{x:Static properties:Resources.DescriptionText}"
                         Text="{Binding EditingTaskBoardData.Description}" />
-                    <Button Command="{Binding SaveTaskBoardChangesCommand}" Text="{x:Static properties:Resources.SaveButton}" />
+                    <Button
+                        BackgroundColor="{DynamicResource Save}"
+                        Command="{Binding SaveTaskBoardChangesCommand}"
+                        Text="{x:Static properties:Resources.SaveButton}" />
                 </StackLayout>
             </VerticalStackLayout>
 
             <VerticalStackLayout IsVisible="{Binding IsEditingUser}">
                 <StackLayout Orientation="Horizontal">
                     <Label FontSize="30" Text="{x:Static properties:Resources.EditUserLabel}" />
-                    <Button Command="{Binding CloseEditingUserCommand}" Text="X" />
+                    <Button
+                        BackgroundColor="{DynamicResource Transparent}"
+                        Command="{Binding CloseEditingUserCommand}"
+                        Text="X"
+                        TextColor="{StaticResource Gray500}" />
                 </StackLayout>
 
                 <Label FontSize="20" Text="{x:Static properties:Resources.RoleLabel}" />
@@ -232,7 +257,10 @@
                     </CollectionView.ItemTemplate>
                 </CollectionView>
 
-                <Button Command="{Binding SaveUserChangesCommand}" Text="{x:Static properties:Resources.SaveButton}" />
+                <Button
+                    BackgroundColor="{DynamicResource Save}"
+                    Command="{Binding SaveUserChangesCommand}"
+                    Text="{x:Static properties:Resources.SaveButton}" />
             </VerticalStackLayout>
         </StackLayout>
     </ScrollView>

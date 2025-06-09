@@ -50,7 +50,7 @@
 
                 <Button
                     Padding="10"
-                    BackgroundColor="#4CAF50"
+                    BackgroundColor="{DynamicResource Save}"
                     Command="{Binding LoginCommand}"
                     CornerRadius="10"
                     FontAttributes="Bold"
@@ -62,7 +62,7 @@
                     IsRunning="{Binding IsLoading}"
                     IsVisible="{Binding IsLoading}"
                     VerticalOptions="Center"
-                    Color="Gray" />
+                    Color="{DynamicResource ActivityIndicator}" />
             </VerticalStackLayout>
             <VerticalStackLayout IsVisible="{Binding IsLoggedIn}" Spacing="20">
                 <Grid>
@@ -91,19 +91,28 @@
                             IsPassword="True"
                             Keyboard="Password"
                             Text="{Binding NewPasswordConfirm}" />
-                        <Button Command="{Binding ChangePasswordCommand}" Text="{x:Static properties:Resources.ChangeButton}" />
+                        <Button
+                            BackgroundColor="{DynamicResource Create}"
+                            Command="{Binding ChangePasswordCommand}"
+                            Text="{x:Static properties:Resources.ChangeButton}" />
                     </VerticalStackLayout>
                     <VerticalStackLayout Grid.Row="0" Grid.Column="1">
                         <Label Text="{x:Static properties:Resources.ChangeEmailLabel}" />
                         <Label Text="{x:Static properties:Resources.NewEmailLabel}" />
                         <Entry Keyboard="Email" Text="{Binding NewEmail}" />
-                        <Button Command="{Binding ChangeEmailCommand}" Text="{x:Static properties:Resources.ChangeButton}" />
+                        <Button
+                            BackgroundColor="{DynamicResource Create}"
+                            Command="{Binding ChangeEmailCommand}"
+                            Text="{x:Static properties:Resources.ChangeButton}" />
                     </VerticalStackLayout>
                     <VerticalStackLayout Grid.Row="1" Grid.Column="1">
                         <Label Text="{x:Static properties:Resources.ChangeUsernameLabel}" />
                         <Label Text="{x:Static properties:Resources.NewUsernameLabel}" />
                         <Entry Text="{Binding NewUsername}" />
-                        <Button Command="{Binding ChangeUsernameCommand}" Text="{x:Static properties:Resources.ChangeButton}" />
+                        <Button
+                            BackgroundColor="{DynamicResource Create}"
+                            Command="{Binding ChangeUsernameCommand}"
+                            Text="{x:Static properties:Resources.ChangeButton}" />
                     </VerticalStackLayout>
                 </Grid>
             </VerticalStackLayout>

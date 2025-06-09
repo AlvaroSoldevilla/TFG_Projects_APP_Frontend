@@ -28,6 +28,7 @@
                     <DataTemplate x:DataType="models:ProjectType">
                         <Border Padding="5">
                             <Button
+                                BackgroundColor="{DynamicResource Create}"
                                 Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Concepts.ConceptBoardPageModel}}, Path=TypeSelectedCommand}"
                                 CommandParameter="{Binding .}"
                                 Text="{Binding Name}" />
@@ -41,7 +42,8 @@
                 IsRunning="{Binding IsLoading}"
                 IsVisible="{Binding IsLoading}"
                 VerticalOptions="Center"
-                WidthRequest="50" />
+                WidthRequest="50"
+                Color="{DynamicResource ActivityIndicator}" />
         </StackLayout>
         <Grid Grid.Column="1">
             <Grid.ColumnDefinitions>
@@ -61,7 +63,11 @@
                 Spacing="5">
                 <StackLayout Orientation="Horizontal" Spacing="5">
                     <Label FontSize="30" Text="{x:Static properties:Resources.EditComponentLabel}" />
-                    <Button Command="{Binding CloseEditingComponentCommand}" Text="X" />
+                    <Button
+                        BackgroundColor="{DynamicResource Transparent}"
+                        TextColor="{StaticResource Gray500}"
+                        Command="{Binding CloseEditingComponentCommand}"
+                        Text="X" />
                 </StackLayout>
 
                 <Label FontSize="20" Text="{x:Static properties:Resources.TitleLabel}" />
@@ -72,8 +78,14 @@
                     Text="{x:Static properties:Resources.ContentLabel}" />
                 <Editor IsVisible="{Binding IsEditingNote}" Text="{Binding EditComponentData.Content}" />
 
-                <Button Command="{Binding DeleteComponentCommand}" Text="{x:Static properties:Resources.DeleteButton}" />
-                <Button Command="{Binding SaveComponentCommand}" Text="{x:Static properties:Resources.SaveButton}" />
+                <Button
+                    BackgroundColor="{DynamicResource Delete}"
+                    Command="{Binding DeleteComponentCommand}"
+                    Text="{x:Static properties:Resources.DeleteButton}" />
+                <Button
+                    BackgroundColor="{DynamicResource Save}"
+                    Command="{Binding SaveComponentCommand}"
+                    Text="{x:Static properties:Resources.SaveButton}" />
             </VerticalStackLayout>
         </Grid>
 

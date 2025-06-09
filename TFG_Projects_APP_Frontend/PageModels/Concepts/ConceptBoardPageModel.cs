@@ -28,13 +28,12 @@ public partial class ConceptBoardPageModel : ObservableObject
 
     public ConceptBoard ConceptBoard { get; set; }
 
-    private ConceptComponent _hoveringContainer { get; set; }
-
     [ObservableProperty]
     private bool _isLoading;
 
     private bool _isLoadingData = false;
     private bool _isNavigating = false;
+    private bool _isRemovingNoteFromComntainer = false;
 
     [ObservableProperty]
     private bool _isEditingNote;
@@ -147,9 +146,12 @@ public partial class ConceptBoardPageModel : ObservableObject
                 var allComponents = await componentsService.GetAllComponentsByBoard(ConceptBoard.Id);
                 component.Children = allComponents.Where(c => c.IdParent == component.Id).ToList();
             }
-
+            
             PaintComponent(component);
         }
+
+        Components = new(componentList);
+
         IsLoading = false;
         _isLoadingData = false;
     }
@@ -190,8 +192,7 @@ public partial class ConceptBoardPageModel : ObservableObject
                     ChildTapCommand = new Command<ConceptComponent>(EditNote),
                     DragEndCommand = new Command<ConceptComponent>(DropComponent),
                     ChildDragEndCommand = new Command<ConceptComponent>(DropComponent),
-                    HoverEnterCommand = new Command<ConceptComponent>(HoverEnter),
-                    HoverExitCommand = new Command<ConceptComponent>(HoverExit)
+                    ChildDoubleTapCommand = new Command<ConceptComponent>(RemoveNoteFromContainer)
                 };
                 break;
             case 4: // Table
@@ -209,16 +210,6 @@ public partial class ConceptBoardPageModel : ObservableObject
         {
             _page.AddComponent(componentView, new Point(component.PosX ?? 0, component.PosY ?? 0));
         }
-    }
-
-    private void HoverExit(ConceptComponent component)
-    {
-        _hoveringContainer = null;
-    }
-
-    private void HoverEnter(ConceptComponent component)
-    {
-        _hoveringContainer = component;
     }
 
     [RelayCommand]
@@ -384,21 +375,60 @@ public partial class ConceptBoardPageModel : ObservableObject
     }
 
     [RelayCommand]
+    private async void RemoveNoteFromContainer(ConceptComponent note)
+    {
+        _isRemovingNoteFromComntainer = true;
+        IsEditingComponent = false;
+        IsEditingNote = false;
+        List<PermissionsUtils.Permissions> permissions = new List<PermissionsUtils.Permissions>();
+        permissions.AddRange(PermissionsUtils.Permissions.FullPermissions, PermissionsUtils.Permissions.EditComponents, PermissionsUtils.Permissions.FullConceptPermissions);
+        if (permissionsUtils.HasOnePermission(permissions))
+        {
+            if (note != null && note.IdParent != null && note.IdParent != note.Id)
+            {
+                
+                note.PosX = 0;
+                note.PosY = 0;
+
+                var noteUpdate = new ComponentUpdate
+                {
+                    IdBoard = note.IdBoard,
+                    IdParent = note.Id,
+                    IdType = note.IdType,
+                    Title = note.Title,
+                    PosX = note.PosX,
+                    PosY = note.PosY,
+                    Content = note.Content
+                };
+                await componentsService.Patch(note.Id, noteUpdate);
+            }
+        }
+        await LoadData();
+    }
+
+    [RelayCommand]
     private async void DropComponent(ConceptComponent component)
     {
         List<PermissionsUtils.Permissions> permissions = new List<PermissionsUtils.Permissions>();
         permissions.AddRange(PermissionsUtils.Permissions.FullPermissions, PermissionsUtils.Permissions.EditComponents, PermissionsUtils.Permissions.FullConceptPermissions);
         if (permissionsUtils.HasOnePermission(permissions))
         {
-            if (component != null && component != null)
+            if (component != null)
             {
-                if (component.IdType == 2 && _hoveringContainer != null)
+                if (component.IdType == 2 && (component.IdParent == null || component.IdParent == component.Id))
                 {
-                    component.IdParent = _hoveringContainer.Id;
+                    var container = CheckCollission(component);
+                    if (container != null)
+                    {
+                        component.IdParent = container.Id;
+                    }
+                    
                 }
                 else if (component.IdType == 2)
                 {
                     component.IdParent = component.Id;
+                    component.PosX = 0;
+                    component.PosY = 0;
                 }
 
                 var componentUpdate = new ComponentUpdate
@@ -424,34 +454,41 @@ public partial class ConceptBoardPageModel : ObservableObject
     [RelayCommand]
     private async void EditNote(ConceptComponent component)
     {
-        List<PermissionsUtils.Permissions> permissions = new List<PermissionsUtils.Permissions>();
-        permissions.AddRange(PermissionsUtils.Permissions.FullPermissions, PermissionsUtils.Permissions.EditComponents, PermissionsUtils.Permissions.FullConceptPermissions);
-        if (permissionsUtils.HasOnePermission(permissions))
+        if (!_isRemovingNoteFromComntainer) {
+            List<PermissionsUtils.Permissions> permissions = new List<PermissionsUtils.Permissions>();
+            permissions.AddRange(PermissionsUtils.Permissions.FullPermissions, PermissionsUtils.Permissions.EditComponents, PermissionsUtils.Permissions.FullConceptPermissions);
+            if (permissionsUtils.HasOnePermission(permissions))
+            {
+                IsEditingComponent = true;
+                IsEditingNote = true;
+                EditComponentData = component;
+            }
+            else
+            {
+                await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.NoPermissionMessage, Resources.ConfirmButton);
+            }
+        } else
         {
-            IsEditingComponent = true;
-            IsEditingNote = true;
-            EditComponentData = component;
-        }
-        else
-        {
-            await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.NoPermissionMessage, Resources.ConfirmButton);
+            _isRemovingNoteFromComntainer = false;
         }
     }
 
     [RelayCommand]
     private async void EditComponent(ConceptComponent component)
     {
+        if (!_isRemovingNoteFromComntainer) {
         List<PermissionsUtils.Permissions> permissions = new List<PermissionsUtils.Permissions>();
         permissions.AddRange(PermissionsUtils.Permissions.FullPermissions, PermissionsUtils.Permissions.EditComponents, PermissionsUtils.Permissions.FullConceptPermissions);
-        if (permissionsUtils.HasOnePermission(permissions))
-        {
-            IsEditingNote = false;
-            IsEditingComponent = true;
-            EditComponentData = component;
-        }
-        else
-        {
-            await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.NoPermissionMessage, Resources.ConfirmButton);
+            if (permissionsUtils.HasOnePermission(permissions))
+            {
+                IsEditingNote = false;
+                IsEditingComponent = true;
+                EditComponentData = component;
+            }
+            else
+            {
+                await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.NoPermissionMessage, Resources.ConfirmButton);
+            }
         }
     }
 
@@ -489,4 +526,44 @@ public partial class ConceptBoardPageModel : ObservableObject
         }
     }
 
+    private ConceptComponent CheckCollission(ConceptComponent note)
+    {
+
+        const double containerWidth = 300;
+        const double noteHeight = 100; // Approximate height of one NoteComponent
+        const double labelHeight = 50; // From MinimumHeightRequest
+        const double titlePadding = 10; // Label padding
+        const double stackPadding = 10; // ChildrenContainer padding
+        const double maxContainerHeight = 500;
+
+        // Simulate bounds of the dragged note
+        double noteX = note.PosX ?? 0;
+        double noteY = note.PosY ?? 0;
+        double noteWidth = 150;
+        double noteRectHeight = 100;
+
+        var noteRect = new Rect(noteX, noteY, noteWidth, noteRectHeight);
+
+        foreach (var container in Components.Where(c => c.IdType == 3)) // Only containers
+        {
+            double containerX = container.PosX ?? 0;
+            double containerY = container.PosY ?? 0;
+
+            int childNoteCount = Components.Count(c => c.IdParent == container.Id && c.Id != c.IdParent && c.IdType == 2);
+
+            double totalContainerHeight =
+                labelHeight + (2 * titlePadding) +   // Label + its padding
+                (childNoteCount * noteHeight) +      // Notes inside
+                (2 * stackPadding);                  // StackLayout padding
+
+            var containerRect = new Rect(containerX, containerY, containerWidth, totalContainerHeight);
+
+            if (noteRect.IntersectsWith(containerRect))
+            {
+                return container;
+            }
+        }
+
+        return null;
+    }
 }

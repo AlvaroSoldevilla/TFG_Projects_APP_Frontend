@@ -388,7 +388,7 @@
     <value>Prioridad</value>
   </data>
   <data name="ProgressLabel" xml:space="preserve">
-    <value>Progreso</value>
+    <value>Progreso: </value>
   </data>
   <data name="ProgressValidationMessage" xml:space="preserve">
     <value>El valor de progreso debe estar entre 0 y 100</value>

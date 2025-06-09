@@ -1,4 +1,3 @@
-using Microsoft.Maui.Graphics;
 using System.Windows.Input;
 using TFG_Projects_APP_Frontend.Entities.Models;
 
@@ -11,6 +10,9 @@ public partial class NoteComponent : ContentView
 
     public static readonly BindableProperty TapCommandProperty =
     BindableProperty.Create(nameof(TapCommand), typeof(ICommand), typeof(NoteComponent), default(ICommand));
+
+    public static readonly BindableProperty DoubleTapCommandProperty =
+    BindableProperty.Create(nameof(DoubleTapCommandProperty), typeof(ICommand), typeof(NoteComponent), default(ICommand));
 
     public static readonly BindableProperty DragEndCommandProperty =
     BindableProperty.Create(nameof(DragEndCommandProperty), typeof(ICommand), typeof(NoteComponent), default(ICommand));
@@ -27,6 +29,12 @@ public partial class NoteComponent : ContentView
         set => SetValue(TapCommandProperty, value);
     }
 
+    public ICommand DoubleTapCommand
+    {
+        get => (ICommand)GetValue(DoubleTapCommandProperty);
+        set => SetValue(DoubleTapCommandProperty, value);
+    }
+
     public ICommand DragEndCommand
     {
         get => (ICommand)GetValue(DragEndCommandProperty);
@@ -34,12 +42,11 @@ public partial class NoteComponent : ContentView
     }
 
     private Point _startOffset;
+    private DateTime _lastTapTime;
     private Point _position;
 
     public event EventHandler? DragStarted;
     public event EventHandler? DragEnded;
-
-    private AbsoluteLayout? _absoluteLayout;
 
     public NoteComponent()
 	{
@@ -58,12 +65,16 @@ public partial class NoteComponent : ContentView
 
     private void AddGestures()
     {
-        var tapGesture = new TapGestureRecognizer();
-        tapGesture.Tapped += (s, e) => OnTapped();
+        var tapGesture = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
+        tapGesture.Tapped += OnTapped;
+
+        var doubleTapgesture = new TapGestureRecognizer { NumberOfTapsRequired = 2 };
+        doubleTapgesture.Tapped += OnDoubleTapped;
 
         var panGesture = new PanGestureRecognizer();
         panGesture.PanUpdated += OnPanUpdated;
         this.GestureRecognizers.Add(tapGesture);
+        this.GestureRecognizers.Add(doubleTapgesture);
         this.GestureRecognizers.Add(panGesture);
     }
 
@@ -73,35 +84,26 @@ public partial class NoteComponent : ContentView
         {
             case GestureStatus.Started:
                 DragStarted?.Invoke(this, EventArgs.Empty);
-
-                _absoluteLayout = FindNearestAbsoluteLayout(this);
-                if (_absoluteLayout != null)
-                {
-                    var bounds = AbsoluteLayout.GetLayoutBounds(this);
-                    _startOffset = new Point(bounds.X, bounds.Y);
-                    _position = new Point(bounds.X, bounds.Y);
-                }
+                var bounds = AbsoluteLayout.GetLayoutBounds(this);
+                _startOffset = new Point(bounds.X, bounds.Y);
+                _position = new Point(bounds.X, bounds.Y);
+                this.ZIndex = 1;
                 break;
 
             case GestureStatus.Running:
-                if (_absoluteLayout != null)
-                {
-                    double runningX = _startOffset.X + e.TotalX;
-                    double runningY = _startOffset.Y + e.TotalY;
-                    _position = new Point(runningX, runningY);
-                    AbsoluteLayout.SetLayoutBounds(this, new Rect(runningX, runningY, -1, -1));
-                }
+                double runningX = _startOffset.X + e.TotalX;
+                double runningY = _startOffset.Y + e.TotalY;
+                _position = new Point(runningX, runningY);
+                AbsoluteLayout.SetLayoutBounds(this, new Rect(runningX, runningY, -1, -1));
                 break;
 
             case GestureStatus.Completed:
-                if (_absoluteLayout != null)
-                {
-                    double finalX = _position.X;
-                    double finalY = _position.Y;
-                    AbsoluteLayout.SetLayoutBounds(this, new Rect(finalX, finalY, -1, -1));
-                    DragEnded?.Invoke(this, EventArgs.Empty);
-                    OnDragEnded(finalX, finalY);
-                }
+                double finalX = _position.X;
+                double finalY = _position.Y;
+                this.ZIndex = 0;
+                AbsoluteLayout.SetLayoutBounds(this, new Rect(finalX, finalY, -1, -1));
+                DragEnded?.Invoke(this, EventArgs.Empty);
+                OnDragEnded(finalX, finalY);
                 break;
         }
     }
@@ -117,7 +119,32 @@ public partial class NoteComponent : ContentView
         }
     }
 
-    private void OnTapped()
+    private void OnTapped(object sender, EventArgs e)
+    {
+        var now = DateTime.Now;
+        if ((now - _lastTapTime).TotalMilliseconds < 300)
+        {
+            OnDoubleTap(); // Fallback in case OS misses a double-tap
+        }
+        else
+        {
+            _lastTapTime = now;
+            Dispatcher.DispatchDelayed(TimeSpan.FromMilliseconds(200), () =>
+            {
+                if ((DateTime.Now - _lastTapTime).TotalMilliseconds >= 200)
+                {
+                    OnSingleTap();
+                }
+            });
+        }
+    }
+
+    private void OnDoubleTapped(object? sender, TappedEventArgs e)
+    {
+        OnDoubleTap();
+    }
+
+    private void OnSingleTap()
     {
         if (TapCommand?.CanExecute(this) == true)
         {
@@ -125,15 +152,11 @@ public partial class NoteComponent : ContentView
         }
     }
 
-    private AbsoluteLayout? FindNearestAbsoluteLayout(Element? current)
+    private void OnDoubleTap()
     {
-        while (current != null)
+        if (DoubleTapCommand?.CanExecute(this) == true)
         {
-            if (current is AbsoluteLayout abs)
-                return abs;
-
-            current = current.Parent;
+            DoubleTapCommand.Execute(Component);
         }
-        return null;
     }
 }

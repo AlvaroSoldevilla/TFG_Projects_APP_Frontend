@@ -1,10 +1,6 @@
 using System.Windows.Input;
 using TFG_Projects_APP_Frontend.Entities.Models;
 
-#if WINDOWS
-using Microsoft.UI.Xaml;
-#endif
-
 namespace TFG_Projects_APP_Frontend.Components.ConceptComponents;
 
 public partial class ContainerComponent : ContentView
@@ -24,11 +20,8 @@ public partial class ContainerComponent : ContentView
     public static readonly BindableProperty ChildTapCommandProperty =
     BindableProperty.Create(nameof(ChildTapCommandProperty), typeof(ICommand), typeof(NoteComponent), default(ICommand));
 
-    public static readonly BindableProperty HoverEnterCommandProperty =
-    BindableProperty.Create(nameof(HoverEnterCommandProperty), typeof(ICommand), typeof(ContainerComponent), default(ICommand));
-
-    public static readonly BindableProperty HoverExitCommandProperty =
-    BindableProperty.Create(nameof(HoverExitCommandProperty), typeof(ICommand), typeof(ContainerComponent), default(ICommand));
+    public static readonly BindableProperty ChildDoubleTapCommandProperty =
+    BindableProperty.Create(nameof(ChildDoubleTapCommandProperty), typeof(ICommand), typeof(NoteComponent), default(ICommand));
 
     public ConceptComponent Component
     {
@@ -60,21 +53,14 @@ public partial class ContainerComponent : ContentView
         set => SetValue(ChildTapCommandProperty, value);
     }
 
-    public ICommand HoverEnterCommand
+    public ICommand ChildDoubleTapCommand
     {
-        get => (ICommand)GetValue(HoverEnterCommandProperty);
-        set => SetValue(HoverEnterCommandProperty, value);
-    }
-
-    public ICommand HoverExitCommand
-    {
-        get => (ICommand)GetValue(HoverExitCommandProperty);
-        set => SetValue(HoverExitCommandProperty, value);
+        get => (ICommand)GetValue(ChildDoubleTapCommandProperty);
+        set => SetValue(ChildDoubleTapCommandProperty, value);
     }
 
     private Point _startOffset;
     private Point _position;
-    private bool _suppressPan = false;
 
 
     public ContainerComponent()
@@ -115,15 +101,10 @@ public partial class ContainerComponent : ContentView
                             {
                                 Component = child,
                                 TapCommand = new Command<ConceptComponent>(view.EditNote),
-                                DragEndCommand = new Command<ConceptComponent>(view.DropComponent)
+                                DragEndCommand = new Command<ConceptComponent>(view.DropComponent),
+                                DoubleTapCommand = new Command<ConceptComponent>(view.RemoveContainer)
                             },
                         };
-
-                        if (renderedChild is NoteComponent note)
-                        {
-                            note.DragStarted += (_, __) => view._suppressPan = true;
-                            note.DragEnded += (_, __) => view._suppressPan = false;
-                        }
                     }
 
                     if (renderedChild != null)
@@ -144,37 +125,17 @@ public partial class ContainerComponent : ContentView
         panGesture.PanUpdated += OnPanUpdated;
         this.GestureRecognizers.Add(tapGesture);
         this.GestureRecognizers.Add(panGesture);
-
-#if WINDOWS
-        this.HandlerChanged += (s, e) =>
-        {
-            if (this.Handler?.PlatformView is Microsoft.UI.Xaml.FrameworkElement frameworkElement)
-            {
-                frameworkElement.PointerEntered += (sender, args) =>
-                {
-                    OnHoverEnter();
-                };
-
-                frameworkElement.PointerExited += (sender, args) =>
-                {
-                    OnHoverExit();
-                };
-            }
-        };
-#endif
     }
 
     private void OnPanUpdated(object? sender, PanUpdatedEventArgs e)
     {
-        if (_suppressPan)
-            return;
-
         switch (e.StatusType)
         {
             case GestureStatus.Started:
                 var bounds = AbsoluteLayout.GetLayoutBounds(this);
                 _startOffset = new Point(bounds.X, bounds.Y);
                 _position = new Point(bounds.X, bounds.Y);
+                this.ZIndex = 1;
                 break;
 
             case GestureStatus.Running:
@@ -188,6 +149,7 @@ public partial class ContainerComponent : ContentView
             case GestureStatus.Completed:
                 double finalX = _position.X;
                 double finalY = _position.Y;
+                this.ZIndex = 0;
                 AbsoluteLayout.SetLayoutBounds(this, new Rect(finalX, finalY, -1, -1));
                 OnDragEnded(finalX, finalY);
                 break;
@@ -196,7 +158,6 @@ public partial class ContainerComponent : ContentView
 
     private void OnDragEnded(double x, double y)
     {
-
         if (DragEndCommand?.CanExecute(this) == true)
         {
             Component.PosX = x;
@@ -223,25 +184,14 @@ public partial class ContainerComponent : ContentView
 
     private void DropComponent(ConceptComponent component)
     {
-        if (ChildDragEndCommand?.CanExecute(component) == true)
-        {
-            ChildDragEndCommand.Execute(component);
-        }
+        return;
     }
 
-    private void OnHoverEnter()
+    private void RemoveContainer(ConceptComponent component)
     {
-        if (HoverEnterCommand?.CanExecute(this) == true)
+        if (ChildDoubleTapCommand?.CanExecute(component) == true)
         {
-            HoverEnterCommand.Execute(Component);
-        }
-    }
-
-    private void OnHoverExit()
-    {
-        if (HoverExitCommand?.CanExecute(this) == true)
-        {
-            HoverExitCommand.Execute(Component);
+            ChildDoubleTapCommand.Execute(component);
         }
     }
 

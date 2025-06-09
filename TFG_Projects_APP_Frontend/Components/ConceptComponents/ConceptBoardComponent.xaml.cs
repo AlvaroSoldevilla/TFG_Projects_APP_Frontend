@@ -83,6 +83,7 @@ public partial class ConceptBoardComponent : ContentView
                 var bounds = AbsoluteLayout.GetLayoutBounds(this);
                 _startOffset = new Point(bounds.X, bounds.Y);
                 _position = new Point(bounds.X, bounds.Y);
+                this.ZIndex = 1;
                 break;
 
             case GestureStatus.Running:
@@ -96,6 +97,7 @@ public partial class ConceptBoardComponent : ContentView
             case GestureStatus.Completed:
                 double finalX = _position.X;
                 double finalY = _position.Y;
+                this.ZIndex = 0;
                 AbsoluteLayout.SetLayoutBounds(this, new Rect(finalX, finalY, -1, -1));
                 OnDragEnded(finalX, finalY);
                 break;

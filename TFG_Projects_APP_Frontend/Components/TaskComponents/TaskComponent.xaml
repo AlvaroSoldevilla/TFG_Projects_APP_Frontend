@@ -22,7 +22,10 @@
             <Label Text="{Binding UserAssigned.Username, StringFormat='Assigned to: {0}'}" />
             <Label Text="{Binding Priority.Name, StringFormat='Priority: {0}'}" />
             <Label Text="{Binding CompletionDate}" />
-            <Button Clicked="Delete_Clicked" Text="Delete Task" />
+            <Button
+                BackgroundColor="{DynamicResource Delete}"
+                Clicked="Delete_Clicked"
+                Text="Delete Task" />
             <CollectionView
                 x:Name="TaskList"
                 ItemsSource="{Binding Children}"
@@ -47,6 +50,7 @@
                                     <Label Text="{Binding Priority.Name, StringFormat='Priority: {0}'}" />
                                     <Label Text="{Binding CompletionDate}" />
                                     <Button
+                                        BackgroundColor="{DynamicResource Delete}"
                                         Command="{Binding Source={RelativeSource AncestorType={x:Type components:TaskComponent}}, Path=ChildDeleteCommand}"
                                         CommandParameter="{Binding .}"
                                         Text="Delete" />
