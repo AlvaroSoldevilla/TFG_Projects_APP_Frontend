@@ -18,187 +18,203 @@
             <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
         </ResourceDictionary>
     </ContentPage.Resources>
-    <Grid Padding="15">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+    <Grid Padding="15" HorizontalOptions="FillAndExpand">
 
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
 
-        <StackLayout Grid.Row="0" Orientation="Horizontal">
-            <Button
-                BackgroundColor="{DynamicResource Create}"
-                Command="{Binding CreateTaskSectionCommand}"
-                HeightRequest="40"
-                HorizontalOptions="Start"
-                Text="{x:Static properties:Resources.CreateTaskSectionButton}"
-                VerticalOptions="Start"
-                WidthRequest="200" />
-            <ActivityIndicator
-                HeightRequest="50"
-                HorizontalOptions="Center"
-                IsRunning="{Binding IsLoading}"
-                IsVisible="{Binding IsLoading}"
-                VerticalOptions="Center"
-                WidthRequest="50"
-                Color="{DynamicResource ActivityIndicator}" />
-        </StackLayout>
-        <StackLayout
-            Grid.Row="1"
-            Padding="5"
-            Orientation="Horizontal"
-            Spacing="20">
-            <ScrollView Orientation="Horizontal">
-                <CollectionView
-                    HorizontalOptions="StartAndExpand"
-                    ItemsSource="{Binding TaskSections}"
-                    SelectedItem="{Binding SelectedTaskSection}"
-                    SelectionChangedCommand="{Binding TaskSectionSelectedCommand}"
-                    SelectionMode="Single">
-                    <CollectionView.ItemsLayout>
-                        <GridItemsLayout Orientation="Horizontal" Span="1" />
-                    </CollectionView.ItemsLayout>
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="models:TaskSection">
-                            <components:TaskSectionComponent
-                                BindingContext="{Binding .}"
-                                ChildDeleteCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=DeleteTaskCommand}"
-                                ChildTapCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=EditTaskCommand}"
-                                CreateTaskCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=TaskCreateCommand}"
-                                DeleteCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=DeleteTaskSectionCommand}"
-                                DroppedOnSectionCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=DropOnSectionCommand}"
-                                DroppedOnTaskCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=DroppedOnTaskCommand}"
-                                EditCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=EditTaskSectionCommand}"
-                                MoveLeftCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=MoveSectionLeftCommand}"
-                                MoveRightCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=MoveSectionRightCommand}"
-                                TaskGrabbedCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=GrabTaskCommand}" />
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-            </ScrollView>
-
-
-            <VerticalStackLayout IsVisible="{Binding IsEditingTaskSection}" Spacing="5">
-                <StackLayout Orientation="Horizontal" Spacing="5">
-                    <Label FontSize="30" Text="{x:Static properties:Resources.EditTaskSectionLabel}" />
-                    <Button
-                        BackgroundColor="{DynamicResource Transparent}"
-                        Command="{Binding CloseEditingtTaskSectionCommand}"
-                        Text="X"
-                        TextColor="{StaticResource Gray500}" />
-                </StackLayout>
-
-                <Label FontSize="20" Text="{x:Static properties:Resources.TitleLabel}" />
-                <Entry Placeholder="{x:Static properties:Resources.TitleText}" Text="{Binding EditingTaskSectionData.Title}" />
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <StackLayout Grid.Row="0" Orientation="Horizontal">
                 <Button
-                    BackgroundColor="{DynamicResource Save}"
-                    Command="{Binding SaveTaskSectionChangesCommand}"
-                    Text="{x:Static properties:Resources.SaveButton}" />
-            </VerticalStackLayout>
+                    BackgroundColor="{DynamicResource Create}"
+                    Command="{Binding CreateTaskSectionCommand}"
+                    HeightRequest="40"
+                    HorizontalOptions="Start"
+                    Text="{x:Static properties:Resources.CreateTaskSectionButton}"
+                    VerticalOptions="Start"
+                    WidthRequest="200" />
+                <ActivityIndicator
+                    HeightRequest="50"
+                    HorizontalOptions="Center"
+                    IsRunning="{Binding IsLoading}"
+                    IsVisible="{Binding IsLoading}"
+                    VerticalOptions="Center"
+                    WidthRequest="50"
+                    Color="{DynamicResource ActivityIndicator}" />
+            </StackLayout>
+            <StackLayout
+                Grid.Row="1"
+                Padding="5"
+                Orientation="Horizontal"
+                Spacing="20">
+                <ScrollView Orientation="Horizontal">
+                    <CollectionView
+                        HorizontalOptions="StartAndExpand"
+                        ItemsSource="{Binding TaskSections}"
+                        SelectedItem="{Binding SelectedTaskSection}"
+                        SelectionChangedCommand="{Binding TaskSectionSelectedCommand}"
+                        SelectionMode="Single">
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout Orientation="Horizontal" Span="1" />
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:TaskSection">
+                                <components:TaskSectionComponent
+                                    BindingContext="{Binding .}"
+                                    ChildDeleteCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=DeleteTaskCommand}"
+                                    ChildTapCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=EditTaskCommand}"
+                                    CreateTaskCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=TaskCreateCommand}"
+                                    DeleteCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=DeleteTaskSectionCommand}"
+                                    DroppedOnSectionCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=DropOnSectionCommand}"
+                                    DroppedOnTaskCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=DroppedOnTaskCommand}"
+                                    EditCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=EditTaskSectionCommand}"
+                                    MoveLeftCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=MoveSectionLeftCommand}"
+                                    MoveRightCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=MoveSectionRightCommand}"
+                                    TaskGrabbedCommand="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Tasks.TaskBoardPageModel}}, Path=GrabTaskCommand}" />
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </ScrollView>
+            </StackLayout>
+        </Grid>
+        <VerticalStackLayout
+            Grid.Column="1"
+            HorizontalOptions="End"
+            IsVisible="{Binding IsEditingTaskSection}"
+            Spacing="5">
+            <StackLayout Orientation="Horizontal" Spacing="5">
+                <Label FontSize="30" Text="{x:Static properties:Resources.EditTaskSectionLabel}" />
+                <Button
+                    BackgroundColor="{DynamicResource Transparent}"
+                    Command="{Binding CloseEditingtTaskSectionCommand}"
+                    FontSize="20"
+                    Text="X"
+                    TextColor="{StaticResource Gray500}" />
+            </StackLayout>
 
-            <Grid IsVisible="{Binding IsEditingTask}" VerticalOptions="FillAndExpand">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <StackLayout
-                    Grid.Row="0"
-                    Orientation="Horizontal"
-                    Spacing="5">
-                    <Label FontSize="30" Text="{x:Static properties:Resources.EditTaskLabel}" />
-                    <Button
-                        BackgroundColor="{DynamicResource Transparent}"
-                        Command="{Binding CloseEditingtTaskCommand}"
-                        Text="X"
-                        TextColor="{StaticResource Gray500}" />
-                </StackLayout>
-                <ScrollView Grid.Row="1" VerticalOptions="FillAndExpand">
-                    <VerticalStackLayout Padding="10" Spacing="5">
-                        <Label FontSize="20" Text="{x:Static properties:Resources.TitleLabel}" />
-                        <Entry Placeholder="{x:Static properties:Resources.TitleText}" Text="{Binding EditingTaskData.Title}" />
-                        <Label FontSize="20" Text="{x:Static properties:Resources.DescriptionLabel}" />
-                        <Editor
-                            HeightRequest="100"
-                            Placeholder="{x:Static properties:Resources.DescriptionText}"
-                            Text="{Binding EditingTaskData.Description}" />
+            <Label FontSize="20" Text="{x:Static properties:Resources.TitleLabel}" />
+            <Entry Placeholder="{x:Static properties:Resources.TitleText}" Text="{Binding EditingTaskSectionData.Title}" />
+            <Button
+                BackgroundColor="{DynamicResource Save}"
+                Command="{Binding SaveTaskSectionChangesCommand}"
+                Text="{x:Static properties:Resources.SaveButton}" />
+        </VerticalStackLayout>
+
+        <Grid
+            Grid.Column="1"
+            Padding="10"
+            HorizontalOptions="End"
+            IsVisible="{Binding IsEditingTask}"
+            RowSpacing="10"
+            VerticalOptions="FillAndExpand">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <StackLayout
+                Grid.Row="0"
+                Orientation="Horizontal"
+                Spacing="5">
+                <Label FontSize="30" Text="{x:Static properties:Resources.EditTaskLabel}" />
+                <Button
+                    BackgroundColor="{DynamicResource Transparent}"
+                    Command="{Binding CloseEditingtTaskCommand}"
+                    FontSize="20"
+                    Text="X"
+                    TextColor="{StaticResource Gray500}" />
+            </StackLayout>
+            <ScrollView Grid.Row="1" VerticalOptions="FillAndExpand">
+                <VerticalStackLayout Padding="10" Spacing="5">
+                    <Label FontSize="20" Text="{x:Static properties:Resources.TitleLabel}" />
+                    <Entry Placeholder="{x:Static properties:Resources.TitleText}" Text="{Binding EditingTaskData.Title}" />
+                    <Label FontSize="20" Text="{x:Static properties:Resources.DescriptionLabel}" />
+                    <Editor
+                        HeightRequest="100"
+                        Placeholder="{x:Static properties:Resources.DescriptionText}"
+                        Text="{Binding EditingTaskData.Description}" />
+                    <HorizontalStackLayout>
+                        <Label Text="{x:Static properties:Resources.ProgressLabel}" />
+                        <Label Text="{Binding ProgressValue, StringFormat='{0:F0}'}" />
+                    </HorizontalStackLayout>
+
+                    <Slider
+                        BackgroundColor="{DynamicResource ProgressBarTrack}"
+                        Maximum="100"
+                        Minimum="0"
+                        MinimumTrackColor="{DynamicResource ProgressBarColor}"
+                        ThumbColor="{DynamicResource Controls}"
+                        Value="{Binding ProgressValue}" />
+                    <Label FontSize="20" Text="{x:Static properties:Resources.LimitDateLabel}" />
+                    <DatePicker Date="{Binding EditingTaskData.LimitDate}" Format="dd/MM/yyyy" />
+
+                    <Label FontSize="20" Text="{x:Static properties:Resources.AssignedToLabel}" />
+                    <Picker
+                        Title="{x:Static properties:Resources.LimitDateLabel}"
+                        ItemDisplayBinding="{Binding Username}"
+                        ItemsSource="{Binding Users}"
+                        SelectedItem="{Binding EditingTaskData.UserAssigned}" />
+                    <Picker
+                        Title="{x:Static properties:Resources.PriorityLabel}"
+                        ItemDisplayBinding="{Binding Name}"
+                        ItemsSource="{Binding Priorities}"
+                        SelectedItem="{Binding EditingTaskData.Priority}" />
+                    <Label FontSize="20" Text="{x:Static properties:Resources.AddDependencyLabel}" />
+                    <StackLayout Orientation="Horizontal">
+                        <Picker
+                            ItemDisplayBinding="{Binding Title}"
+                            ItemsSource="{Binding PossibleDependencies}"
+                            SelectedItem="{Binding DependencyTaskSelected}" />
+                        <Button
+                            BackgroundColor="{DynamicResource Save}"
+                            Command="{Binding AddDependencyCommand}"
+                            Text="{x:Static properties:Resources.AddButton}" />
+                    </StackLayout>
+
+
+                    <CollectionView
+                        ItemsSource="{Binding TaskDependencies}"
+                        SelectedItem="{Binding SelectedDependency}"
+                        SelectionChangedCommand="{Binding DependencySelectedCommand}"
+                        SelectionMode="Single">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:TaskDependency">
+                                <Border Padding="5">
+                                    <StackLayout Orientation="Horizontal" Spacing="10">
+                                        <Label Text="{Binding DisplayName}" />
+                                    </StackLayout>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                    <VerticalStackLayout IsVisible="{Binding IsEditingTaskDependency}">
                         <HorizontalStackLayout>
-                            <Label Text="{x:Static properties:Resources.ProgressLabel}" />
-                            <Label Text="{Binding ProgressValue, StringFormat='{0:F0}'}" />
+                            <Label Text="{x:Static properties:Resources.UnlockAtLabel}" />
+                            <Label Text="{Binding UnlockAtValue, StringFormat='{0:F0}'}" />
                         </HorizontalStackLayout>
-
                         <Slider
                             BackgroundColor="{DynamicResource ProgressBarTrack}"
                             Maximum="100"
                             Minimum="0"
                             MinimumTrackColor="{DynamicResource ProgressBarColor}"
                             ThumbColor="{DynamicResource Controls}"
-                            Value="{Binding ProgressValue}" />
-                        <Label FontSize="20" Text="{x:Static properties:Resources.LimitDateLabel}" />
-                        <DatePicker Date="{Binding EditingTaskData.LimitDate}" Format="dd/MM/yyyy" />
-
-                        <Label FontSize="20" Text="{x:Static properties:Resources.AssignedToLabel}" />
-                        <Picker
-                            Title="{x:Static properties:Resources.LimitDateLabel}"
-                            ItemDisplayBinding="{Binding Username}"
-                            ItemsSource="{Binding Users}"
-                            SelectedItem="{Binding EditingTaskData.UserAssigned}" />
-                        <Picker
-                            Title="{x:Static properties:Resources.PriorityLabel}"
-                            ItemDisplayBinding="{Binding Name}"
-                            ItemsSource="{Binding Priorities}"
-                            SelectedItem="{Binding EditingTaskData.Priority}" />
-                        <Label FontSize="20" Text="{x:Static properties:Resources.AddDependencyLabel}" />
-                        <StackLayout Orientation="Horizontal">
-                            <Picker
-                                ItemDisplayBinding="{Binding Title}"
-                                ItemsSource="{Binding PossibleDependencies}"
-                                SelectedItem="{Binding DependencyTaskSelected}" />
-                            <Button
-                                BackgroundColor="{DynamicResource Save}"
-                                Command="{Binding AddDependencyCommand}"
-                                Text="{x:Static properties:Resources.AddButton}" />
-                        </StackLayout>
-
-
-                        <CollectionView
-                            ItemsSource="{Binding TaskDependencies}"
-                            SelectedItem="{Binding SelectedDependency}"
-                            SelectionChangedCommand="{Binding DependencySelectedCommand}"
-                            SelectionMode="Single">
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate x:DataType="models:TaskDependency">
-                                    <Border Padding="5">
-                                        <StackLayout Orientation="Horizontal" Spacing="10">
-                                            <Label Text="{Binding DisplayName}" />
-                                        </StackLayout>
-                                    </Border>
-                                </DataTemplate>
-                            </CollectionView.ItemTemplate>
-                        </CollectionView>
-                        <VerticalStackLayout IsVisible="{Binding IsEditingTaskDependency}">
-                            <HorizontalStackLayout>
-                                <Label Text="{x:Static properties:Resources.UnlockAtLabel}" />
-                                <Label Text="{Binding UnlockAtValue, StringFormat='{0:F0}'}" />
-                            </HorizontalStackLayout>
-                            <Slider
-                                BackgroundColor="{DynamicResource ProgressBarTrack}"
-                                Maximum="100"
-                                Minimum="0"
-                                MinimumTrackColor="{DynamicResource ProgressBarColor}"
-                                ThumbColor="{DynamicResource Controls}"
-                                Value="{Binding UnlockAtValue}" />
-                            <Button Command="{Binding SaveTaskDependencyChangesCommand}" Text="{x:Static properties:Resources.SaveDependencyChangesButton}" />
-                            <Button Command="{Binding RemoveDependencyCommand}" Text="{x:Static properties:Resources.RemoveDependencyButton}" />
-                        </VerticalStackLayout>
-
-
-                        <Button
-                            BackgroundColor="{DynamicResource Save}"
-                            Command="{Binding SaveTaskChangesCommand}"
-                            Text="{x:Static properties:Resources.SaveButton}" />
+                            Value="{Binding UnlockAtValue}" />
+                        <Button Command="{Binding SaveTaskDependencyChangesCommand}" Text="{x:Static properties:Resources.SaveDependencyChangesButton}" />
+                        <Button Command="{Binding RemoveDependencyCommand}" Text="{x:Static properties:Resources.RemoveDependencyButton}" />
                     </VerticalStackLayout>
-                </ScrollView>
-            </Grid>
-        </StackLayout>
+
+
+                    <Button
+                        BackgroundColor="{DynamicResource Save}"
+                        Command="{Binding SaveTaskChangesCommand}"
+                        Text="{x:Static properties:Resources.SaveButton}" />
+                </VerticalStackLayout>
+            </ScrollView>
+        </Grid>
     </Grid>
 </ContentPage>

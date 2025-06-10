@@ -201,6 +201,9 @@
   <data name="CreateBoardTitle" xml:space="preserve">
     <value>Create Concept  Board</value>
   </data>
+  <data name="CreateColumnButton" xml:space="preserve">
+    <value>Add Column</value>
+  </data>
   <data name="CreateComponentTitle" xml:space="preserve">
     <value>Create Component</value>
   </data>
@@ -228,6 +231,9 @@
   <data name="CreateProjectTitle" xml:space="preserve">
     <value>Create Project</value>
   </data>
+  <data name="CreateRowButton" xml:space="preserve">
+    <value>Add Row</value>
+  </data>
   <data name="CreateTableTitle" xml:space="preserve">
     <value>Create Table</value>
   </data>
@@ -236,6 +242,9 @@
   </data>
   <data name="CreateTaskBoardTitle" xml:space="preserve">
     <value>Create Task Board</value>
+  </data>
+  <data name="CreateTaskButton" xml:space="preserve">
+    <value>Crear Tarea</value>
   </data>
   <data name="CreateTaskProgressButton" xml:space="preserve">
     <value>Create Progress Section</value>
@@ -275,6 +284,9 @@
   </data>
   <data name="DescriptionText" xml:space="preserve">
     <value>Description</value>
+  </data>
+  <data name="DropZone" xml:space="preserve">
+    <value>Soltar Aquí</value>
   </data>
   <data name="EditButton" xml:space="preserve">
     <value>Edit</value>
@@ -402,11 +414,17 @@
   <data name="RemoveButton" xml:space="preserve">
     <value>Remove</value>
   </data>
+  <data name="RemoveColumnButton" xml:space="preserve">
+    <value>Remove Column</value>
+  </data>
   <data name="RemoveDependencyButton" xml:space="preserve">
     <value>Remove Dependency</value>
   </data>
   <data name="RemovePermissionsLabel" xml:space="preserve">
     <value>Remove permissions:</value>
+  </data>
+  <data name="RemoveRowButton" xml:space="preserve">
+    <value>Remove Row</value>
   </data>
   <data name="RestartMessage" xml:space="preserve">
     <value>You need to restart the app to apply the changes</value>
@@ -464,6 +482,9 @@
   </data>
   <data name="UserAlreadyInProjectMessage" xml:space="preserve">
     <value>User already exists in the project</value>
+  </data>
+  <data name="UsernameLabel" xml:space="preserve">
+    <value>Nombre de usuario</value>
   </data>
   <data name="UsernameNotIntroducedMessage" xml:space="preserve">
     <value>You need to input a username</value>

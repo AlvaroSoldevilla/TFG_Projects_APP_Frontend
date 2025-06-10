@@ -32,9 +32,13 @@
     <Color x:Key="Edit">#03A9F4</Color>
     <Color x:Key="Misc">#673AB7</Color>
     <Color x:Key="Controls">#2196F3</Color>
+    <Color x:Key="ConceptBoard">#ADD8E6</Color>
+    <Color x:Key="Table">#E1E1E1</Color>
     <Color x:Key="ActivityIndicator">#757575</Color>
     <Color x:Key="ProgressBarTrack">#E0E0E0</Color>
     <Color x:Key="ProgressBarColor">#2196F3</Color>
+    <Color x:Key="TaskBackground">#E1E1E1</Color>
+
     <Color x:Key="Transparent">Transparent</Color>
 
     <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource Primary}" />
@@ -56,9 +60,13 @@
     <SolidColorBrush x:Key="SaveBrush" Color="{StaticResource Save}" />
     <SolidColorBrush x:Key="CreateBrush" Color="{StaticResource Create}" />
     <SolidColorBrush x:Key="EditBrush" Color="{StaticResource Edit}" />
+    <SolidColorBrush x:Key="ConceptBoardBrush" Color="{StaticResource ConceptBoard}" />
+    <SolidColorBrush x:Key="TableBrush" Color="{StaticResource Table}" />
     <SolidColorBrush x:Key="MiscBrush" Color="{StaticResource Misc}" />
     <SolidColorBrush x:Key="ControlsBrush" Color="{StaticResource Controls}" />
     <SolidColorBrush x:Key="ActivityIndicatorBrush" Color="{StaticResource ActivityIndicator}" />
     <SolidColorBrush x:Key="ProgressBarTrackBrush" Color="{StaticResource ProgressBarTrack}" />
+    <SolidColorBrush x:Key="TaskBackgroundkBrush" Color="{StaticResource TaskBackground}" />
+
     <SolidColorBrush x:Key="TransparentBrush" Color="{StaticResource Transparent}" />
 </ResourceDictionary>

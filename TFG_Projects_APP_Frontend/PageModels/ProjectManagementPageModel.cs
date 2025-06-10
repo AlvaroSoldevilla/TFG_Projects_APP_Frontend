@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using TFG_Projects_APP_Frontend.Components.CreateModal;
 using TFG_Projects_APP_Frontend.Entities.Dtos.ConceptBoards;
 using TFG_Projects_APP_Frontend.Entities.Dtos.Concepts;
@@ -27,7 +26,6 @@ using TFG_Projects_APP_Frontend.Utils;
 
 namespace TFG_Projects_APP_Frontend.PageModels;
 
-[QueryProperty(nameof(Project), nameof(Project))]
 public partial class ProjectManagementPageModel : ObservableObject
 {
     private readonly IConceptsService conceptsService;
@@ -180,7 +178,7 @@ public partial class ProjectManagementPageModel : ObservableObject
         SelectedUser = null;
 
         await LoadData();
-
+        NavigationContext.CurrentProject = null;
         IsLoadingConcepts = false;
         IsLoadingTaskBoards = false;
         IsLoadingUsers = false;
@@ -193,18 +191,16 @@ public partial class ProjectManagementPageModel : ObservableObject
             return;
         }
         _isLoadingData = true;
-        if (Project == null)
+        if (NavigationContext.CurrentProject == null)
         {
-            if (NavigationContext.CurrentProject == null)
-            {
-                await Shell.Current.GoToAsync("//MainPage");
-                return;
-            }
-            else
-            {
-                Project = NavigationContext.CurrentProject;
-            }
+            await Shell.Current.GoToAsync("//MainPage");
+            return;
         }
+        else
+        {
+            Project = NavigationContext.CurrentProject;
+        }
+        
         CurrentProject = Project;
 
         var concepts = await conceptsService.GetAllConceptsByProject(Project.Id);
@@ -281,6 +277,7 @@ public partial class ProjectManagementPageModel : ObservableObject
         if (SelectedConcept != null)
         {
             var conceptBoard = await conceptBoardsService.GetById(SelectedConcept.IdFirstBoard);
+            NavigationContext.CurrentProject = Project;
             NavigationContext.CurrentConceptBoards.Push(conceptBoard);
             if (conceptBoard != null)
             {
@@ -355,6 +352,7 @@ public partial class ProjectManagementPageModel : ObservableObject
     [RelayCommand]
     private async void TaskBoardSelected(TaskBoard taskBoard)
     {
+        NavigationContext.CurrentProject = Project;
         NavigationContext.CurrentTaskBoard = SelectedTaskBoard;
         await Shell.Current.GoToAsync("TaskBoardPage", new Dictionary<string, object>
         {

@@ -127,7 +127,10 @@
                     Text="{x:Static properties:Resources.AddUserButton}"
                     VerticalOptions="Start" />
 
-                <StackLayout IsVisible="{Binding IsLookingForUser}" Orientation="Horizontal">
+                <StackLayout
+                    IsVisible="{Binding IsLookingForUser}"
+                    Orientation="Horizontal"
+                    Spacing="5">
                     <Entry Placeholder="{x:Static properties:Resources.SearchUserByEmailLabel}" Text="{Binding AdduserEmail, Mode=TwoWay}" />
                     <Button
                         BackgroundColor="{DynamicResource Save}"
@@ -170,12 +173,13 @@
                     Color="{DynamicResource ActivityIndicator}" />
             </VerticalStackLayout>
 
-            <VerticalStackLayout IsVisible="{Binding IsEditingConcept}">
+            <VerticalStackLayout IsVisible="{Binding IsEditingConcept}" Spacing="10">
                 <StackLayout Orientation="Horizontal">
                     <Label FontSize="30" Text="{x:Static properties:Resources.EditConceptLabel}" />
                     <Button
                         BackgroundColor="{DynamicResource Transparent}"
                         Command="{Binding CloseEditingConceptCommand}"
+                        FontSize="20"
                         Text="X"
                         TextColor="{StaticResource Gray500}" />
                 </StackLayout>
@@ -192,11 +196,14 @@
                     Text="{x:Static properties:Resources.SaveButton}" />
             </VerticalStackLayout>
 
-            <VerticalStackLayout IsVisible="{Binding IsEditingTaskBoard}">
+            <VerticalStackLayout IsVisible="{Binding IsEditingTaskBoard}" Spacing="10">
                 <StackLayout Orientation="Vertical">
                     <StackLayout Orientation="Horizontal">
                         <Label FontSize="30" Text="{x:Static properties:Resources.EditTaskBoardLabel}" />
-                        <Button Command="{Binding CloseEditingTaskBoardCommand}" Text="X" />
+                        <Button
+                            Command="{Binding CloseEditingTaskBoardCommand}"
+                            FontSize="20"
+                            Text="X" />
                     </StackLayout>
                     <Label FontSize="20" Text="{x:Static properties:Resources.TitleLabel}" />
                     <Entry Placeholder="{x:Static properties:Resources.TitleText}" Text="{Binding EditingTaskBoardData.Title}" />

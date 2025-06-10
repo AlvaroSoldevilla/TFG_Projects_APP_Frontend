@@ -66,12 +66,13 @@
                     WidthRequest="50"
                     Color="{DynamicResource ActivityIndicator}" />
             </VerticalStackLayout>
-            <VerticalStackLayout IsVisible="{Binding IsEditingProject}">
+            <VerticalStackLayout IsVisible="{Binding IsEditingProject}" Spacing="10">
                 <StackLayout Orientation="Horizontal">
                     <Label FontSize="30" Text="{x:Static properties:Resources.EditProjectLabel}" />
                     <Button
                         BackgroundColor="{DynamicResource Transparent}"
                         Command="{Binding CloseEditingCommand}"
+                        FontSize="20"
                         Text="X"
                         TextColor="{StaticResource Gray500}" />
                 </StackLayout>

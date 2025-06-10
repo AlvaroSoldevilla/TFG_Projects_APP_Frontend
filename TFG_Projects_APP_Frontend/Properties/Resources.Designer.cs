@@ -313,6 +313,15 @@ namespace TFG_Projects_APP_Frontend.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add Column.
+        /// </summary>
+        public static string CreateColumnButton {
+            get {
+                return ResourceManager.GetString("CreateColumnButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Create Component.
         /// </summary>
         public static string CreateComponentTitle {
@@ -394,6 +403,15 @@ namespace TFG_Projects_APP_Frontend.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add Row.
+        /// </summary>
+        public static string CreateRowButton {
+            get {
+                return ResourceManager.GetString("CreateRowButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Create Table.
         /// </summary>
         public static string CreateTableTitle {
@@ -417,6 +435,15 @@ namespace TFG_Projects_APP_Frontend.Properties {
         public static string CreateTaskBoardTitle {
             get {
                 return ResourceManager.GetString("CreateTaskBoardTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create Task.
+        /// </summary>
+        public static string CreateTaskButton {
+            get {
+                return ResourceManager.GetString("CreateTaskButton", resourceCulture);
             }
         }
         
@@ -534,6 +561,15 @@ namespace TFG_Projects_APP_Frontend.Properties {
         public static string DescriptionText {
             get {
                 return ResourceManager.GetString("DescriptionText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Drop Here.
+        /// </summary>
+        public static string DropZone {
+            get {
+                return ResourceManager.GetString("DropZone", resourceCulture);
             }
         }
         
@@ -916,6 +952,15 @@ namespace TFG_Projects_APP_Frontend.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Remove Column.
+        /// </summary>
+        public static string RemoveColumnButton {
+            get {
+                return ResourceManager.GetString("RemoveColumnButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Remove Dependency.
         /// </summary>
         public static string RemoveDependencyButton {
@@ -930,6 +975,15 @@ namespace TFG_Projects_APP_Frontend.Properties {
         public static string RemovePermissionsLabel {
             get {
                 return ResourceManager.GetString("RemovePermissionsLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove Row.
+        /// </summary>
+        public static string RemoveRowButton {
+            get {
+                return ResourceManager.GetString("RemoveRowButton", resourceCulture);
             }
         }
         
@@ -1101,6 +1155,15 @@ namespace TFG_Projects_APP_Frontend.Properties {
         public static string UserAlreadyInProjectMessage {
             get {
                 return ResourceManager.GetString("UserAlreadyInProjectMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Username.
+        /// </summary>
+        public static string UsernameLabel {
+            get {
+                return ResourceManager.GetString("UsernameLabel", resourceCulture);
             }
         }
         

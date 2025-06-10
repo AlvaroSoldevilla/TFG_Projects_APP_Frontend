@@ -31,7 +31,7 @@
                 <Entry
                     x:Name="Username"
                     BackgroundColor="White"
-                    Placeholder="Username"
+                    Placeholder="{x:Static properties:Resources.UsernameLabel}"
                     Text="{Binding Username, Mode=TwoWay}" />
 
                 <Entry
@@ -64,57 +64,88 @@
                     VerticalOptions="Center"
                     Color="{DynamicResource ActivityIndicator}" />
             </VerticalStackLayout>
-            <VerticalStackLayout IsVisible="{Binding IsLoggedIn}" Spacing="20">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-
-
-                    <VerticalStackLayout
-                        Grid.Row="0"
-                        Grid.RowSpan="2"
-                        Grid.Column="0">
-                        <Label Text="{x:Static properties:Resources.ChangePasswordLabel}" />
-                        <Label Text="{x:Static properties:Resources.NewPasswordLabel}" />
+            <VerticalStackLayout
+                Padding="10"
+                IsVisible="{Binding IsLoggedIn}"
+                Spacing="30">
+                <Border
+                    Margin="0"
+                    Padding="15"
+                    HorizontalOptions="FillAndExpand"
+                    Stroke="#DDDDDD"
+                    StrokeShape="RoundRectangle"
+                    StrokeThickness="1">
+                    <VerticalStackLayout Spacing="10">
+                        <Label
+                            FontAttributes="Bold"
+                            FontSize="18"
+                            Text="{x:Static properties:Resources.ChangePasswordLabel}" />
                         <Entry
                             IsPassword="True"
                             Keyboard="Password"
+                            Placeholder="{x:Static properties:Resources.NewPasswordLabel}"
                             Text="{Binding NewPassword}" />
-                        <Label Text="{x:Static properties:Resources.ConfirmPasswordLabel}" />
                         <Entry
                             IsPassword="True"
                             Keyboard="Password"
+                            Placeholder="{x:Static properties:Resources.ConfirmPasswordLabel}"
                             Text="{Binding NewPasswordConfirm}" />
                         <Button
                             BackgroundColor="{DynamicResource Create}"
                             Command="{Binding ChangePasswordCommand}"
-                            Text="{x:Static properties:Resources.ChangeButton}" />
+                            CornerRadius="8"
+                            FontAttributes="Bold"
+                            Text="{x:Static properties:Resources.ChangeButton}"
+                            TextColor="White" />
                     </VerticalStackLayout>
-                    <VerticalStackLayout Grid.Row="0" Grid.Column="1">
-                        <Label Text="{x:Static properties:Resources.ChangeEmailLabel}" />
-                        <Label Text="{x:Static properties:Resources.NewEmailLabel}" />
-                        <Entry Keyboard="Email" Text="{Binding NewEmail}" />
+                </Border>
+                <Border
+                    Padding="15"
+                    BackgroundColor="#FFFFFF"
+                    HorizontalOptions="FillAndExpand"
+                    Stroke="#DDDDDD"
+                    StrokeShape="RoundRectangle"
+                    StrokeThickness="1">
+                    <VerticalStackLayout Spacing="10">
+                        <Label
+                            FontAttributes="Bold"
+                            FontSize="18"
+                            Text="{x:Static properties:Resources.ChangeEmailLabel}" />
+                        <Entry
+                            Keyboard="Email"
+                            Placeholder="{x:Static properties:Resources.NewEmailLabel}"
+                            Text="{Binding NewEmail}" />
                         <Button
                             BackgroundColor="{DynamicResource Create}"
                             Command="{Binding ChangeEmailCommand}"
-                            Text="{x:Static properties:Resources.ChangeButton}" />
+                            CornerRadius="8"
+                            FontAttributes="Bold"
+                            Text="{x:Static properties:Resources.ChangeButton}"
+                            TextColor="White" />
                     </VerticalStackLayout>
-                    <VerticalStackLayout Grid.Row="1" Grid.Column="1">
-                        <Label Text="{x:Static properties:Resources.ChangeUsernameLabel}" />
-                        <Label Text="{x:Static properties:Resources.NewUsernameLabel}" />
-                        <Entry Text="{Binding NewUsername}" />
+                </Border>
+                <Border
+                    Padding="15"
+                    HorizontalOptions="FillAndExpand"
+                    Stroke="#DDDDDD"
+                    StrokeShape="RoundRectangle"
+                    StrokeThickness="1">
+                    <VerticalStackLayout Spacing="10">
+                        <Label
+                            FontAttributes="Bold"
+                            FontSize="18"
+                            Text="{x:Static properties:Resources.ChangeUsernameLabel}" />
+                        <Entry Placeholder="{x:Static properties:Resources.NewUsernameLabel}" Text="{Binding NewUsername}" />
                         <Button
                             BackgroundColor="{DynamicResource Create}"
                             Command="{Binding ChangeUsernameCommand}"
-                            Text="{x:Static properties:Resources.ChangeButton}" />
+                            CornerRadius="8"
+                            FontAttributes="Bold"
+                            Text="{x:Static properties:Resources.ChangeButton}"
+                            TextColor="White" />
                     </VerticalStackLayout>
-                </Grid>
+                </Border>
+
             </VerticalStackLayout>
         </VerticalStackLayout>
     </ScrollView>

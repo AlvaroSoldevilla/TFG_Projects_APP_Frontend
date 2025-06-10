@@ -5,61 +5,139 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:components="clr-namespace:TFG_Projects_APP_Frontend.Components.TaskComponents"
     xmlns:models="clr-namespace:TFG_Projects_APP_Frontend.Entities.Models"
+    xmlns:properties="clr-namespace:TFG_Projects_APP_Frontend.Properties"
     x:DataType="models:ProjectTask">
     <Border
-        Margin="5"
-        Padding="10"
-        BackgroundColor="#f0f0f0">
+        Margin="10"
+        Padding="15"
+        BackgroundColor="#ffffff"
+        Stroke="LightGray"
+        StrokeThickness="1">
+        <Border.StrokeShape>
+            <RoundRectangle CornerRadius="10" />
+        </Border.StrokeShape>
+        <Border.Shadow>
+            <Shadow
+                Brush="Black"
+                Opacity="0.2"
+                Radius="5"
+                Offset="2,2" />
+        </Border.Shadow>
+
         <Border.GestureRecognizers>
             <DragGestureRecognizer CanDrag="True" DragStarting="OnTaskGrabbed" />
             <DropGestureRecognizer AllowDrop="True" Drop="OnDroppedOnTask" />
         </Border.GestureRecognizers>
-        <StackLayout Spacing="5">
-            <Label Text="{Binding Title}" />
-            <Label Text="{Binding Description}" />
-            <Label Text="{Binding Progress, StringFormat='Progress: {0:F0}'}" />
-            <Label Text="{Binding LimitDate, StringFormat='Limit Date: {0:dd/MM/yyyy}'}" />
-            <Label Text="{Binding UserAssigned.Username, StringFormat='Assigned to: {0}'}" />
-            <Label Text="{Binding Priority.Name, StringFormat='Priority: {0}'}" />
-            <Label Text="{Binding CompletionDate}" />
+
+        <VerticalStackLayout Spacing="6">
+            <Border
+                Margin="0,0,0,5"
+                Padding="7"
+                BackgroundColor="{Binding Priority.Color}"
+                HorizontalOptions="Start"
+                Stroke="{Binding Priority.Color}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <Label FontSize="12" Text="{Binding Priority.Name}" />
+            </Border>
+
+            <Label
+                FontAttributes="Bold"
+                FontSize="18"
+                Text="{Binding Title}" />
+            <Label FontSize="14" Text="{Binding Description}" />
+            <Label FontSize="14" Text="{Binding Progress, StringFormat='Progress: {0:F0}%'}" />
+            <Label FontSize="14" Text="{Binding LimitDate, StringFormat='Limit Date: {0:dd/MM/yyyy}'}" />
+            <HorizontalStackLayout>
+                <Label FontSize="14" Text="Assigned to: " />
+                <Label FontSize="14" Text="{Binding UserAssigned.Username}" />
+            </HorizontalStackLayout>
+            <Label
+                FontSize="14"
+                IsVisible="{Binding Finished}"
+                Text="{Binding CompletionDate, StringFormat='Completed on: {0:dd/MM/yyyy}'}" />
+
             <Button
+                Padding="10,5"
                 BackgroundColor="{DynamicResource Delete}"
                 Clicked="Delete_Clicked"
-                Text="Delete Task" />
+                CornerRadius="6"
+                FontAttributes="Bold"
+                Text="Delete Task"
+                TextColor="White" />
+
+            <!--  Child Tasks  -->
             <CollectionView
                 x:Name="TaskList"
+                Margin="0,10,0,0"
                 ItemsSource="{Binding Children}"
                 VerticalOptions="FillAndExpand">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="models:ProjectTask">
-                        <VerticalStackLayout>
-                            <Border
-                                Margin="5"
-                                Padding="10"
-                                BackgroundColor="#f0f0f0">
-                                <Border.GestureRecognizers>
-                                    <DragGestureRecognizer CanDrag="True" DragStarting="OnTaskGrabbed" />
-                                    <DropGestureRecognizer AllowDrop="True" Drop="OnDroppedOnTask" />
-                                </Border.GestureRecognizers>
-                                <StackLayout Spacing="5">
-                                    <Label Text="{Binding Title}" />
-                                    <Label Text="{Binding Description}" />
-                                    <Label Text="{Binding Progress, StringFormat='Progress: {0:F0}'}" />
-                                    <Label Text="{Binding LimitDate, StringFormat='Limit Date: {0:dd/MM/yyyy}'}" />
-                                    <Label Text="{Binding UserAssigned.Username, StringFormat='Assigned to: {0}'}" />
-                                    <Label Text="{Binding Priority.Name, StringFormat='Priority: {0}'}" />
-                                    <Label Text="{Binding CompletionDate}" />
-                                    <Button
-                                        BackgroundColor="{DynamicResource Delete}"
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type components:TaskComponent}}, Path=ChildDeleteCommand}"
-                                        CommandParameter="{Binding .}"
-                                        Text="Delete" />
-                                </StackLayout>
-                            </Border>
-                        </VerticalStackLayout>
+                        <Border
+                            Margin="10,5,0,5"
+                            Padding="12"
+                            BackgroundColor="#f8f8f8"
+                            Stroke="LightGray"
+                            StrokeThickness="1">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <Border.Shadow>
+                                <Shadow
+                                    Brush="Black"
+                                    Opacity="0.1"
+                                    Radius="3"
+                                    Offset="1,1" />
+                            </Border.Shadow>
+                            <Border.GestureRecognizers>
+                                <DragGestureRecognizer CanDrag="True" DragStarting="OnTaskGrabbed" />
+                                <DropGestureRecognizer AllowDrop="True" Drop="OnDroppedOnTask" />
+                            </Border.GestureRecognizers>
+                            <VerticalStackLayout Spacing="4">
+                                <Border
+                                    Margin="0,0,0,5"
+                                    Padding="7"
+                                    BackgroundColor="{Binding Priority.Color}"
+                                    HorizontalOptions="Start"
+                                    Stroke="{Binding Priority.Color}">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="10" />
+                                    </Border.StrokeShape>
+                                    <Label FontSize="12" Text="{Binding Priority.Name}" />
+                                </Border>
+                                <Label
+                                    FontAttributes="Bold"
+                                    FontSize="16"
+                                    Text="{Binding Title}" />
+                                <Label FontSize="13" Text="{Binding Description}" />
+                                <Label FontSize="13" Text="{Binding Progress, StringFormat='Progress: {0:F0}%'}" />
+                                <Label FontSize="13" Text="{Binding LimitDate, StringFormat='Limit Date: {0:dd/MM/yyyy}'}" />
+                                <HorizontalStackLayout>
+                                    <Label FontSize="13" Text="Assigned to: " />
+                                    <Label FontSize="13" Text="{Binding UserAssigned.Username}" />
+                                </HorizontalStackLayout>
+
+                                <Label
+                                    FontSize="13"
+                                    IsVisible="{Binding Finished}"
+                                    Text="{Binding CompletionDate, StringFormat='Completed on: {0:dd/MM/yyyy}'}" />
+                                <Button
+                                    Padding="8,4"
+                                    BackgroundColor="{DynamicResource Delete}"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type components:TaskComponent}}, Path=ChildDeleteCommand}"
+                                    CommandParameter="{Binding .}"
+                                    CornerRadius="6"
+                                    FontAttributes="Bold"
+                                    FontSize="13"
+                                    Text="Delete"
+                                    TextColor="White" />
+                            </VerticalStackLayout>
+                        </Border>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
-        </StackLayout>
+        </VerticalStackLayout>
     </Border>
 </ContentView>

@@ -365,7 +365,7 @@ public partial class TaskProgressPageModel : ObservableObject
     }
 
     [RelayCommand]
-    public async Task MoveProgressLeft(TaskProgress taskProgress)
+    public async Task MoveProgressSectionLeft(TaskProgress taskProgress)
     {
         List<PermissionsUtils.Permissions> permissions = new List<PermissionsUtils.Permissions>();
         permissions.AddRange(PermissionsUtils.Permissions.FullPermissions, PermissionsUtils.Permissions.EditTaskBoardSections, PermissionsUtils.Permissions.FullTaskPermissions);
@@ -394,7 +394,7 @@ public partial class TaskProgressPageModel : ObservableObject
     }
 
     [RelayCommand]
-    public async Task MoveProgressRight(TaskProgress taskProgress)
+    public async Task MoveProgressSectionRight(TaskProgress taskProgress)
     {
         List<PermissionsUtils.Permissions> permissions = new List<PermissionsUtils.Permissions>();
         permissions.AddRange(PermissionsUtils.Permissions.FullPermissions, PermissionsUtils.Permissions.EditTaskBoardSections, PermissionsUtils.Permissions.FullTaskPermissions);

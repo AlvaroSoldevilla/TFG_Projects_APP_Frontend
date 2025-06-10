@@ -503,18 +503,28 @@ public partial class ConceptBoardPageModel : ObservableObject
     [RelayCommand]
     private async void SaveComponent(ConceptComponent component)
     {
-        if (EditComponentData != null && !string.IsNullOrEmpty(EditComponentData.Title))
+        ConceptComponent conceptComponent = null;
+
+        if (component == null && EditComponentData != null)
+        {
+            conceptComponent = EditComponentData;
+        } else if (component != null && EditComponentData == null)
+        {
+            conceptComponent = component;
+        }
+
+        if (conceptComponent != null && !string.IsNullOrEmpty(conceptComponent.Title))
         {
             var componentUpdate = new ComponentUpdate
             {
                 IdBoard = ConceptBoard.Id,
-                IdType = EditComponentData.IdType,
-                Title = EditComponentData.Title,
-                PosX = EditComponentData.PosX,
-                PosY = EditComponentData.PosY,
-                Content = EditComponentData.Content
+                IdType = conceptComponent.IdType,
+                Title = conceptComponent.Title,
+                PosX = conceptComponent.PosX,
+                PosY = conceptComponent.PosY,
+                Content = conceptComponent.Content
             };
-            await componentsService.Patch(EditComponentData.Id, componentUpdate);
+            await componentsService.Patch(conceptComponent.Id, componentUpdate);
             IsEditingNote = false;
             IsEditingComponent = false;
             EditComponentData = null;

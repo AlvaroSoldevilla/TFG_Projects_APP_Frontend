@@ -201,6 +201,9 @@
   <data name="CreateBoardTitle" xml:space="preserve">
     <value>Crear Tabla de Conceptos</value>
   </data>
+  <data name="CreateColumnButton" xml:space="preserve">
+    <value>Añadir Columna</value>
+  </data>
   <data name="CreateComponentTitle" xml:space="preserve">
     <value>Crear Componente</value>
   </data>
@@ -228,6 +231,9 @@
   <data name="CreateProjectTitle" xml:space="preserve">
     <value>Crear Proyecto</value>
   </data>
+  <data name="CreateRowButton" xml:space="preserve">
+    <value>Añadir Fila</value>
+  </data>
   <data name="CreateTableTitle" xml:space="preserve">
     <value>Crear Tabla</value>
   </data>
@@ -236,6 +242,9 @@
   </data>
   <data name="CreateTaskBoardTitle" xml:space="preserve">
     <value>Crear Tabla de Tareas</value>
+  </data>
+  <data name="CreateTaskButton" xml:space="preserve">
+    <value>Create Task</value>
   </data>
   <data name="CreateTaskProgressButton" xml:space="preserve">
     <value>Crear Sección de Progreso</value>
@@ -275,6 +284,9 @@
   </data>
   <data name="DescriptionText" xml:space="preserve">
     <value>Descripción</value>
+  </data>
+  <data name="DropZone" xml:space="preserve">
+    <value>Drop Here</value>
   </data>
   <data name="EditButton" xml:space="preserve">
     <value>Editar</value>
@@ -402,11 +414,17 @@
   <data name="RemoveButton" xml:space="preserve">
     <value>Eliminar</value>
   </data>
+  <data name="RemoveColumnButton" xml:space="preserve">
+    <value>Borrar Columna</value>
+  </data>
   <data name="RemoveDependencyButton" xml:space="preserve">
     <value>Eliminar Dependencia</value>
   </data>
   <data name="RemovePermissionsLabel" xml:space="preserve">
     <value>Eliminar Permisos:</value>
+  </data>
+  <data name="RemoveRowButton" xml:space="preserve">
+    <value>Borrar Fila</value>
   </data>
   <data name="RestartMessage" xml:space="preserve">
     <value>Necesitas reiniciar la aplicación para aplicar los cambios</value>
@@ -464,6 +482,9 @@
   </data>
   <data name="UserAlreadyInProjectMessage" xml:space="preserve">
     <value>El usuario ya está en el proyecto</value>
+  </data>
+  <data name="UsernameLabel" xml:space="preserve">
+    <value>Username</value>
   </data>
   <data name="UsernameNotIntroducedMessage" xml:space="preserve">
     <value>Necesitas introducir un nombre de usuario</value>

@@ -58,6 +58,7 @@ public partial class MainPageModel : ObservableObject
 
     public async Task OnNavigatedTo()
     {
+        SelectedProject = null;
         if (NavigationContext.Startup)
         {
             NavigationContext.Startup = false;
@@ -104,19 +105,18 @@ public partial class MainPageModel : ObservableObject
     {
         Isloading = true;
         Projects = new(await projectsService.GetAllProjectsByUser(userSession.User.Id));
-        SelectedProject = null;
         Isloading = false;
     }
 
     [RelayCommand]
     private async void ProjectSelected(Project project)
     {
-        NavigationContext.CurrentProject = SelectedProject;
-        userSession.User.ProjectPermissions = await userProjectPermissionsService.getAllUserProjectPermissionsByUserAndProject(userSession.User.Id, SelectedProject.Id);
-        await Shell.Current.GoToAsync("ProjectmanagementPage", new Dictionary<string, object>
+        if (SelectedProject != null)
         {
-             {"Project", SelectedProject }
-        });
+            NavigationContext.CurrentProject = SelectedProject;
+            userSession.User.ProjectPermissions = await userProjectPermissionsService.getAllUserProjectPermissionsByUserAndProject(userSession.User.Id, SelectedProject.Id);
+            await Shell.Current.GoToAsync("ProjectmanagementPage");
+        }
     }
 
     [RelayCommand]

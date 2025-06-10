@@ -205,6 +205,29 @@ public partial class TaskBoardPageModel : ObservableObject
                 if (task.IsParent)
                 {
                     task.Children = new(await tasksService.GetAllTasksByParent(task.Id));
+                    foreach (var child in task.Children)
+                    {
+                        var childDependencies = await taskDependenciesService.GetAllTaskDependenciesByTask(child.Id);
+                        if (childDependencies != null && childDependencies.Count > 0)
+                        {
+                            child.Dependents = childDependencies;
+
+                            foreach (var dependency in childDependencies)
+                            {
+                                dependency.DependsOn = taskSection.Tasks.FirstOrDefault(x => x.Id == dependency.IdDependsOn);
+                            }
+                        }
+                        if (child.IdUserAssigned != null)
+                        {
+                            child.UserAssigned = await tasksService.getUserAssigned(child.Id);
+                        }
+                        child.Priority = priorities.FirstOrDefault(x => x.Id == child.IdPriority);
+                        if (task.Priority == null)
+                        {
+                            var minPriority = priorities.OrderBy(x => x.PriorityValue).LastOrDefault();
+                            child.Priority = minPriority;
+                        }
+                    }
                     showTasks.Add(task);
                 } else
                 {

@@ -1,5 +1,6 @@
 using System.Windows.Input;
 using TFG_Projects_APP_Frontend.Entities.Models;
+using TFG_Projects_APP_Frontend.Properties;
 
 namespace TFG_Projects_APP_Frontend.Components.ConceptComponents;
 
@@ -74,25 +75,49 @@ public partial class TableComponent : ContentView
 
             var addRowButton = new Button
             {
-                Text = "Add Row",
+                Text = Properties.Resources.CreateRowButton,
+                FontSize = 12,
+                BackgroundColor = (Color)Application.Current.Resources["Create"],
                 Command = new Command(() => view.AddRow())
             };
 
             var addColumnButton = new Button
             {
-                Text = "Add Column",
+                Text = Properties.Resources.CreateColumnButton,
+                FontSize = 12,
+                BackgroundColor = (Color)Application.Current.Resources["Create"],
                 Command = new Command(() => view.AddColumn())
             };
 
             var saveButton = new Button
             {
-                Text = "Save",
+                Text = Properties.Resources.SaveButton,
+                FontSize = 12,
+                BackgroundColor = (Color)Application.Current.Resources["Save"],
                 Command = new Command(() => view.EditTableData(view.Component))
+            };
+
+            var removeColButton = new Button
+            {
+                Text = Properties.Resources.RemoveColumnButton,
+                FontSize = 12,
+                BackgroundColor = (Color)Application.Current.Resources["Delete"],
+                Command = new Command(() => view.RemoveColumn(view._tableData[0].Count-1))
+            };
+
+            var removeRowButton = new Button
+            {
+                Text = Properties.Resources.RemoveRowButton,
+                FontSize = 12,
+                BackgroundColor = (Color)Application.Current.Resources["Delete"],
+                Command = new Command(() => view.RemoveRow(view._tableData.Count - 1))
             };
 
             view.Buttons.Add(addRowButton);
             view.Buttons.Add(addColumnButton);
             view.Buttons.Add(saveButton);
+            view.DeleteButtons.Add(removeColButton);
+            view.DeleteButtons.Add(removeRowButton);
 
             var rows = view.Component.Content.Split("\n", StringSplitOptions.RemoveEmptyEntries);
 
@@ -117,10 +142,14 @@ public partial class TableComponent : ContentView
                     var entry = new Entry
                     {
                         Text = view._tableData[i][j],
-                        HorizontalOptions = LayoutOptions.Fill,
-                        VerticalOptions = LayoutOptions.Fill,
-                        Margin = new Thickness(5),
-                        ReturnCommand= new Command<ConceptComponent>(view.EditTableData),
+                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        VerticalOptions = LayoutOptions.Center,
+                        Margin = new Thickness(3),
+                        BackgroundColor = Colors.White,
+                        TextColor = Colors.Black,
+                        FontSize = 14,
+                        HeightRequest = 40,
+                        ReturnCommand = new Command<ConceptComponent>(view.EditTableData),
                         ReturnCommandParameter = view.Component
                     };
 
@@ -143,9 +172,15 @@ public partial class TableComponent : ContentView
             var entry = new Entry
             {
                 Text = "",
-                HorizontalOptions = LayoutOptions.Fill,
-                VerticalOptions = LayoutOptions.Fill,
-                Margin = new Thickness(5)
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                VerticalOptions = LayoutOptions.Center,
+                Margin = new Thickness(3),
+                BackgroundColor = Colors.White,
+                TextColor = Colors.Black,
+                FontSize = 14,
+                HeightRequest = 40,
+                ReturnCommand = new Command<ConceptComponent>(EditTableData),
+                ReturnCommandParameter = Component
             };
             Grid.SetRow(entry, rowIndex);
             Grid.SetColumn(entry, j);
@@ -162,13 +197,41 @@ public partial class TableComponent : ContentView
             var entry = new Entry
             {
                 Text = "",
-                HorizontalOptions = LayoutOptions.Fill,
-                VerticalOptions = LayoutOptions.Fill,
-                Margin = new Thickness(5)
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                VerticalOptions = LayoutOptions.Center,
+                Margin = new Thickness(3),
+                BackgroundColor = Colors.White,
+                TextColor = Colors.Black,
+                FontSize = 14,
+                HeightRequest = 40,
+                ReturnCommand = new Command<ConceptComponent>(EditTableData),
+                ReturnCommandParameter = Component
             };
             Grid.SetRow(entry, i);
             Grid.SetColumn(entry, _tableData[0].Count - 1);
             TableGrid.Children.Add(entry);
+        }
+    }
+
+    private void RemoveRow(int rowNum)
+    {
+        if (rowNum>0)
+        {
+            _tableData.RemoveAt(rowNum);
+            EditTableData(Component);
+        }
+        
+    }
+
+    private void RemoveColumn(int colNum)
+    {
+        if (colNum>0)
+        {
+            foreach (var row in _tableData)
+            {
+                row.RemoveAt(colNum);
+            }
+            EditTableData(Component);
         }
     }
 
@@ -231,9 +294,26 @@ public partial class TableComponent : ContentView
 
     private void EditTableData(ConceptComponent component)
     {
+        int rowCount = _tableData.Count;
+        int columnCount = _tableData[0].Count;
+
+        foreach (var child in TableGrid.Children)
+        {
+            if (child is Entry entry)
+            {
+                int row = Grid.GetRow(entry);
+                int col = Grid.GetColumn(entry);
+
+                if (row < rowCount && col < columnCount)
+                {
+                    _tableData[row][col] = entry.Text ?? string.Empty;
+                }
+            }
+        }
+
         if (UpdateContentCommand?.CanExecute(component) == true)
         {
-            component.Content = string.Join("\n", _tableData.Select(row => string.Join("\t", row)));
+            component.Content = string.Join("\n", _tableData.Select(row => string.Join("\t", row.Select(col => col))));
 
             UpdateContentCommand.Execute(component);
         }

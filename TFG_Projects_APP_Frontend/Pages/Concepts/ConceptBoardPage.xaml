@@ -22,29 +22,7 @@
         </Grid.ColumnDefinitions>
 
 
-        <StackLayout Grid.Column="0" Orientation="Vertical">
-            <CollectionView ItemsSource="{Binding Types}" SelectionMode="Single">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="models:ProjectType">
-                        <Border Padding="5">
-                            <Button
-                                BackgroundColor="{DynamicResource Create}"
-                                Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Concepts.ConceptBoardPageModel}}, Path=TypeSelectedCommand}"
-                                CommandParameter="{Binding .}"
-                                Text="{Binding Name}" />
-                        </Border>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-            <ActivityIndicator
-                HeightRequest="50"
-                HorizontalOptions="Center"
-                IsRunning="{Binding IsLoading}"
-                IsVisible="{Binding IsLoading}"
-                VerticalOptions="Center"
-                WidthRequest="50"
-                Color="{DynamicResource ActivityIndicator}" />
-        </StackLayout>
+
         <Grid Grid.Column="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -54,20 +32,23 @@
             <AbsoluteLayout
                 x:Name="ComponentCanvas"
                 Grid.Column="0"
-                BackgroundColor="LightGray"
                 HorizontalOptions="FillAndExpand"
+                IgnoreSafeArea="False"
+                IsClippedToBounds="True"
                 VerticalOptions="FillAndExpand" />
             <VerticalStackLayout
                 Grid.Column="1"
+                BackgroundColor="{DynamicResource White}"
                 IsVisible="{Binding IsEditingComponent}"
-                Spacing="5">
+                Spacing="10">
                 <StackLayout Orientation="Horizontal" Spacing="5">
                     <Label FontSize="30" Text="{x:Static properties:Resources.EditComponentLabel}" />
                     <Button
                         BackgroundColor="{DynamicResource Transparent}"
-                        TextColor="{StaticResource Gray500}"
                         Command="{Binding CloseEditingComponentCommand}"
-                        Text="X" />
+                        FontSize="20"
+                        Text="X"
+                        TextColor="{StaticResource Gray500}" />
                 </StackLayout>
 
                 <Label FontSize="20" Text="{x:Static properties:Resources.TitleLabel}" />
@@ -88,6 +69,32 @@
                     Text="{x:Static properties:Resources.SaveButton}" />
             </VerticalStackLayout>
         </Grid>
+
+        <Border>
+            <StackLayout Grid.Column="0" Orientation="Vertical">
+                <CollectionView ItemsSource="{Binding Types}" SelectionMode="Single">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:ProjectType">
+                            <Border Padding="5" Stroke="{DynamicResource Transparent}">
+                                <Button
+                                    BackgroundColor="{DynamicResource Create}"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:Concepts.ConceptBoardPageModel}}, Path=TypeSelectedCommand}"
+                                    CommandParameter="{Binding .}"
+                                    Text="{Binding Name}" />
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+                <ActivityIndicator
+                    HeightRequest="50"
+                    HorizontalOptions="Center"
+                    IsRunning="{Binding IsLoading}"
+                    IsVisible="{Binding IsLoading}"
+                    VerticalOptions="Center"
+                    WidthRequest="50"
+                    Color="{DynamicResource ActivityIndicator}" />
+            </StackLayout>
+        </Border>
 
 
     </Grid>

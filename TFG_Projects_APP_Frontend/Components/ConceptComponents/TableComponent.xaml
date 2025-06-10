@@ -3,16 +3,46 @@
     x:Class="TFG_Projects_APP_Frontend.Components.ConceptComponents.TableComponent"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
-    <VerticalStackLayout Background="AliceBlue">
-        <Label
-            FontAttributes="Bold"
-            FontSize="Medium"
-            HorizontalOptions="Center"
-            Text="{Binding Component.Title}"
-            VerticalOptions="Center" />
-        <HorizontalStackLayout x:Name="Buttons" />
-        <ScrollView>
-            <Grid x:Name="TableGrid" />
-        </ScrollView>
-    </VerticalStackLayout>
+    <Border>
+        <Border.StrokeShape>
+            <RoundRectangle CornerRadius="10" />
+        </Border.StrokeShape>
+        <Grid Padding="10" Background="{DynamicResource Table}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Label
+                Grid.Row="0"
+                FontAttributes="Bold"
+                FontSize="Medium"
+                HorizontalOptions="Center"
+                Text="{Binding Component.Title}"
+                VerticalOptions="Center" />
+            <HorizontalStackLayout
+                x:Name="Buttons"
+                Grid.Row="1"
+                Margin="10"
+                HorizontalOptions="Center"
+                Spacing="10" />
+            <HorizontalStackLayout
+                x:Name="DeleteButtons"
+                Grid.Row="2"
+                Margin="10"
+                HorizontalOptions="Center"
+                Spacing="10" />
+
+            <ScrollView Grid.Row="3" Orientation="Both">
+                <Border Background="{DynamicResource White}">
+                    <Grid
+                        x:Name="TableGrid"
+                        Margin="10"
+                        ColumnSpacing="1"
+                        RowSpacing="1" />
+                </Border>
+            </ScrollView>
+        </Grid>
+    </Border>
 </ContentView>

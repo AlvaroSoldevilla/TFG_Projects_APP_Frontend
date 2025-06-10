@@ -4,21 +4,23 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:components="clr-namespace:TFG_Projects_APP_Frontend.Components.ConceptComponents">
-    <VerticalStackLayout
-        Background="BlanchedAlmond"
-        HorizontalOptions="Center"
-        MaximumHeightRequest="500">
-        <Label
-            Padding="10"
-            FontAttributes="Bold"
-            FontSize="Medium"
-            HorizontalOptions="Center"
-            MinimumHeightRequest="50"
-            MinimumWidthRequest="100"
-            Text="{Binding Component.Title}"
-            VerticalOptions="Center" />
-        <ScrollView>
-            <StackLayout x:Name="ChildrenContainer" Padding="10" />
-        </ScrollView>
-    </VerticalStackLayout>
+    <Border BackgroundColor="{DynamicResource Gray100}">
+        <Border.StrokeShape>
+            <RoundRectangle CornerRadius="10" />
+        </Border.StrokeShape>
+        <VerticalStackLayout HorizontalOptions="Center" MaximumHeightRequest="500">
+            <Label
+                Padding="10"
+                FontAttributes="Bold"
+                FontSize="Medium"
+                HorizontalOptions="Center"
+                MinimumHeightRequest="50"
+                MinimumWidthRequest="100"
+                Text="{Binding Component.Title}"
+                VerticalOptions="Center" />
+            <ScrollView>
+                <StackLayout x:Name="ChildrenContainer" Padding="10" />
+            </ScrollView>
+        </VerticalStackLayout>
+    </Border>
 </ContentView>
