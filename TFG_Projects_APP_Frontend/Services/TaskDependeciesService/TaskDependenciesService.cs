@@ -5,6 +5,7 @@ using TFG_Projects_APP_Frontend.Rest;
 
 namespace TFG_Projects_APP_Frontend.Services.TaskDependeciesService;
 
+/*Implementation of the TaskDependenciesService Interface*/
 public class TaskDependenciesService(RestClient restClient) : ITaskDependenciesService
 {
     private readonly string route = "task_dependencies";

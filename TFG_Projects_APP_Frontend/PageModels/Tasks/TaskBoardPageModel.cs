@@ -127,6 +127,7 @@ public partial class TaskBoardPageModel : ObservableObject
         this.permissionsUtils = permissionsUtils;
     }
 
+    /*When a user navigates to the page, resets the relevant properties and begins loading the data*/
     public async Task OnNavigatedTo()
     {
         IsLoading = true;
@@ -137,6 +138,7 @@ public partial class TaskBoardPageModel : ObservableObject
         IsLoading = false;
     }
 
+    /*Loads the relevant data*/
     private async Task LoadData()
     {
 
@@ -157,7 +159,7 @@ public partial class TaskBoardPageModel : ObservableObject
         var priorities = await prioritiesService.GetAll();
         Priorities = new ObservableCollection<Priority>(priorities.OrderBy(x => x.PriorityValue));
 
-        var taskSections = await taskSectionsService.getAllTaskSectionsByTaskBoard(TaskBoard.Id);
+        var taskSections = await taskSectionsService.GetAllTaskSectionsByTaskBoard(TaskBoard.Id);
         taskSections = taskSections.OrderBy(x => x.Order).ToList();
         AllTasks.Clear();
         foreach (var taskSection in taskSections)
@@ -173,7 +175,7 @@ public partial class TaskBoardPageModel : ObservableObject
                 AllTasks.Add(task);
                 if (task.IdUserAssigned != null)
                 {
-                    task.UserAssigned = await tasksService.getUserAssigned(task.Id);
+                    task.UserAssigned = await tasksService.GetUserAssigned(task.Id);
                 }
                 task.Priority = priorities.FirstOrDefault(x => x.Id == task.IdPriority);
                 if (task.Priority == null)
@@ -219,7 +221,7 @@ public partial class TaskBoardPageModel : ObservableObject
                         }
                         if (child.IdUserAssigned != null)
                         {
-                            child.UserAssigned = await tasksService.getUserAssigned(child.Id);
+                            child.UserAssigned = await tasksService.GetUserAssigned(child.Id);
                         }
                         child.Priority = priorities.FirstOrDefault(x => x.Id == child.IdPriority);
                         if (task.Priority == null)
@@ -249,6 +251,7 @@ public partial class TaskBoardPageModel : ObservableObject
         TaskSections = new ObservableCollection<TaskSection>(taskSections);
     }
 
+    /*Creates a Task Section*/
     [RelayCommand]
     public async Task CreateTaskSection()
     {
@@ -308,6 +311,7 @@ public partial class TaskBoardPageModel : ObservableObject
         }
     }
 
+    /*Creates a Task*/
     [RelayCommand]
     public async Task TaskCreate(TaskSection taskSection)
     {
@@ -353,6 +357,7 @@ public partial class TaskBoardPageModel : ObservableObject
         }
     }
 
+    /*Removes a task's parent (It doesn't delete the parent)*/
     [RelayCommand]
     public async Task RemoveParent(ProjectTask task)
     {
@@ -403,6 +408,7 @@ public partial class TaskBoardPageModel : ObservableObject
         }
     }
 
+    /*Moves the section to the left 1 position*/
     [RelayCommand]
     public async Task MoveSectionLeft(TaskSection taskSection)
     {
@@ -440,7 +446,8 @@ public partial class TaskBoardPageModel : ObservableObject
             await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.NoPermissionMessage, Resources.ConfirmButton);
         }
     }
-
+    
+    /*Moves the section to the right 1 position*/
     [RelayCommand]
     public async Task MoveSectionRight(TaskSection taskSection)
     {
@@ -479,6 +486,7 @@ public partial class TaskBoardPageModel : ObservableObject
         }
     }
 
+    /*When a task section is selected, moves to the task progress page*/
     [RelayCommand]
     public async Task TaskSectionSelected(TaskSection taskSection)
     {
@@ -489,6 +497,7 @@ public partial class TaskBoardPageModel : ObservableObject
         });
     }
 
+    /*Opens the edit menu for task sections and loads all relevant data*/
     [RelayCommand]
     public async void EditTaskSection(TaskSection taskSection)
     {
@@ -534,6 +543,7 @@ public partial class TaskBoardPageModel : ObservableObject
         }
     }
 
+    /*Opens the edit menu for tasks and loads all relevant data*/
     [RelayCommand]
     public async Task EditTask(ProjectTask task)
     {
@@ -673,6 +683,7 @@ public partial class TaskBoardPageModel : ObservableObject
         }
     }
 
+    /*Opens the edit menu for task dependencies*/
     [RelayCommand]
     private async void DependencySelected(TaskDependency taskDependency)
     {
@@ -696,6 +707,7 @@ public partial class TaskBoardPageModel : ObservableObject
         }
     }
 
+    /*Closes the edit menu for task sections*/
     [RelayCommand]
     private async void CloseEditingtTaskSection()
     {
@@ -703,6 +715,7 @@ public partial class TaskBoardPageModel : ObservableObject
         IsEditingTaskSection = false;
     }
 
+    /*closes the edit menu for tasks*/
     [RelayCommand]
     private async void CloseEditingtTask()
     {
@@ -710,6 +723,7 @@ public partial class TaskBoardPageModel : ObservableObject
         IsEditingTask = false;
     }
 
+    /*Adds a dependency to a task*/
     [RelayCommand]
     private async void AddDependency(ProjectTask task)
     {
@@ -751,6 +765,7 @@ public partial class TaskBoardPageModel : ObservableObject
         }
     }
 
+    /*Removes a dependency from a task*/
     [RelayCommand]
     private async void RemoveDependency(TaskDependency taskDependency)
     {
@@ -771,27 +786,28 @@ public partial class TaskBoardPageModel : ObservableObject
         }
     }
 
+    /*Saves the changes made to a task section*/
     [RelayCommand]
-    private async void SaveTaskDependencyChanges()
+    private async void SaveTaskSectionChanges()
     {
-        if (EditingTaskDependencyData != null)
+        if (EditingTaskSectionData != null)
         {
-            IsLoading = true;
-            var taskDependencyUpdate = new TaskDependencyUpdate
+            var taskSectionUpdate = new TaskSectionUpdate
             {
-                IdTask = EditingTaskDependencyData.IdTask,
-                IdDependsOn = EditingTaskDependencyData.IdDependsOn,
-                UnlockAt = unlockAtValue
+                IdBoard = EditingTaskSectionData.IdBoard,
+                IdDefaultProgress = EditingTaskSectionData.IdDefaultProgress,
+                Title = EditingTaskSectionData.Title,
+                Order = EditingTaskSectionData.Order
             };
-            await taskDependenciesService.Patch(EditingTaskDependencyData.Id, taskDependencyUpdate);
-            IsEditingTaskDependency = false;
-            EditingTaskDependencyData = null;
-            SelectedDependency = null;
+
+            IsLoading = true;
+            taskSectionsService.Patch(EditingTaskSectionData.Id, taskSectionUpdate);
             await LoadData();
             IsLoading = false;
         }
     }
 
+    /*Saves the changes made to a task*/
     [RelayCommand]
     private async void SaveTaskChanges()
     {
@@ -879,26 +895,29 @@ public partial class TaskBoardPageModel : ObservableObject
         }
     }
 
+    /*Saves the changes made to a task dependency*/
     [RelayCommand]
-    private async void SaveTaskSectionChanges()
+    private async void SaveTaskDependencyChanges()
     {
-        if (EditingTaskSectionData != null)
+        if (EditingTaskDependencyData != null)
         {
-            var taskSectionUpdate = new TaskSectionUpdate
-            {
-                IdBoard = EditingTaskSectionData.IdBoard,
-                IdDefaultProgress = EditingTaskSectionData.IdDefaultProgress,
-                Title = EditingTaskSectionData.Title,
-                Order = EditingTaskSectionData.Order
-            };
-
             IsLoading = true;
-            taskSectionsService.Patch(EditingTaskSectionData.Id, taskSectionUpdate);
+            var taskDependencyUpdate = new TaskDependencyUpdate
+            {
+                IdTask = EditingTaskDependencyData.IdTask,
+                IdDependsOn = EditingTaskDependencyData.IdDependsOn,
+                UnlockAt = unlockAtValue
+            };
+            await taskDependenciesService.Patch(EditingTaskDependencyData.Id, taskDependencyUpdate);
+            IsEditingTaskDependency = false;
+            EditingTaskDependencyData = null;
+            SelectedDependency = null;
             await LoadData();
             IsLoading = false;
         }
     }
 
+    /*Deletes a task section*/
     [RelayCommand]
     private async void DeleteTaskSection(TaskSection taskSection)
     {
@@ -951,6 +970,7 @@ public partial class TaskBoardPageModel : ObservableObject
         }
     }
 
+    /*Deletes a task*/
     [RelayCommand]
     private async void DeleteTask(ProjectTask task)
     {
@@ -984,6 +1004,7 @@ public partial class TaskBoardPageModel : ObservableObject
         }
     }
 
+    /*Checks for changes on a task*/
     private bool HasChangedTaskData(ProjectTask task)
     {
         if (task == null || EditingTaskData == null)
@@ -1006,6 +1027,7 @@ public partial class TaskBoardPageModel : ObservableObject
                task.IsParent != EditingTaskData.IsParent;
     }
 
+    /*When a task is dropped on a section, it updates the task, removing its parent if needed*/
     [RelayCommand]
     public async void DropOnSection(TaskSection section)
     {
@@ -1075,6 +1097,7 @@ public partial class TaskBoardPageModel : ObservableObject
         _grabbedTask = null;
     }
 
+    /*If a task is dropped on another task and is a parent task, it changes its and its childrens section ID. If the task is not a parent, the dropped task becomes a child of the task it's dropped on*/
     [RelayCommand]
     public async void DroppedOnTask(ProjectTask task)
     {
@@ -1175,6 +1198,7 @@ public partial class TaskBoardPageModel : ObservableObject
         _grabbedTask = null;
     }
 
+    /*When a task is grabbed, it's stored*/
     [RelayCommand]
     private void GrabTask(ProjectTask task)
     {

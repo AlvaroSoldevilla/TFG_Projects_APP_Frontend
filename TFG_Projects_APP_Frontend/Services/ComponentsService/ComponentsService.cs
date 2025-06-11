@@ -5,6 +5,7 @@ using TFG_Projects_APP_Frontend.Rest;
 
 namespace TFG_Projects_APP_Frontend.Services.ComponentsService;
 
+/*Implementation of the ComponentsService Interface*/
 public class ComponentsService(RestClient restClient) : IComponentsService
 {
     private readonly string route = "components";

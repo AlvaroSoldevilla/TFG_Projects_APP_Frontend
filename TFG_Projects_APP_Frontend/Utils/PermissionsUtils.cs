@@ -2,8 +2,10 @@
 
 namespace TFG_Projects_APP_Frontend.Utils;
 
+/*Util class to manage permissions*/
 public class PermissionsUtils(UserSession userSession)
 {
+    /*All permssions in the app with their corresponding ID*/
     public enum Permissions
     {
         FullPermissions = 1,
@@ -31,9 +33,9 @@ public class PermissionsUtils(UserSession userSession)
         EditUsers = 23,
         RemoveUsers = 24,
         FullUserPermissions = 25
-
     }
 
+    /*Check if the user has every permission given*/
     public bool HasAllPermissions(List<Permissions> permissions)
     {
         bool hasAllPermissions = true;
@@ -49,6 +51,7 @@ public class PermissionsUtils(UserSession userSession)
         return hasAllPermissions;
     }
 
+    /*Checks if the user has at least one permission*/
     public bool HasOnePermission(List<Permissions> permissions)
     {
         bool hasOnePermission = false;
@@ -65,6 +68,7 @@ public class PermissionsUtils(UserSession userSession)
         return hasOnePermission;
     }
 
+    /*Check if the user has one of the required permissions or all of the optionals*/
     public bool HasOneOfRequiredPermissionsOrAllOptional(List<Permissions> required, List<Permissions> optional)
     {
         bool hasOneOfRequiredPermissionsOrAllOptional = false;

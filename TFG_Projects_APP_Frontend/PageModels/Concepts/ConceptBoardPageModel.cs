@@ -65,6 +65,7 @@ public partial class ConceptBoardPageModel : ObservableObject
         this.permissionsUtils = permissionsUtils;
     }
 
+    /*When a user navigates to the page, resets the relevant properties and begins loading the data*/
     public async Task OnNavigatedTo()
     {
         IsLoading = true;
@@ -75,24 +76,9 @@ public partial class ConceptBoardPageModel : ObservableObject
         IsLoading = false;
     }
 
-    [RelayCommand]
-    private async void NavigateInside(ConceptComponent component)
-    {
-        if (component != null && component.IdType == 1 && !_isNavigating)
-        {
-            _isNavigating = true;
-            var componentBaordId = int.Parse(component.Content);
-            var componentBoard = await conceptBoardsService.GetById(componentBaordId);
-            NavigationContext.CurrentConceptBoards.Push(ConceptBoard);
-            NavigationContext.CurrentConceptBoards.Push(component.Board);
-            if (component.Board != null)
-            {
-                await Shell.Current.GoToAsync("ConceptBoardPage");
-            }
-            _isNavigating = false;
-        }
-    }
+    
 
+    /*Loads the types*/
     private async Task LoadTypes()
     {
         if (Types == null || Types.Count == 0)
@@ -102,6 +88,7 @@ public partial class ConceptBoardPageModel : ObservableObject
         }
     }
 
+    /*Loads the components*/
     private async Task LoadData()
     {
         if (_isLoadingData)
@@ -156,6 +143,27 @@ public partial class ConceptBoardPageModel : ObservableObject
         _isLoadingData = false;
     }
 
+    /*When a ConceptBoard is clicked, updates the state of the NavigationContext and navigates to the new Concept Board*/
+    [RelayCommand]
+    private async void NavigateInside(ConceptComponent component)
+    {
+        if (component != null && component.IdType == 1 && !_isNavigating)
+        {
+            _isNavigating = true;
+            var componentBaordId = int.Parse(component.Content);
+            var componentBoard = await conceptBoardsService.GetById(componentBaordId);
+            NavigationContext.CurrentConceptBoards.Push(ConceptBoard);
+            NavigationContext.CurrentConceptBoards.Push(component.Board);
+            if (component.Board != null)
+            {
+                await Shell.Current.GoToAsync("ConceptBoardPage");
+            }
+            _isNavigating = false;
+        }
+    }
+
+
+    /*Calls the page to paint the components*/
     private void PaintComponent(ConceptComponent component)
     {
         View componentView = null;
@@ -212,6 +220,7 @@ public partial class ConceptBoardPageModel : ObservableObject
         }
     }
 
+    /*When a type is selected, creates the component*/
     [RelayCommand]
     public async Task TypeSelected(ProjectType projectType)
     {
@@ -351,6 +360,7 @@ public partial class ConceptBoardPageModel : ObservableObject
         }
     }
 
+    /*Deletes a component*/
     [RelayCommand]
     public async void DeleteComponent(ConceptComponent component)
     {
@@ -374,6 +384,7 @@ public partial class ConceptBoardPageModel : ObservableObject
         }
     }
 
+    /*Removes a note component from its container component*/
     [RelayCommand]
     private async void RemoveNoteFromContainer(ConceptComponent note)
     {
@@ -406,6 +417,7 @@ public partial class ConceptBoardPageModel : ObservableObject
         await LoadData();
     }
 
+    /*Logic for when a component is dropped. If the component is a note, checks if it should place it inside a container component. For any other component, updates its position*/
     [RelayCommand]
     private async void DropComponent(ConceptComponent component)
     {
@@ -451,6 +463,7 @@ public partial class ConceptBoardPageModel : ObservableObject
         await LoadData();
     }
 
+    /*Edit a note (Unlike other components, the content of the note component should be edited in the menu)*/
     [RelayCommand]
     private async void EditNote(ConceptComponent component)
     {
@@ -473,6 +486,7 @@ public partial class ConceptBoardPageModel : ObservableObject
         }
     }
 
+    /*Edit any non Note component (Unlike notes, the rest of the components don't allow for their content to be modified directly)*/
     [RelayCommand]
     private async void EditComponent(ConceptComponent component)
     {
@@ -492,6 +506,7 @@ public partial class ConceptBoardPageModel : ObservableObject
         }
     }
 
+    /*Closes the editing menu*/
     [RelayCommand]
     private async void CloseEditingComponent()
     {
@@ -500,6 +515,7 @@ public partial class ConceptBoardPageModel : ObservableObject
         EditComponentData = null;
     }
 
+    /*Saves the changes done to a component*/
     [RelayCommand]
     private async void SaveComponent(ConceptComponent component)
     {
@@ -536,6 +552,7 @@ public partial class ConceptBoardPageModel : ObservableObject
         }
     }
 
+    /*When a note is dropped, simulates the size of the note component and the container components in the page to check if it should be placed inside it*/
     private ConceptComponent CheckCollission(ConceptComponent note)
     {
 

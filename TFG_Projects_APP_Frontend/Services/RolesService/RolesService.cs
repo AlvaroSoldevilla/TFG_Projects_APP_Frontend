@@ -5,6 +5,7 @@ using TFG_Projects_APP_Frontend.Rest;
 
 namespace TFG_Projects_APP_Frontend.Services.RolesService;
 
+/*Implementation of the RolesService Interface*/
 public class RolesService(RestClient restClient) : IRolesService
 {
     private readonly string route = "roles";

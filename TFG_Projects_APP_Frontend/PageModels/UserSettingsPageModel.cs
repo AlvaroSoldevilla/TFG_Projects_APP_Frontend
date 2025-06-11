@@ -46,6 +46,7 @@ public partial class UserSettingsPageModel : ObservableObject
         this.userSession = userSession;
     }
 
+    /*The user has to be authenticated before being allowed to change their settings*/
     [RelayCommand]
     public async Task Login()
     {
@@ -96,6 +97,7 @@ public partial class UserSettingsPageModel : ObservableObject
         IsLoading = false;
     }
 
+    /*Changes the user's password*/
     [RelayCommand]
     private async Task ChangePassword()
     {
@@ -139,6 +141,7 @@ public partial class UserSettingsPageModel : ObservableObject
         }
     }
 
+    /*Changes the user's email*/
     [RelayCommand]
     private async Task ChangeEmail()
     {
@@ -169,6 +172,7 @@ public partial class UserSettingsPageModel : ObservableObject
         }
     }
 
+    /*Changes the user's username*/
     [RelayCommand]
     private async Task ChangeUsername()
     {

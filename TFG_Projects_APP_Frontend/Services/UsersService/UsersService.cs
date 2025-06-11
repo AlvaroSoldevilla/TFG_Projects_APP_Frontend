@@ -5,6 +5,7 @@ using TFG_Projects_APP_Frontend.Rest;
 
 namespace TFG_Projects_APP_Frontend.Services.UsersService;
 
+/*Implementation of the UserService Interface*/
 public class UsersService(RestClient restClient) : IUsersService
 {
     private readonly string route = "users";

@@ -2,7 +2,9 @@
 
 namespace TFG_Projects_APP_Frontend.Services.TaskProgressService;
 
+/*Inherits IService and adds model specific methods*/
 public interface ITaskProgressService : IService<TaskProgress>
 {
-    Task<List<TaskProgress>> getAlltaskProgressByTaskSection(int idSection);
+    /*Get all progress sections from a section*/
+    Task<List<TaskProgress>> GetAlltaskProgressByTaskSection(int idSection);
 }

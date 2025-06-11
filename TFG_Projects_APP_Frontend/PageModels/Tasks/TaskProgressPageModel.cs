@@ -118,6 +118,7 @@ public partial class TaskProgressPageModel : ObservableObject
         this.permissionsUtils = permissionsUtils;
     }
 
+    /*When a user navigates to the page, begins loading the data*/
     public async Task OnNavigatedTo()
     {
         IsLoading = true;
@@ -125,6 +126,7 @@ public partial class TaskProgressPageModel : ObservableObject
         IsLoading = false;
     }
 
+    /*Loads the relevant data (Unlike Task Sections, TaskProgresses doesn't load parent tasks or tasks with unfullfilled dependencies)*/
     public async Task LoadData()
     {
         if (TaskSection == null)
@@ -144,7 +146,7 @@ public partial class TaskProgressPageModel : ObservableObject
         var priorities = await prioritiesService.GetAll();
         Priorities = new ObservableCollection<Priority>(priorities.OrderBy(x => x.PriorityValue));
 
-        var taskProgresses = await taskProgressService.getAlltaskProgressByTaskSection(TaskSection.Id);
+        var taskProgresses = await taskProgressService.GetAlltaskProgressByTaskSection(TaskSection.Id);
         taskProgresses = taskProgresses.OrderBy(tp => tp.Order).ToList();
         foreach (var taskProgress in taskProgresses)
         {
@@ -211,6 +213,7 @@ public partial class TaskProgressPageModel : ObservableObject
         TaskProgresses = new(taskProgresses);
     }
 
+    /*Creates a Task Progress Section*/
     [RelayCommand]
     public async Task CreateTaskProgress()
     {
@@ -258,6 +261,7 @@ public partial class TaskProgressPageModel : ObservableObject
         }
     }
 
+    /*Creates a Task*/
     [RelayCommand]
     public async Task TaskCreate(TaskProgress taskProgress)
     {
@@ -314,56 +318,7 @@ public partial class TaskProgressPageModel : ObservableObject
         }
     }
 
-    [RelayCommand]
-    public async Task RemoveParent(ProjectTask task)
-    {
-        if (task != null)
-        {
-            if (task.IdParentTask != null)
-            {
-                var parentTask = AllTasks.FirstOrDefault(x => x.Id == task.IdParentTask);
-                task.IdParentTask = null;
-                await tasksService.Patch(task.Id, new TaskUpdate
-                {
-                    IdSection = task.IdSection,
-                    IdProgressSection = task.IdProgressSection,
-                    IdUserCreated = task.IdUserCreated,
-                    Title = task.Title,
-                    IdUserAssigned = task.IdUserAssigned,
-                    IdParentTask = task.IdParentTask,
-                    IdPriority = task.IdPriority,
-                    Description = task.Description,
-                    Progress = task.Progress,
-                    LimitDate = task.LimitDate,
-                    CompletionDate = task.CompletionDate,
-                    Finished = task.Finished,
-                    IsParent = false
-                });
-
-                var isParent = AllTasks.Any(x => x.IdParentTask == task.Id);
-
-                await tasksService.Patch(parentTask.Id, new TaskUpdate
-                {
-                    IdSection = parentTask.IdSection,
-                    IdProgressSection = parentTask.IdProgressSection,
-                    IdUserCreated = parentTask.IdUserCreated,
-                    Title = parentTask.Title,
-                    IdUserAssigned = parentTask.IdUserAssigned,
-                    IdParentTask = parentTask.IdParentTask,
-                    IdPriority = parentTask.IdPriority,
-                    Description = parentTask.Description,
-                    Progress = parentTask.Progress,
-                    LimitDate = parentTask.LimitDate,
-                    CompletionDate = parentTask.CompletionDate,
-                    Finished = parentTask.Finished,
-                    IsParent = isParent
-                });
-            }
-
-            await LoadData();
-        }
-    }
-
+    /*Moves the section to the left 1 position*/
     [RelayCommand]
     public async Task MoveProgressSectionLeft(TaskProgress taskProgress)
     {
@@ -393,6 +348,7 @@ public partial class TaskProgressPageModel : ObservableObject
         }
     }
 
+    /*Moves the section to the right 1 position*/
     [RelayCommand]
     public async Task MoveProgressSectionRight(TaskProgress taskProgress)
     {
@@ -422,6 +378,7 @@ public partial class TaskProgressPageModel : ObservableObject
         }
     }
 
+    /*Opens the edit menu for task progress sections and loads all relevant data*/
     [RelayCommand]
     public async void EditTaskProgressSection(TaskProgress taskProgress)
     {
@@ -469,6 +426,7 @@ public partial class TaskProgressPageModel : ObservableObject
         }
     }
 
+    /*Opens the edit menu for tasks and loads all relevant data*/
     [RelayCommand]
     public async Task EditTask(ProjectTask task)
     {
@@ -581,6 +539,7 @@ public partial class TaskProgressPageModel : ObservableObject
         }
     }
 
+    /*Opens the edit menu for task dependencies*/
     [RelayCommand]
     private async void DependencySelected(TaskDependency taskDependency)
     {
@@ -605,6 +564,7 @@ public partial class TaskProgressPageModel : ObservableObject
         }
     }
 
+    /*Closes the edit menu for task sections*/
     [RelayCommand]
     private async void CloseEditingtTaskProgress()
     {
@@ -612,6 +572,7 @@ public partial class TaskProgressPageModel : ObservableObject
         IsEditingTaskProgress = false;
     }
 
+    /*closes the edit menu for tasks*/
     [RelayCommand]
     private async void CloseEditingtTask()
     {
@@ -619,6 +580,7 @@ public partial class TaskProgressPageModel : ObservableObject
         IsEditingTask = false;
     }
 
+    /*Adds a dependency to a task*/
     [RelayCommand]
     private async void AddDependency(ProjectTask task)
     {
@@ -660,6 +622,7 @@ public partial class TaskProgressPageModel : ObservableObject
         }
     }
 
+    /*Removes a dependency from a task*/
     [RelayCommand]
     private async void RemoveDependency(TaskDependency taskDependency)
     {
@@ -680,27 +643,29 @@ public partial class TaskProgressPageModel : ObservableObject
         }
     }
 
+    /*Saves the changes made to a task progress section*/
     [RelayCommand]
-    private async void SaveTaskDependencyChanges()
+    private async void SaveTaskProgressChanges()
     {
-        if (EditingTaskDependencyData != null)
+        if (EditingTaskProgressData != null)
         {
-            IsLoading = true;
-            var taskDependencyUpdate = new TaskDependencyUpdate
+            var taskProgressUpdate = new TaskProgressUpdate
             {
-                IdTask = EditingTaskDependencyData.IdTask,
-                IdDependsOn = EditingTaskDependencyData.IdDependsOn,
-                UnlockAt = unlockAtValue
+                IdSection = EditingTaskProgressData.IdSection,
+                Title = EditingTaskProgressData.Title,
+                ModifiesProgress = EditingTaskProgressData.ModifiesProgress,
+                ProgressValue = TaskProgressValue,
+                Order = EditingTaskProgressData.Order
             };
-            await taskDependenciesService.Patch(EditingTaskDependencyData.Id, taskDependencyUpdate);
-            IsEditingTaskDependency = false;
-            EditingTaskDependencyData = null;
-            SelectedDependency = null;
+
+            IsLoading = true;
+            taskProgressService.Patch(EditingTaskProgressData.Id, taskProgressUpdate);
             await LoadData();
             IsLoading = false;
         }
     }
 
+    /*Saves the changes made to a task*/
     [RelayCommand]
     private async void SaveTaskChanges()
     {
@@ -790,27 +755,29 @@ public partial class TaskProgressPageModel : ObservableObject
         }
     }
 
+    /*Saves the changes made to a task dependency*/
     [RelayCommand]
-    private async void SaveTaskProgressChanges()
+    private async void SaveTaskDependencyChanges()
     {
-        if (EditingTaskProgressData != null)
+        if (EditingTaskDependencyData != null)
         {
-            var taskProgressUpdate = new TaskProgressUpdate
-            {
-                IdSection = EditingTaskProgressData.IdSection,
-                Title = EditingTaskProgressData.Title,
-                ModifiesProgress = EditingTaskProgressData.ModifiesProgress,
-                ProgressValue = TaskProgressValue,
-                Order = EditingTaskProgressData.Order
-            };
-
             IsLoading = true;
-            taskProgressService.Patch(EditingTaskProgressData.Id, taskProgressUpdate);
+            var taskDependencyUpdate = new TaskDependencyUpdate
+            {
+                IdTask = EditingTaskDependencyData.IdTask,
+                IdDependsOn = EditingTaskDependencyData.IdDependsOn,
+                UnlockAt = unlockAtValue
+            };
+            await taskDependenciesService.Patch(EditingTaskDependencyData.Id, taskDependencyUpdate);
+            IsEditingTaskDependency = false;
+            EditingTaskDependencyData = null;
+            SelectedDependency = null;
             await LoadData();
             IsLoading = false;
         }
     }
 
+    /*Deletes a task progress section*/
     [RelayCommand]
     private async void DeleteTaskProgressSection(TaskProgress taskProgress)
     {
@@ -890,6 +857,7 @@ public partial class TaskProgressPageModel : ObservableObject
         }
     }
 
+    /*Deletes a task*/
     [RelayCommand]
     private async void DeleteTask(ProjectTask task)
     {
@@ -918,6 +886,7 @@ public partial class TaskProgressPageModel : ObservableObject
         }
     }
 
+    /*Checks for changes on a task*/
     private bool HasChangedTaskData(ProjectTask task)
     {
         if (EditingTaskData == null || task == null)
@@ -938,6 +907,7 @@ public partial class TaskProgressPageModel : ObservableObject
                EditingTaskData.IdPriority != task.IdPriority;
     }
 
+    /*When a task is dropped on a section, it updates the task*/
     [RelayCommand]
     public async void DropOnProgressSection(TaskProgress taskProgress)
     {
@@ -984,6 +954,7 @@ public partial class TaskProgressPageModel : ObservableObject
         _grabbedTask = null;
     }
 
+    /*When a task is dropped on another, its section ID is updated*/
     [RelayCommand]
     public async void DroppedOnTask(ProjectTask task)
     {
@@ -1037,6 +1008,7 @@ public partial class TaskProgressPageModel : ObservableObject
         _grabbedTask = null;
     }
 
+    /*When a task is grabbed, it's stored*/
     [RelayCommand]
     private void GrabTask(ProjectTask task)
     {

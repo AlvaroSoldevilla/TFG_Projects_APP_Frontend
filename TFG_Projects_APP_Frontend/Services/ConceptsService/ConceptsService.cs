@@ -5,6 +5,7 @@ using TFG_Projects_APP_Frontend.Rest;
 
 namespace TFG_Projects_APP_Frontend.Services.ConceptsService;
 
+/*Implementation of the ConceptsService Interface*/
 public class ConceptsService(RestClient restClient) : IConceptsService
 {
     private readonly string route = "concepts";

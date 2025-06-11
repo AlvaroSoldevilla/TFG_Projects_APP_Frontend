@@ -5,6 +5,7 @@ using TFG_Projects_APP_Frontend.Rest;
 
 namespace TFG_Projects_APP_Frontend.Services.PermissionsService;
 
+/*Implementation of the PermissionsService Interface*/
 public class PermissionsService(RestClient restClient) : IPermissionsService
 {
     private readonly string route = "permissions";

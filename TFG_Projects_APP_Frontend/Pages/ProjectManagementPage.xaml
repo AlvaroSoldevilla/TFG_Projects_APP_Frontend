@@ -46,7 +46,7 @@
                                 <StackLayout Padding="10" Orientation="Vertical">
                                     <Label FontSize="16" Text="{Binding Title}" />
                                     <Label FontSize="12" Text="{Binding Description}" />
-                                    <StackLayout Orientation="Horizontal">
+                                    <StackLayout Orientation="Horizontal" Spacing="10">
                                         <Button
                                             BackgroundColor="{DynamicResource Edit}"
                                             Command="{Binding ConceptEditCommand, Source={RelativeSource AncestorType={x:Type pageModels:ProjectManagementPageModel}}}"
@@ -93,7 +93,7 @@
                                 <StackLayout Padding="10" Orientation="Vertical">
                                     <Label FontSize="16" Text="{Binding Title}" />
                                     <Label FontSize="12" Text="{Binding Description}" />
-                                    <StackLayout Orientation="Horizontal">
+                                    <StackLayout Orientation="Horizontal" Spacing="10">
                                         <Button
                                             BackgroundColor="{DynamicResource Edit}"
                                             Command="{Binding TaskBoardEditCommand, Source={RelativeSource AncestorType={x:Type pageModels:ProjectManagementPageModel}}}"

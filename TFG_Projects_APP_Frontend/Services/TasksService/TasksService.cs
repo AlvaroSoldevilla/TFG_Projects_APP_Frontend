@@ -6,6 +6,7 @@ using TFG_Projects_APP_Frontend.Rest;
 
 namespace TFG_Projects_APP_Frontend.Services.TasksService;
 
+/*Implementation of the TasksService Interface*/
 public class TasksService(RestClient restClient) : ITasksService
 {
     private readonly string route = "tasks";
@@ -172,7 +173,7 @@ public class TasksService(RestClient restClient) : ITasksService
         };
     }
 
-    public async Task<AppUser> getUserAssigned(int id)
+    public async Task<AppUser> GetUserAssigned(int id)
     {
         HttpResponseMessage response = await restClient.GetByIdAsync($"{route}/user/assigned", id);
         if (response == null)
@@ -188,7 +189,7 @@ public class TasksService(RestClient restClient) : ITasksService
         };
     }
 
-    public async Task<AppUser> getUserCreated(int id)
+    public async Task<AppUser> GetUserCreated(int id)
     {
         HttpResponseMessage response = await restClient.GetByIdAsync($"{route}/user/created", id);
         if (response == null)

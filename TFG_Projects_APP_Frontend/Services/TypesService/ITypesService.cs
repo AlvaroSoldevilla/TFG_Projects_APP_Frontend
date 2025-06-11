@@ -2,6 +2,7 @@
 
 namespace TFG_Projects_APP_Frontend.Services.TypesService;
 
+/*Inherits IService*/
 public interface ITypesService : IService<ProjectType>
 {
 }

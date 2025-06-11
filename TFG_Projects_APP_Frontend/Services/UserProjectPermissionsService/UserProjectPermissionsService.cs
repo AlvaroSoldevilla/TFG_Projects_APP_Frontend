@@ -5,6 +5,7 @@ using TFG_Projects_APP_Frontend.Rest;
 
 namespace TFG_Projects_APP_Frontend.Services.UserProjectPermissionsService;
 
+/*Implementation of the UserProjectPermissionService Interface*/
 public class UserProjectPermissionsService(RestClient restClient) : IUserProjectPermissionsService
 {
     private readonly string route = "user_project_permissions";
@@ -39,7 +40,7 @@ public class UserProjectPermissionsService(RestClient restClient) : IUserProject
         }).ToList());
     }
 
-    public async Task<List<UserProjectPermission>> getAllUserProjectPermissionsByPermission(int id)
+    public async Task<List<UserProjectPermission>> GetAllUserProjectPermissionsByPermission(int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/permission/{id}");
         if (response == null)
@@ -59,7 +60,7 @@ public class UserProjectPermissionsService(RestClient restClient) : IUserProject
         }).ToList());
     }
 
-    public async Task<List<UserProjectPermission>> getAllUserProjectPermissionsByProject(int id)
+    public async Task<List<UserProjectPermission>> GetAllUserProjectPermissionsByProject(int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/project/{id}");
         if (response == null)
@@ -79,7 +80,7 @@ public class UserProjectPermissionsService(RestClient restClient) : IUserProject
         }).ToList());
     }
 
-    public async Task<List<UserProjectPermission>> getAllUserProjectPermissionsByUser(int id)
+    public async Task<List<UserProjectPermission>> GetAllUserProjectPermissionsByUser(int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/user/{id}");
         if (response == null)
@@ -99,7 +100,7 @@ public class UserProjectPermissionsService(RestClient restClient) : IUserProject
         }).ToList());
     }
 
-    public async Task<List<UserProjectPermission>> getAllUserProjectPermissionsByUserAndProject(int userId, int projectId)
+    public async Task<List<UserProjectPermission>> GetAllUserProjectPermissionsByUserAndProject(int userId, int projectId)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/user/{userId}/project/{projectId}");
         if (response == null)

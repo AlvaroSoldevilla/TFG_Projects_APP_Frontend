@@ -5,6 +5,7 @@ using TFG_Projects_APP_Frontend.Rest;
 
 namespace TFG_Projects_APP_Frontend.Services.TaskSectionsService;
 
+/*Implementation of the TaskSectionsService Interface*/
 public class TaskSectionsService(RestClient restClient) : ITaskSectionsService
 {
     private readonly string route = "task_sections";
@@ -40,7 +41,7 @@ public class TaskSectionsService(RestClient restClient) : ITaskSectionsService
         }).ToList());
     }
 
-    public async Task<List<TaskSection>> getAllTaskSectionsByTaskBoard(int id)
+    public async Task<List<TaskSection>> GetAllTaskSectionsByTaskBoard(int id)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/board/{id}");
         if (response == null)

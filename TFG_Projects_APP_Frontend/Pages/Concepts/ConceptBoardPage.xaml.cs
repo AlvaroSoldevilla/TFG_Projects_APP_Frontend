@@ -21,6 +21,7 @@ public partial class ConceptBoardPage : ContentPage
         ViewModel._page = this;
     }
 
+    /*Method to populate the AbsoluteLayout with the components*/
     public void AddComponent(View component, Point position)
     {
         AbsoluteLayout.SetLayoutBounds(component, new Rect(position.X, position.Y, -1, -1));
@@ -28,6 +29,7 @@ public partial class ConceptBoardPage : ContentPage
         ComponentCanvas.Children.Add(component);
     }
 
+    /*Method to clear the AbsoluteLayout*/
     public void ClearComponents()
     {
         ComponentCanvas.Children.Clear();

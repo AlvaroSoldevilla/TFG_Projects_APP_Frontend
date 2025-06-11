@@ -5,6 +5,7 @@ using TFG_Projects_APP_Frontend.Rest;
 
 namespace TFG_Projects_APP_Frontend.Services.TaskProgressService;
 
+/*Implementation of the TaskProgressService Interface*/
 public class TaskProgressService(RestClient restClient) : ITaskProgressService
 {
     private readonly string route = "task_progress";
@@ -41,7 +42,7 @@ public class TaskProgressService(RestClient restClient) : ITaskProgressService
         }).ToList());
     }
 
-    public async Task<List<TaskProgress>> getAlltaskProgressByTaskSection(int idSection)
+    public async Task<List<TaskProgress>> GetAlltaskProgressByTaskSection(int idSection)
     {
         HttpResponseMessage response = await restClient.GetAllAsync($"{route}/section/{idSection}");
         if (response == null)

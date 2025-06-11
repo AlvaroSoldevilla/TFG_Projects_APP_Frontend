@@ -5,6 +5,7 @@ using TFG_Projects_APP_Frontend.Rest;
 
 namespace TFG_Projects_APP_Frontend.Services.TaskBoardsService;
 
+/*Implementation of the TaskBoardsService Interface*/
 public class TaskBoardsService(RestClient restClient) : ITaskBoardsService
 {
     private readonly string route = "task_boards";

@@ -15,15 +15,7 @@ public partial class AppSettingsPageModel : ObservableObject
     [ObservableProperty]
     Language _selectedLanguage;
 
-    [ObservableProperty]
-    string _aPIUrl;
-
-    [ObservableProperty]
-    string _aPIPort;
-
-    [ObservableProperty]
-    string _savedMessage = "";
-
+    /*The languages that are currently available, the LanguageCode sould be the same as the resource file that is intended to be applied*/
     [ObservableProperty]
     ObservableCollection<Language> languages = new ObservableCollection<Language>
     {
@@ -37,7 +29,7 @@ public partial class AppSettingsPageModel : ObservableObject
         this.userSession = userSession;
     }
 
-
+    /*Changes the language of the app, while it partially works without needing a restart, for it to take full effect, the user should restart the app*/
     [RelayCommand]
     private async Task LanguageSelected()
     {

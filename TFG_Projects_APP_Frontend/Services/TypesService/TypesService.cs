@@ -5,6 +5,7 @@ using TFG_Projects_APP_Frontend.Rest;
 
 namespace TFG_Projects_APP_Frontend.Services.TypesService;
 
+/*Implementation of the TypeService Interface*/
 public class TypesService(RestClient restClient) : ITypesService
 {
     private readonly string route = "types";

@@ -5,6 +5,7 @@ using TFG_Projects_APP_Frontend.Rest;
 
 namespace TFG_Projects_APP_Frontend.Services.ProjectsService;
 
+/*Implementation of the ProjectsService Interface*/
 public class ProjectsService(RestClient restClient) : IProjectsService
 {
     private readonly string route = "projects";

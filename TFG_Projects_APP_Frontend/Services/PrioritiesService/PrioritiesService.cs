@@ -5,6 +5,7 @@ using TFG_Projects_APP_Frontend.Rest;
 
 namespace TFG_Projects_APP_Frontend.Services.PrioritiesService;
 
+/*Implementation of the PrioritiesService Interface*/
 public class PrioritiesService(RestClient restClient) : IPrioritiesService
 {
     private readonly string route = "priorities";

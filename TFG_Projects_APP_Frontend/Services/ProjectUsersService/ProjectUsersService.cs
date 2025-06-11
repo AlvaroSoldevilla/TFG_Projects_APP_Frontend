@@ -5,6 +5,7 @@ using TFG_Projects_APP_Frontend.Rest;
 
 namespace TFG_Projects_APP_Frontend.Services.ProjectUsersService;
 
+/*Implementation of the ProjectUsersService Interface*/
 public class ProjectUsersService(RestClient restClient) : IProjectUsersService
 {
     private readonly string route = "project_users";

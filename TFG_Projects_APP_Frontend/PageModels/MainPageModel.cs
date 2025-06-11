@@ -56,6 +56,10 @@ public partial class MainPageModel : ObservableObject
 
     }
 
+    /*When a user navigates to the page, checks if it's the startup sequence, in which case, if the user has set remember me, it updates the UserSession properties based on the Preferences, 
+     * otherwise it sends the user to the Login Page
+     * If it's not the startup sequence, begins loading data
+     */
     public async Task OnNavigatedTo()
     {
         SelectedProject = null;
@@ -92,6 +96,7 @@ public partial class MainPageModel : ObservableObject
         }
     }
 
+    /*A method to take the user to the Login page during the startup sequence*/
     private async Task GoToLogin()
     {
         Application.Current.Dispatcher.Dispatch(async () =>
@@ -101,6 +106,7 @@ public partial class MainPageModel : ObservableObject
         });
     }
 
+    /*Loads the relevant data*/
     private async Task LoadData()
     {
         Isloading = true;
@@ -114,7 +120,7 @@ public partial class MainPageModel : ObservableObject
         if (SelectedProject != null)
         {
             NavigationContext.CurrentProject = SelectedProject;
-            userSession.User.ProjectPermissions = await userProjectPermissionsService.getAllUserProjectPermissionsByUserAndProject(userSession.User.Id, SelectedProject.Id);
+            userSession.User.ProjectPermissions = await userProjectPermissionsService.GetAllUserProjectPermissionsByUserAndProject(userSession.User.Id, SelectedProject.Id);
             await Shell.Current.GoToAsync("ProjectmanagementPage");
         }
     }
@@ -157,7 +163,7 @@ public partial class MainPageModel : ObservableObject
     [RelayCommand]
     private async void ProjectDelete(Project project)
     {
-        userSession.User.ProjectPermissions = await userProjectPermissionsService.getAllUserProjectPermissionsByUserAndProject(userSession.User.Id, project.Id);
+        userSession.User.ProjectPermissions = await userProjectPermissionsService.GetAllUserProjectPermissionsByUserAndProject(userSession.User.Id, project.Id);
         List<PermissionsUtils.Permissions> requiredPermissions = [PermissionsUtils.Permissions.FullPermissions];
         if (userSession.User.ProjectPermissions != null && permissionsUtils.HasAllPermissions(requiredPermissions))
         {
@@ -183,7 +189,7 @@ public partial class MainPageModel : ObservableObject
     [RelayCommand]
     private async void ProjectEdit(Project project)
     {
-        userSession.User.ProjectPermissions = await userProjectPermissionsService.getAllUserProjectPermissionsByUserAndProject(userSession.User.Id, project.Id);
+        userSession.User.ProjectPermissions = await userProjectPermissionsService.GetAllUserProjectPermissionsByUserAndProject(userSession.User.Id, project.Id);
         List<PermissionsUtils.Permissions> requiredPermissions = [PermissionsUtils.Permissions.FullPermissions];
 
         if (userSession.User.ProjectPermissions != null && permissionsUtils.HasAllPermissions(requiredPermissions))
