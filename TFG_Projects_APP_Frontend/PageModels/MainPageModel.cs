@@ -21,6 +21,7 @@ public partial class MainPageModel : ObservableObject
     private readonly IProjectsService projectsService;
     private readonly IUserProjectPermissionsService userProjectPermissionsService;
     private readonly IProjectUsersService projectUsersService;
+    private readonly IUsersService usersService;
     private readonly UserSession userSession;
     private readonly PermissionsUtils permissionsUtils;
     private readonly RestClient restClient;
@@ -42,7 +43,8 @@ public partial class MainPageModel : ObservableObject
 
     public MainPageModel(IProjectsService projectsService, 
         IUserProjectPermissionsService userProjectPermissionsService,
-        IProjectUsersService projectUsersService, 
+        IProjectUsersService projectUsersService,
+        IUsersService usersService,
         UserSession userSession,
         PermissionsUtils permissionsUtils,
         RestClient restClient)
@@ -50,6 +52,7 @@ public partial class MainPageModel : ObservableObject
         this.projectsService = projectsService;
         this.userProjectPermissionsService = userProjectPermissionsService;
         this.projectUsersService = projectUsersService;
+        this.usersService = usersService;
         this.userSession = userSession;
         this.permissionsUtils = permissionsUtils;
         this.restClient = restClient;
@@ -79,6 +82,13 @@ public partial class MainPageModel : ObservableObject
                         Username = Preferences.Get("Username", "Admin"),
                         Email = Preferences.Get("Email", "admin@test.com")
                     };
+
+                    var user = await usersService.GetById(userSession.User.Id);
+
+                    if (userSession.User.Email != user.Email || userSession.User.Username != user.Username)
+                    {
+                        await GoToLogin();
+                    }
 
                     userSession.Token = Preferences.Get("Token", "");
                     await LoadData();

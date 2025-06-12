@@ -374,6 +374,7 @@ public partial class ProjectManagementPageModel : ObservableObject
         if (permissionsUtils.HasOnePermission(permissions))
         {
             IsLoadingTaskBoards = true;
+            NavigationContext.CurrentProject = Project;
             var taskBoardform = await FormDialog.ShowCreateObjectMenuAsync<TaskBoardFormCreate>(Resources.CreateTaskBoardTitle);
             if (taskBoardform != null && !string.IsNullOrEmpty(taskBoardform.Title))
             {
@@ -439,6 +440,7 @@ public partial class ProjectManagementPageModel : ObservableObject
         if (permissionsUtils.HasOnePermission(permissions))
         {
             IsLoadingConcepts = true;
+            NavigationContext.CurrentProject = Project;
             var conceptForm = await FormDialog.ShowCreateObjectMenuAsync<ConceptFormCreate>(Resources.CreateConceptTitle);
 
             if (conceptForm != null && !string.IsNullOrEmpty(conceptForm.Title))
@@ -483,9 +485,8 @@ public partial class ProjectManagementPageModel : ObservableObject
                 if (conceptBoardReturn == "Concept board updated")
                 {
                     var concepts = Concepts.ToList();
-                    concepts.Add(returnConcept);
-                    Concepts.Clear();
-                    Concepts = new(concepts);
+                    NavigationContext.CurrentProject = Project;
+                    await LoadData();
                 }
             }
             else
