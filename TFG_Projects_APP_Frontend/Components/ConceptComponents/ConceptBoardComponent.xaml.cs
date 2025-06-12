@@ -52,6 +52,7 @@ public partial class ConceptBoardComponent : ContentView
         AddGestures();
     }
 
+    /*Sets the Binding context*/
     private static void OnComponentChanged(BindableObject bindable, object oldValue, object newValue)
     {
         if (bindable is ConceptBoardComponent view)
@@ -60,6 +61,7 @@ public partial class ConceptBoardComponent : ContentView
         }
     }
 
+    /*Adds the events when the component is interacted with*/
     private void AddGestures()
     {
         var tapGesture = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
@@ -75,6 +77,7 @@ public partial class ConceptBoardComponent : ContentView
         this.GestureRecognizers.Add(panGesture);
     }
 
+    /*Logic for dragging the component*/
     private void OnPanUpdated(object? sender, PanUpdatedEventArgs e)
     {
         switch (e.StatusType)
@@ -104,6 +107,7 @@ public partial class ConceptBoardComponent : ContentView
         }
     }
 
+    /*Logic for dropping the component*/
     private void OnDragEnded(double x, double y)
     {
 
@@ -115,6 +119,7 @@ public partial class ConceptBoardComponent : ContentView
         }
     }
 
+    /*Logic for clicking on the component*/
     private void OnTapped(object sender, EventArgs e)
     {
         var now = DateTime.Now;
@@ -135,11 +140,13 @@ public partial class ConceptBoardComponent : ContentView
         }
     }
 
+    /*logic for double clicking the component*/
     private void OnDoubleTapped(object? sender, TappedEventArgs e)
     {
         OnDoubleTap();
     }
 
+    /*Executes the command for single click*/
     private void OnSingleTap()
     {
         if (TapCommand?.CanExecute(this) == true)
@@ -148,6 +155,7 @@ public partial class ConceptBoardComponent : ContentView
         }
     }
 
+    /*Executes the command for double click*/
     private void OnDoubleTap()
     {
         if (DoubleTapCommand?.CanExecute(this) == true)

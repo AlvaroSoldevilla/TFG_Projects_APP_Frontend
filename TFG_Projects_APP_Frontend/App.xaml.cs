@@ -17,8 +17,8 @@ namespace TFG_Projects_APP_Frontend
             CultureInfo.DefaultThreadCurrentCulture = culture;
             CultureInfo.DefaultThreadCurrentUICulture = culture;
             var window = new Window(new AppShell());
-            window.MinimumWidth = 500;
-            window.MinimumHeight = 600;
+            window.MinimumWidth = 750;
+            window.MinimumHeight = 800;
             return window;
         }
     }

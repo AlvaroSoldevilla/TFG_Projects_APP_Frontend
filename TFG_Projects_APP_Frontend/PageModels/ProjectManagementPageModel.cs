@@ -412,10 +412,8 @@ public partial class ProjectManagementPageModel : ObservableObject
                     Order = taskSection.Order
                 });
 
-                var taskBoards = TaskBoards.ToList();
-                taskBoards.Add(returnTaskBoard);
-                TaskBoards.Clear();
-                TaskBoards = new(taskBoards);
+                NavigationContext.CurrentProject = Project;
+                await LoadData();
             }
             else
             {
@@ -556,6 +554,7 @@ public partial class ProjectManagementPageModel : ObservableObject
                     IsLookingForUser = false;
 
                     IsLoadingUsers = true;
+                    NavigationContext.CurrentProject = Project;
                     await LoadData();
                     IsLoadingUsers = false;
                 }
@@ -591,6 +590,7 @@ public partial class ProjectManagementPageModel : ObservableObject
             if (confirmed)
             {
                 await taskBoardsService.Delete(taskBoard.Id);
+                NavigationContext.CurrentProject = Project;
                 await LoadData();
             }
             IsLoadingTaskBoards = false;
@@ -620,6 +620,7 @@ public partial class ProjectManagementPageModel : ObservableObject
             if (confirmed)
             {
                 await conceptsService.Delete(concept.Id);
+                NavigationContext.CurrentProject = Project;
                 await LoadData();
             }
             IsLoadingConcepts = false;
@@ -654,7 +655,8 @@ public partial class ProjectManagementPageModel : ObservableObject
                 {
                     await projectUsersService.Delete(projectUser.Id);
                 }
-                Users.Remove(user);
+                NavigationContext.CurrentProject = Project;
+                await LoadData();
             }
 
             IsLoadingUsers = false;
@@ -782,6 +784,7 @@ public partial class ProjectManagementPageModel : ObservableObject
             IsEditingTaskBoard = true;
             await taskBoardsService.Patch(EditingTaskBoardData.Id, taskBoardUpdate);
             CloseEditingTaskBoard();
+            NavigationContext.CurrentProject = Project;
             await LoadData();
         }
         IsEditingTaskBoard = false;
@@ -804,6 +807,7 @@ public partial class ProjectManagementPageModel : ObservableObject
             IsEditingConcept = true;
             await conceptsService.Patch(EditingConceptData.Id, conceptUpdate);
             CloseEditingConcept();
+            NavigationContext.CurrentProject = Project;
             await LoadData();
         }
         IsEditingConcept = false;
@@ -858,6 +862,7 @@ public partial class ProjectManagementPageModel : ObservableObject
             }
 
             CloseEditingUser();
+            NavigationContext.CurrentProject = Project;
             await LoadData();
             IsLoadingUsers = false;
         }

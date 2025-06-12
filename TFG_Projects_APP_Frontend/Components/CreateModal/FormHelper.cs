@@ -2,6 +2,7 @@
 
 public static class FormHelper
 {
+    /*Extracts the Field Definitions for the craetion form*/
     public static List<FieldDefinition> GetFieldDefinitions<T>()
     {
         return typeof(T)

@@ -66,10 +66,11 @@ public partial class MainPageModel : ObservableObject
         if (NavigationContext.Startup)
         {
             NavigationContext.Startup = false;
-            if (Preferences.Get("RememberMe", false))
+            var rememberMe = Preferences.Get("RememberMe", false);
+            if (rememberMe)
             {
                 var testUrl = Preferences.Get("APIurl", "http://localhost:8080");
-                var result = await restClient.TestConnection(testUrl);
+                var result = await restClient.TestConnection(testUrl + "/connection/test");
                 if (result.IsSuccessStatusCode)
                 {
                     userSession.User = new AppUser
@@ -149,7 +150,7 @@ public partial class MainPageModel : ObservableObject
                 IdUser = userSession.User.Id,
                 IdPermission = 1
             });
-            Projects.Add(returnProject);
+            await LoadData();
         } else
         {
             if (string.IsNullOrEmpty(project.Title))
@@ -177,7 +178,7 @@ public partial class MainPageModel : ObservableObject
             if (confirmed)
             {
                 await projectsService.Delete(project.Id);
-                Projects.Remove(project);
+                await LoadData();
             }
         } else
         {

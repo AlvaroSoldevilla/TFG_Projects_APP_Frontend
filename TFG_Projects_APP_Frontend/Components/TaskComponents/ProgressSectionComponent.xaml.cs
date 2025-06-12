@@ -103,6 +103,7 @@ public partial class ProgressSectionComponent : ContentView
         this.BindingContextChanged += OnBindingContextChanged;
     }
 
+    /*Adds the binding context and creates the tasks*/
     private void OnBindingContextChanged(object sender, EventArgs e)
     {
         TaskContainer.Children.Clear();
@@ -132,18 +133,21 @@ public partial class ProgressSectionComponent : ContentView
         }
     }
 
+    /*Logic for clicking on a task*/
     private void OnTaskTapped(ProjectTask task)
     {
         if (ChildTapCommand?.CanExecute(task) == true)
             ChildTapCommand.Execute(task);
     }
 
+    /*Logic for clicking on the delete button of a task*/
     private void OnTaskDeleted(ProjectTask task)
     {
         if (ChildDeleteCommand?.CanExecute(task) == true)
             ChildDeleteCommand.Execute(task);
     }
 
+    /*logic for grabbing a task*/
     private void OnTaskGrabbed(ProjectTask task)
     {
         if (TaskGrabbedCommand?.CanExecute(task) == true)
@@ -153,6 +157,7 @@ public partial class ProgressSectionComponent : ContentView
         }
     }
 
+    /*Logic for dropping a task*/
     private void OnDroppedOnTask(ProjectTask task)
     {
         if (DroppedOnTaskCommand?.CanExecute(task) == true)
@@ -162,6 +167,7 @@ public partial class ProgressSectionComponent : ContentView
         }
     }
 
+    /*Logic for when a task gets dropped into the section*/
     private void DroppedOnProgress(object sender, DropEventArgs e)
     {
         if (BindingContext is TaskProgress taskProgress && DroppedOnProgressCommand?.CanExecute(taskProgress) == true)
@@ -171,6 +177,7 @@ public partial class ProgressSectionComponent : ContentView
         }
     }
 
+    /*Logic for when the left button is clicked*/
     private void Left_Clicked(object sender, EventArgs e)
     {
         if (BindingContext is TaskProgress taskProgress && MoveLeftCommand?.CanExecute(taskProgress) == true)
@@ -179,6 +186,7 @@ public partial class ProgressSectionComponent : ContentView
         }
     }
 
+    /*Logic for when the right button is clicked*/
     private void Right_Clicked(object sender, EventArgs e)
     {
         if (BindingContext is TaskProgress taskProgress && MoveRightCommand?.CanExecute(taskProgress) == true)
@@ -187,6 +195,7 @@ public partial class ProgressSectionComponent : ContentView
         }
     }
 
+    /*Logic for when the edit button is clicked*/
     private void Edit_Clicked(object sender, EventArgs e)
     {
         if (BindingContext is TaskProgress taskProgress && EditCommand?.CanExecute(taskProgress) == true)
@@ -195,6 +204,7 @@ public partial class ProgressSectionComponent : ContentView
         }
     }
 
+    /*Logic for when the delete button is clicked*/
     private void Delete_Clicked(object sender, EventArgs e)
     {
         if (BindingContext is TaskProgress taskProgress && DeleteCommand?.CanExecute(taskProgress) == true)
@@ -203,6 +213,7 @@ public partial class ProgressSectionComponent : ContentView
         }
     }
 
+    /*Logic for when the create task button is clicked*/
     private void Create_Task_Clicked(object sender, EventArgs e)
     {
         if (BindingContext is TaskProgress taskProgress && CreateTaskCommand?.CanExecute(taskProgress) == true)

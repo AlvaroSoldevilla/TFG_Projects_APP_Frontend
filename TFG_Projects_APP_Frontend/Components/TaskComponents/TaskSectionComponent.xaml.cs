@@ -104,6 +104,7 @@ public partial class TaskSectionComponent : ContentView
         this.BindingContextChanged += OnBindingContextChanged;
     }
 
+    /*Adds the binding context and creates the tasks and subtasks*/
     private void OnBindingContextChanged(object sender, EventArgs e)
     {
         if (BindingContext is TaskSection taskSection)
@@ -136,6 +137,25 @@ public partial class TaskSectionComponent : ContentView
         }
     }
 
+    /*Logic for clicking on a task*/
+    private void ChildTapped(ProjectTask projectTask)
+    {
+        if (ChildTapCommand?.CanExecute(projectTask) == true)
+        {
+            ChildTapCommand.Execute(projectTask);
+        }
+    }
+
+    /*Logic for clicking on the delete button of a task*/
+    private void ChildDeleted(ProjectTask projectTask)
+    {
+        if (BindingContext is TaskSection section && ChildDeleteCommand?.CanExecute(projectTask) == true)
+        {
+            ChildDeleteCommand.Execute(projectTask);
+        }
+    }
+
+    /*logic for grabbing a task*/
     private void TaskGrabbed(ProjectTask task)
     {
         if (TaskGrabbedCommand?.CanExecute(task) == true)
@@ -145,14 +165,7 @@ public partial class TaskSectionComponent : ContentView
         }
     }
 
-    private void ChildTapped(ProjectTask projectTask)
-    {
-        if (ChildTapCommand?.CanExecute(projectTask) == true)
-        {
-            ChildTapCommand.Execute(projectTask);
-        }
-    }
-
+    /*Logic for dropping a task*/
     private void DroppedOnTask(ProjectTask projectTask)
     {
         if (DroppedOnTaskCommand?.CanExecute(projectTask) == true)
@@ -161,6 +174,8 @@ public partial class TaskSectionComponent : ContentView
             DroppedOnTaskCommand.Execute(projectTask);
         }
     }
+
+    /*Logic for when a task gets dropped into the section*/
     private void DroppedOnSection(object sender, DropEventArgs e)
     {
         if (BindingContext is TaskSection section && DroppedOnSectionCommand?.CanExecute(section) == true)
@@ -170,14 +185,7 @@ public partial class TaskSectionComponent : ContentView
         }
     }
 
-    private void ChildDeleted(ProjectTask projectTask)
-    {
-        if (BindingContext is TaskSection section && ChildDeleteCommand?.CanExecute(projectTask) == true)
-        {
-            ChildDeleteCommand.Execute(projectTask);
-        }
-    }
-
+    /*Logic for when the left button is clicked*/
     private void Left_Clicked(object sender, EventArgs e)
     {
         if (BindingContext is TaskSection section && MoveLeftCommand?.CanExecute(section) == true)
@@ -186,6 +194,7 @@ public partial class TaskSectionComponent : ContentView
         }
     }
 
+    /*Logic for when the right button is clicked*/
     private void Right_Clicked(object sender, EventArgs e)
     {
         if (BindingContext is TaskSection section && MoveRightCommand?.CanExecute(section) == true)
@@ -194,6 +203,7 @@ public partial class TaskSectionComponent : ContentView
         }
     }
 
+    /*Logic for when the edit button is clicked*/
     private void Edit_Clicked(object sender, EventArgs e)
     {
         if (BindingContext is TaskSection section && EditCommand?.CanExecute(section) == true)
@@ -202,6 +212,7 @@ public partial class TaskSectionComponent : ContentView
         }
     }
 
+    /*Logic for when the delete button is clicked*/
     private void Delete_Clicked(object sender, EventArgs e)
     {
         if (BindingContext is TaskSection section && DeleteCommand?.CanExecute(section) == true)
@@ -210,6 +221,7 @@ public partial class TaskSectionComponent : ContentView
         }
     }
 
+    /*Logic for when the create task button is clicked*/
     private void Create_Task_Clicked(object sender, EventArgs e)
     {
         if (BindingContext is TaskSection section && CreateTaskCommand?.CanExecute(section) == true)

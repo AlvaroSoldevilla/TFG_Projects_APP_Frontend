@@ -86,6 +86,7 @@ public partial class TaskComponent : ContentView
         AddGestures();
     }
 
+    /*Adds the events when the component is interacted with*/
     private void AddGestures()
     {
         var tapGesture = new TapGestureRecognizer();
@@ -93,6 +94,7 @@ public partial class TaskComponent : ContentView
         this.GestureRecognizers.Add(tapGesture);
     }
 
+    /*Logic for when a task is grabbed*/
     private void OnTaskGrabbed(object sender, DragStartingEventArgs e)
     {
         if (BindingContext is ProjectTask componentTask && TaskGrabbedCommand?.CanExecute(componentTask) == true)
@@ -101,38 +103,7 @@ public partial class TaskComponent : ContentView
         }
     }
 
-    private void ChildTapped(ProjectTask projectTask)
-    {
-        if (ChildTapCommand?.CanExecute(projectTask) == true)
-        {
-            ChildTapCommand.Execute(projectTask);
-        }
-    }
-
-    private void ChildDroppedOnTask(ProjectTask projectTask)
-    {
-        if (ChildDroppedOnTaskCommand?.CanExecute(projectTask) == true)
-        {
-            ChildDroppedOnTaskCommand.Execute(projectTask);
-        }
-    }
-
-    private void ChildDeleted(ProjectTask projectTask)
-    {
-        if (ChildDeleteCommand?.CanExecute(projectTask) == true)
-        {
-            ChildDeleteCommand.Execute(projectTask);
-        }
-    }
-
-    private void ChildTaskGrabbed(ProjectTask projectTask)
-    {
-        if (ChildTaskGrabbedCommand?.CanExecute(projectTask) == true)
-        {
-            ChildTaskGrabbedCommand.Execute(projectTask);
-        }
-    }
-
+    /*Logic for when a task gets clicked*/
     private void OnTapped()
     {
         if (BindingContext is ProjectTask componentTask && TapCommand?.CanExecute(this) == true)
@@ -141,6 +112,7 @@ public partial class TaskComponent : ContentView
         }
     }
 
+    /*Logic for when the delete button gets clicked*/
     private void Delete_Clicked(object sender, EventArgs e)
     {
         if (BindingContext is ProjectTask componentTask && DeleteCommand?.CanExecute(componentTask) == true)
@@ -149,11 +121,48 @@ public partial class TaskComponent : ContentView
         }
     }
 
+    /*Logic for when the task gets droppped on another task*/
     private void OnDroppedOnTask(object sender, DropEventArgs e)
     {
         if (BindingContext is ProjectTask componentTask && DroppedOnTaskCommand?.CanExecute(componentTask) == true)
         {
             DroppedOnTaskCommand.Execute(componentTask);
+        }
+    }
+
+    /*Logic for when a subtask gets clicked*/
+    private void ChildTapped(ProjectTask projectTask)
+    {
+        if (ChildTapCommand?.CanExecute(projectTask) == true)
+        {
+            ChildTapCommand.Execute(projectTask);
+        }
+    }
+
+    /*Logic for when a subtask gets dropped on the task*/
+    private void ChildDroppedOnTask(ProjectTask projectTask)
+    {
+        if (ChildDroppedOnTaskCommand?.CanExecute(projectTask) == true)
+        {
+            ChildDroppedOnTaskCommand.Execute(projectTask);
+        }
+    }
+
+    /*Logic for when the subtask's delete button gets clicked*/
+    private void ChildDeleted(ProjectTask projectTask)
+    {
+        if (ChildDeleteCommand?.CanExecute(projectTask) == true)
+        {
+            ChildDeleteCommand.Execute(projectTask);
+        }
+    }
+
+    /*Logic for when a subtask gets grabbed*/
+    private void ChildTaskGrabbed(ProjectTask projectTask)
+    {
+        if (ChildTaskGrabbedCommand?.CanExecute(projectTask) == true)
+        {
+            ChildTaskGrabbedCommand.Execute(projectTask);
         }
     }
 }

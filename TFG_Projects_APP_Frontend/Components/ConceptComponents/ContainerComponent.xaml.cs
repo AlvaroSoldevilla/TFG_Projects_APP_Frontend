@@ -70,6 +70,7 @@ public partial class ContainerComponent : ContentView
         AddGestures();
     }
 
+    /*Sets the Binding context and creates the subcomponents*/
     private static void OnComponentChanged(BindableObject bindable, object oldValue, object newValue)
     {
         if (bindable is ContainerComponent view && view.Component != null)
@@ -116,6 +117,7 @@ public partial class ContainerComponent : ContentView
         }
     }
 
+    /*Adds the events when the component is interacted with*/
     private void AddGestures()
     {
         var tapGesture = new TapGestureRecognizer();
@@ -127,6 +129,7 @@ public partial class ContainerComponent : ContentView
         this.GestureRecognizers.Add(panGesture);
     }
 
+    /*Logic for dragging the component*/
     private void OnPanUpdated(object? sender, PanUpdatedEventArgs e)
     {
         switch (e.StatusType)
@@ -156,6 +159,7 @@ public partial class ContainerComponent : ContentView
         }
     }
 
+    /*Logic for dropping the component*/
     private void OnDragEnded(double x, double y)
     {
         if (DragEndCommand?.CanExecute(this) == true)
@@ -166,6 +170,7 @@ public partial class ContainerComponent : ContentView
         }
     }
 
+    /*Logic for clicking on the component*/
     private void OnTapped()
     {
         if (TapCommand?.CanExecute(this) == true)
@@ -174,6 +179,7 @@ public partial class ContainerComponent : ContentView
         }
     }
 
+    /*logic for double clicking the component*/
     private void EditNote(ConceptComponent component)
     {
         if (ChildTapCommand?.CanExecute(component) == true)
@@ -182,11 +188,13 @@ public partial class ContainerComponent : ContentView
         }
     }
 
+    /*Does nothing since tasks inside containers can't be dragged*/
     private void DropComponent(ConceptComponent component)
     {
         return;
     }
 
+    /*Executes the command for double click*/
     private void RemoveContainer(ConceptComponent component)
     {
         if (ChildDoubleTapCommand?.CanExecute(component) == true)

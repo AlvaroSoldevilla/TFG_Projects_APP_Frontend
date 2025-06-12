@@ -62,6 +62,19 @@ public partial class TableComponent : ContentView
         AddGestures();
     }
 
+    /*Adds the events when the component is interacted with*/
+    private void AddGestures()
+    {
+        var tapGesture = new TapGestureRecognizer();
+        tapGesture.Tapped += (s, e) => OnTapped();
+
+        var panGesture = new PanGestureRecognizer();
+        panGesture.PanUpdated += OnPanUpdated;
+        this.GestureRecognizers.Add(tapGesture);
+        this.GestureRecognizers.Add(panGesture);
+    }
+
+    /*Sets the Binding context and creates the table layout*/
     private static void OnComponentChanged(BindableObject bindable, object oldValue, object newValue)
     {
         if (bindable is TableComponent view)
@@ -161,6 +174,7 @@ public partial class TableComponent : ContentView
         }
     }
 
+    /*Logic for adding a row to the end*/
     private void AddRow()
     {
         var newRow = new List<string>(new string[_tableData[0].Count]);
@@ -188,6 +202,7 @@ public partial class TableComponent : ContentView
         }
     }
 
+    /*logic for adding a column to the end*/
     private void AddColumn()
     {
         _tableData.ForEach(row => row.Add(""));
@@ -213,6 +228,7 @@ public partial class TableComponent : ContentView
         }
     }
 
+    /*Logic for removing a row from the end*/
     private void RemoveRow(int rowNum)
     {
         if (rowNum>0)
@@ -223,6 +239,7 @@ public partial class TableComponent : ContentView
         
     }
 
+    /*Logic for removing a column from the end*/
     private void RemoveColumn(int colNum)
     {
         if (colNum>0)
@@ -235,17 +252,7 @@ public partial class TableComponent : ContentView
         }
     }
 
-    private void AddGestures()
-    {
-        var tapGesture = new TapGestureRecognizer();
-        tapGesture.Tapped += (s, e) => OnTapped();
-
-        var panGesture = new PanGestureRecognizer();
-        panGesture.PanUpdated += OnPanUpdated;
-        this.GestureRecognizers.Add(tapGesture);
-        this.GestureRecognizers.Add(panGesture);
-    }
-
+    /*Logic for dragging the component*/
     private void OnPanUpdated(object? sender, PanUpdatedEventArgs e)
     {
         switch (e.StatusType)
@@ -273,6 +280,7 @@ public partial class TableComponent : ContentView
         }
     }
 
+    /*Logic for dropping the component*/
     private void OnDragEnded(double x, double y)
     {
 
@@ -284,6 +292,7 @@ public partial class TableComponent : ContentView
         }
     }
 
+    /*Logic for clicking on the component*/
     private void OnTapped()
     {
         if (TapCommand?.CanExecute(this) == true)
@@ -292,6 +301,7 @@ public partial class TableComponent : ContentView
         }
     }
 
+    /*Logic for editing the content of the table, goes through _tableData and transforms it into a single string where rows are separated by line returns and columns are separated by tabs*/
     private void EditTableData(ConceptComponent component)
     {
         int rowCount = _tableData.Count;

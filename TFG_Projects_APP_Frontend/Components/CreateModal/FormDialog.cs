@@ -2,6 +2,7 @@
 
 public static class FormDialog
 {
+    /*Creates the page for the form and navigates to it*/
     public static async Task<T> ShowCreateObjectMenuAsync<T>(string title) where T : new()
     {
         var tcs = new TaskCompletionSource<T>();

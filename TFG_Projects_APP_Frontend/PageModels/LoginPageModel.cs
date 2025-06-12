@@ -27,6 +27,9 @@ public partial class LoginPageModel : ObservableObject
     private string _password;
 
     [ObservableProperty]
+    private string _protocol;
+
+    [ObservableProperty]
     private bool _isLoading;
 
     [ObservableProperty]
@@ -47,6 +50,9 @@ public partial class LoginPageModel : ObservableObject
     [ObservableProperty]
     private bool _rememberMe = false;
 
+    [ObservableProperty]
+    private List<string> _protocols = new() { "https", "http" };
+
     public LoginPageModel(IUsersService usersService, UserSession userSession, RestClient restClient)
     {
         this.usersService = usersService;
@@ -64,19 +70,9 @@ public partial class LoginPageModel : ObservableObject
         Password = string.Empty;
         Route = string.Empty;
         Port = string.Empty;
+        Protocol = Preferences.Get("Protocol", "https");
 
         Preferences.Set("RememberMe", false);
-    }
-
-    /*Debug method to skip login TODO: Remove*/
-    [RelayCommand]
-    public async Task DirectLogin()
-    {
-        Application.Current.Dispatcher.Dispatch(async () =>
-        {
-            await Task.Delay(50);
-            await Shell.Current.GoToAsync("//MainPage");
-        });
     }
 
     /*Checks if the user is allowed to log in, then calls the authenticate method in the UserService, and if it gets a sucecesful response, it takes the user to the main page.
@@ -158,6 +154,13 @@ public partial class LoginPageModel : ObservableObject
             Password = password
         };
         var result = await usersService.Post(user);
+        var userAuth = new UserAuthenticate
+        {
+            Email = Email,
+            Username = Username,
+            Password = password
+        };
+        await usersService.AuthenticateUser(userAuth);
         if (result != null)
         {
             userSession.User = result;
@@ -194,7 +197,7 @@ public partial class LoginPageModel : ObservableObject
             await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.APIValidationMessage, Resources.ConfirmButton);
         } else
         {
-            var testUrl = $"http://{Route}:{Port}/connection/test";
+            var testUrl = $"{Protocol}://{Route}:{Port}/connection/test";
             var result = await restClient.TestConnection(testUrl);
             if (result == null)
             {
@@ -222,7 +225,7 @@ public partial class LoginPageModel : ObservableObject
     {
         if (ApiFound)
         {
-            Preferences.Set("APIurl", $"http://{Route}:{Port}");
+            Preferences.Set("APIurl", $"{Protocol}://{Route}:{Port}");
             ApiSaved = true;
             await Application.Current.MainPage.DisplayAlert(Resources.SuccessMessageTitle, Resources.APIUpdatedMessage, Resources.ConfirmButton);
         } else

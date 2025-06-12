@@ -16,9 +16,10 @@
     <ScrollView
         Padding="30"
         HorizontalOptions="Center"
-        VerticalOptions="Center"
-        WidthRequest="500">
-        <Grid RowSpacing="20">
+        MaximumWidthRequest="700"
+        MinimumWidthRequest="500"
+        VerticalOptions="Center">
+        <Grid HorizontalOptions="Center" RowSpacing="20">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -44,22 +45,23 @@
                 HorizontalOptions="Center"
                 Text="{x:Static properties:Resources.LoginPageMessage}" />
 
-            <Button
-                Grid.Row="1"
-                BackgroundColor="{DynamicResource Misc}"
-                Command="{Binding DirectLoginCommand}"
-                Text="Debug Login" />
-
             <HorizontalStackLayout Grid.Row="2" Spacing="10">
+                <Picker
+                    x:Name="ProtocolPicker"
+                    ItemsSource="{Binding Protocols}"
+                    SelectedItem="{Binding Protocol}" />
+
                 <Entry
                     x:Name="IP"
                     BackgroundColor="White"
+                    MinimumWidthRequest="130"
                     Placeholder="{x:Static properties:Resources.ServerIPLabel}"
                     Text="{Binding Route, Mode=TwoWay}" />
 
                 <Entry
                     x:Name="Port"
                     BackgroundColor="White"
+                    MinimumWidthRequest="80"
                     Placeholder="{x:Static properties:Resources.PortLabel}"
                     Text="{Binding Port, Mode=TwoWay}" />
                 <Button
@@ -69,11 +71,13 @@
                     CornerRadius="10"
                     FontAttributes="Bold"
                     IsVisible="{Binding ShowTestButton}"
+                    MinimumWidthRequest="130"
                     Text="{x:Static properties:Resources.TestConnectionButton}"
                     TextColor="White" />
                 <VerticalStackLayout
                     HorizontalOptions="Center"
                     IsVisible="{Binding IsTesting}"
+                    MinimumWidthRequest="130"
                     Spacing="0"
                     VerticalOptions="Center">
                     <ActivityIndicator
@@ -85,6 +89,7 @@
                 </VerticalStackLayout>
 
             </HorizontalStackLayout>
+
 
             <Button
                 Grid.Row="3"
@@ -106,7 +111,7 @@
                 x:Name="Email"
                 Grid.Row="5"
                 BackgroundColor="White"
-                Keyboard="Email"
+                Keyboard="Text"
                 Placeholder="{x:Static properties:Resources.EmailLabel}"
                 Text="{Binding Email, Mode=TwoWay}" />
 

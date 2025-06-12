@@ -55,6 +55,7 @@ public partial class NoteComponent : ContentView
         AddGestures();
     }
 
+    /*Sets the Binding context*/
     private static void OnComponentChanged(BindableObject bindable, object oldValue, object newValue)
     {
         if (bindable is NoteComponent view)
@@ -63,6 +64,7 @@ public partial class NoteComponent : ContentView
         }
     }
 
+    /*Adds the events when the component is interacted with*/
     private void AddGestures()
     {
         var tapGesture = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
@@ -78,6 +80,7 @@ public partial class NoteComponent : ContentView
         this.GestureRecognizers.Add(panGesture);
     }
 
+    /*Logic for dragging the component*/
     private void OnPanUpdated(object? sender, PanUpdatedEventArgs e)
     {
         switch (e.StatusType)
@@ -108,6 +111,7 @@ public partial class NoteComponent : ContentView
         }
     }
 
+    /*Logic for dropping the component*/
     private void OnDragEnded(double x, double y)
     {
 
@@ -119,12 +123,13 @@ public partial class NoteComponent : ContentView
         }
     }
 
+    /*Logic for clicking on the component*/
     private void OnTapped(object sender, EventArgs e)
     {
         var now = DateTime.Now;
         if ((now - _lastTapTime).TotalMilliseconds < 300)
         {
-            OnDoubleTap(); // Fallback in case OS misses a double-tap
+            OnDoubleTap();
         }
         else
         {
@@ -139,11 +144,13 @@ public partial class NoteComponent : ContentView
         }
     }
 
+    /*logic for double clicking the component*/
     private void OnDoubleTapped(object? sender, TappedEventArgs e)
     {
         OnDoubleTap();
     }
 
+    /*Executes the command for single click*/
     private void OnSingleTap()
     {
         if (TapCommand?.CanExecute(this) == true)
@@ -152,6 +159,7 @@ public partial class NoteComponent : ContentView
         }
     }
 
+    /*Executes the command for double click*/
     private void OnDoubleTap()
     {
         if (DoubleTapCommand?.CanExecute(this) == true)
