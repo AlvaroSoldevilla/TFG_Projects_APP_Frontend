@@ -3,6 +3,9 @@
 
 Aplicación cliente desarrollada con .NET MAUI como parte del Trabajo de Fin de Grado en Desarrollo de Aplicaciones Multiplataforma. Esta aplicación permite la gestión colaborativa de proyectos, integrando funcionalidades inspiradas en herramientas como Trello y Milanote.
 
+Para información sobre el servidor, visitar el siguiente enlace:
+
+[TFG_Projects_APP_Backend](https://github.com/AlvaroSoldevilla/TFG_Projects_APP_Backend)
 
 ## Características
 
@@ -50,7 +53,3 @@ El ejecutable se generará en la carpeta:
 ```bash
     bin\Release\net9.0-windows10.0.19041.0\win-x64\publish
 ```
-
-Para información sobre el servidor, visitar el siguiente enlace:
-
-[TFG_Projects_APP_Backend](https://github.com/AlvaroSoldevilla/TFG_Projects_APP_Backend)
