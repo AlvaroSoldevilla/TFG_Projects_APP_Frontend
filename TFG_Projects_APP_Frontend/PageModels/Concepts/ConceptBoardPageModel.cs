@@ -260,8 +260,7 @@ public partial class ConceptBoardPageModel : ObservableObject
                 returnComponent = await FormDialog.ShowCreateObjectMenuAsync<ComponentFormCreate>(title);
             }
 
-            if ((returnComponent != null || returnNoteComponent != null) && (!string.IsNullOrEmpty(returnComponent.Title) || !string.IsNullOrEmpty(returnNoteComponent.Title)))
-            {
+            if ((returnNoteComponent != null && !string.IsNullOrEmpty(returnNoteComponent.Title)) || (returnComponent != null && !string.IsNullOrEmpty(returnComponent.Title))) { 
                 ConceptComponent component;
                 if (returnComponent == null)
                 {

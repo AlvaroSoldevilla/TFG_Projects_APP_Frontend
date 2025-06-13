@@ -163,7 +163,6 @@
 
                     <Label FontSize="20" Text="{x:Static properties:Resources.AssignedToLabel}" />
                     <Picker
-                        Title="{x:Static properties:Resources.AssignedToLabel}"
                         ItemDisplayBinding="{Binding Username}"
                         ItemsSource="{Binding Users}"
                         SelectedItem="{Binding EditingTaskData.UserAssigned}" />

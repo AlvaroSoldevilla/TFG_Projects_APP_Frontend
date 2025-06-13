@@ -66,6 +66,7 @@ public partial class MainPageModel : ObservableObject
     public async Task OnNavigatedTo()
     {
         SelectedProject = null;
+        Isloading = true;
         if (NavigationContext.Startup)
         {
             NavigationContext.Startup = false;
@@ -82,10 +83,11 @@ public partial class MainPageModel : ObservableObject
                         Username = Preferences.Get("Username", "Admin"),
                         Email = Preferences.Get("Email", "admin@test.com")
                     };
+                    userSession.Token = Preferences.Get("Token", "");
 
                     var user = await usersService.GetById(userSession.User.Id);
 
-                    if (userSession.User.Email != user.Email || userSession.User.Username != user.Username)
+                    if (user == null || userSession.User.Email != user.Email || userSession.User.Username != user.Username)
                     {
                         await GoToLogin();
                     }
