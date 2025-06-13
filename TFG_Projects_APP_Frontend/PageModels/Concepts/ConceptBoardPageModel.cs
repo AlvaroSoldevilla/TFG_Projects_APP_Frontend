@@ -229,7 +229,8 @@ public partial class ConceptBoardPageModel : ObservableObject
         if (permissionsUtils.HasOnePermission(permissions))
         {
             IsLoading = true;
-            ComponentFormCreate returnComponent;
+            NoteComponentFormCreate returnNoteComponent = null;
+            ComponentFormCreate returnComponent = null;
             string title;
             switch (projectType.Id)
             {
@@ -252,29 +253,29 @@ public partial class ConceptBoardPageModel : ObservableObject
 
             if (projectType.Id == 2)
             {
-                returnComponent = await FormDialog.ShowCreateObjectMenuAsync<NoteComponentFormCreate>(title);
+                returnNoteComponent = await FormDialog.ShowCreateObjectMenuAsync<NoteComponentFormCreate>(title);
             }
             else
             {
                 returnComponent = await FormDialog.ShowCreateObjectMenuAsync<ComponentFormCreate>(title);
             }
 
-            if (returnComponent != null && !string.IsNullOrEmpty(returnComponent.Title))
+            if ((returnComponent != null || returnNoteComponent != null) && (!string.IsNullOrEmpty(returnComponent.Title) || !string.IsNullOrEmpty(returnNoteComponent.Title)))
             {
                 ConceptComponent component;
-                if (returnComponent is NoteComponentFormCreate noteComponentForm)
+                if (returnComponent == null)
                 {
-                    if (string.IsNullOrEmpty(noteComponentForm.Content))
+                    if (string.IsNullOrEmpty(returnNoteComponent.Content))
                     {
-                        noteComponentForm.Content = string.Empty;
+                        returnNoteComponent.Content = string.Empty;
                     }
 
                     ComponentCreate componentCreate = new()
                     {
                         IdBoard = ConceptBoard.Id,
                         IdType = projectType.Id,
-                        Title = noteComponentForm.Title,
-                        Content = noteComponentForm.Content,
+                        Title = returnNoteComponent.Title,
+                        Content = returnNoteComponent.Content,
                         PosX = 0,
                         PosY = 0
                     };

@@ -30,20 +30,17 @@
                 <Label HorizontalOptions="Center" Text="{x:Static properties:Resources.UserSettingsMessage}" />
                 <Entry
                     x:Name="Username"
-                    BackgroundColor="White"
                     Placeholder="{x:Static properties:Resources.UsernameLabel}"
                     Text="{Binding Username, Mode=TwoWay}" />
 
                 <Entry
                     x:Name="Email"
-                    BackgroundColor="White"
                     Keyboard="Email"
                     Placeholder="{x:Static properties:Resources.EmailLabel}"
                     Text="{Binding Email, Mode=TwoWay}" />
 
                 <Entry
                     x:Name="Password"
-                    BackgroundColor="White"
                     IsPassword="True"
                     Placeholder="{x:Static properties:Resources.PasswordLabel}"
                     Text="{Binding Password, Mode=TwoWay}" />
@@ -54,8 +51,7 @@
                     Command="{Binding LoginCommand}"
                     CornerRadius="10"
                     FontAttributes="Bold"
-                    Text="{x:Static properties:Resources.LoginButton}"
-                    TextColor="White" />
+                    Text="{x:Static properties:Resources.LoginButton}" />
 
                 <ActivityIndicator
                     HorizontalOptions="Center"

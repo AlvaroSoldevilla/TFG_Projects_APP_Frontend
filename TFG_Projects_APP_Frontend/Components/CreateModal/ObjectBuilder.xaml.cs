@@ -1,11 +1,12 @@
 namespace TFG_Projects_APP_Frontend.Components.CreateModal;
 
+/*An Object used to create a form that dynamically changes depending on the class it recieves, which can be any class, but it is recomended to use a specific class for the form*/
 public partial class DynamicInputPage<T> : ContentPage where T : new()
 {
     private readonly TaskCompletionSource<T> _tcs;
     private readonly Dictionary<string, View> _inputs = new();
     private readonly List<FieldDefinition> _fields;
-    private string _title { get; set; }
+    private string Title { get; set; }
 
     public DynamicInputPage(TaskCompletionSource<T> tcs, string title)
     {
@@ -15,6 +16,7 @@ public partial class DynamicInputPage<T> : ContentPage where T : new()
         BuildForm();
     }
 
+    /*Logic for building the creation form. Goes through each field of the object and creates an appropiate input*/
     private void BuildForm()
     {
         var layout = new VerticalStackLayout { Padding = 20, Spacing = 10 };
@@ -47,8 +49,8 @@ public partial class DynamicInputPage<T> : ContentPage where T : new()
             layout.Children.Add(input);
         }
 
-        var button = new Button { Text = "Create" };
-        var cancelButton = new Button { Text = "Cancel" };
+        var button = new Button { Text = "Create", BackgroundColor = (Color)Application.Current.Resources["Create"] };
+        var cancelButton = new Button { Text = "Cancel", BackgroundColor = (Color)Application.Current.Resources["Misc"] };
         button.Clicked += Submit;
         cancelButton.Clicked += Cancel;
         layout.Children.Add(button);
@@ -57,6 +59,7 @@ public partial class DynamicInputPage<T> : ContentPage where T : new()
         Content = new ScrollView { Content = layout };
     }
 
+    /*Logic for clicking the submit button. Goes through each field, parses the information and the returns the built object*/
     private void Submit(object sender, EventArgs e)
     {
         var obj = new T();
@@ -81,7 +84,6 @@ public partial class DynamicInputPage<T> : ContentPage where T : new()
                 var text = ((Entry)input).Text?.Trim();
                 if (string.IsNullOrEmpty(text))
                 {
-                    // Set to null if nullable, or 0 if not
                     value = Nullable.GetUnderlyingType(field.DataType) != null ? null : 0;
                 }
                 else if (int.TryParse(text, out var i))
@@ -90,7 +92,6 @@ public partial class DynamicInputPage<T> : ContentPage where T : new()
                 }
                 else
                 {
-                    // Optionally, handle parse error (show alert, etc.)
                     value = Nullable.GetUnderlyingType(field.DataType) != null ? null : 0;
                 }
             }
@@ -110,6 +111,7 @@ public partial class DynamicInputPage<T> : ContentPage where T : new()
         Application.Current.MainPage.Navigation.PopModalAsync();
     }
 
+    /*Logic for pressing cancel button*/
     private void Cancel(object sender, EventArgs e)
     {
         Application.Current.MainPage.Navigation.PopModalAsync();

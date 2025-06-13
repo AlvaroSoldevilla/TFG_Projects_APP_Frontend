@@ -53,14 +53,12 @@
 
                 <Entry
                     x:Name="IP"
-                    BackgroundColor="White"
                     MinimumWidthRequest="130"
                     Placeholder="{x:Static properties:Resources.ServerIPLabel}"
                     Text="{Binding Route, Mode=TwoWay}" />
 
                 <Entry
                     x:Name="Port"
-                    BackgroundColor="White"
                     MinimumWidthRequest="80"
                     Placeholder="{x:Static properties:Resources.PortLabel}"
                     Text="{Binding Port, Mode=TwoWay}" />
@@ -72,8 +70,7 @@
                     FontAttributes="Bold"
                     IsVisible="{Binding ShowTestButton}"
                     MinimumWidthRequest="130"
-                    Text="{x:Static properties:Resources.TestConnectionButton}"
-                    TextColor="White" />
+                    Text="{x:Static properties:Resources.TestConnectionButton}" />
                 <VerticalStackLayout
                     HorizontalOptions="Center"
                     IsVisible="{Binding IsTesting}"
@@ -98,19 +95,16 @@
                 Command="{Binding ChangeRouteCommand}"
                 CornerRadius="10"
                 FontAttributes="Bold"
-                Text="{x:Static properties:Resources.SaveApiLocationButton}"
-                TextColor="White" />
+                Text="{x:Static properties:Resources.SaveApiLocationButton}" />
             <Entry
                 x:Name="Username"
                 Grid.Row="4"
-                BackgroundColor="White"
                 Placeholder="Username"
                 Text="{Binding Username, Mode=TwoWay}" />
 
             <Entry
                 x:Name="Email"
                 Grid.Row="5"
-                BackgroundColor="White"
                 Keyboard="Text"
                 Placeholder="{x:Static properties:Resources.EmailLabel}"
                 Text="{Binding Email, Mode=TwoWay}" />
@@ -144,8 +138,7 @@
                 Command="{Binding LoginCommand}"
                 CornerRadius="10"
                 FontAttributes="Bold"
-                Text="{x:Static properties:Resources.LoginButton}"
-                TextColor="White" />
+                Text="{x:Static properties:Resources.LoginButton}" />
 
             <Button
                 Grid.Row="9"
@@ -154,8 +147,7 @@
                 Command="{Binding RegisterCommand}"
                 CornerRadius="10"
                 FontAttributes="Bold"
-                Text="{x:Static properties:Resources.RegisterButton}"
-                TextColor="White" />
+                Text="{x:Static properties:Resources.RegisterButton}" />
 
             <ActivityIndicator
                 Grid.Row="10"

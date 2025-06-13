@@ -160,16 +160,16 @@ public partial class LoginPageModel : ObservableObject
             Username = Username,
             Password = password
         };
-        await usersService.AuthenticateUser(userAuth);
-        if (result != null)
+        var auth = await usersService.AuthenticateUser(userAuth);
+        if (auth != null)
         {
-            userSession.User = result;
+            userSession.User = auth;
             if (RememberMe)
             {
                 Preferences.Set("RememberMe", true);
-                Preferences.Set("UserId", result.Id);
-                Preferences.Set("Username", result.Username);
-                Preferences.Set("Email", result.Email);
+                Preferences.Set("UserId", auth.Id);
+                Preferences.Set("Username", auth.Username);
+                Preferences.Set("Email", auth.Email);
                 Preferences.Set("Token", userSession.Token);
             }
             else
