@@ -45,7 +45,7 @@ Para ejecutar la aplicación:
 Para generar un ejecutable para Windows:
 
 ```bash
-    dotnet publish -c Release -f net9.0-windows10.0.19041.0 -r win-x64 --self-contained
+    dotnet publish -c Release -f net9.0-windows10.0.19041.0 -r win-x64 --self-contained true
 ```
 
 El ejecutable se generará en la carpeta:
