@@ -8,7 +8,6 @@ using TFG_Projects_APP_Frontend.Entities.Dtos.Tasks;
 using TFG_Projects_APP_Frontend.Entities.Models;
 using TFG_Projects_APP_Frontend.Properties;
 using TFG_Projects_APP_Frontend.Services.PrioritiesService;
-using TFG_Projects_APP_Frontend.Services.ProjectUsersService;
 using TFG_Projects_APP_Frontend.Services.TaskDependeciesService;
 using TFG_Projects_APP_Frontend.Services.TaskProgressService;
 using TFG_Projects_APP_Frontend.Services.TaskSectionsService;
@@ -24,7 +23,6 @@ public partial class TaskProgressPageModel : ObservableObject
     private readonly ITaskProgressService taskProgressService;
     private readonly ITasksService tasksService;
     private readonly ITaskDependenciesService taskDependenciesService;
-    private readonly IProjectUsersService projectUsersService;
     private readonly IUsersService usersService;
     private readonly IPrioritiesService prioritiesService;
     private readonly ITaskSectionsService taskSectionService;
@@ -100,7 +98,6 @@ public partial class TaskProgressPageModel : ObservableObject
         ITaskProgressService taskProgressService, 
         ITasksService tasksService,
         ITaskDependenciesService taskDependenciesService,
-        IProjectUsersService projectUsersService,
         IUsersService usersService,
         IPrioritiesService prioritiesService,
         ITaskSectionsService taskSectionService,
@@ -110,7 +107,6 @@ public partial class TaskProgressPageModel : ObservableObject
         this.taskProgressService = taskProgressService;
         this.tasksService = tasksService;
         this.taskDependenciesService = taskDependenciesService;
-        this.projectUsersService = projectUsersService;
         this.usersService = usersService;
         this.prioritiesService = prioritiesService;
         this.taskSectionService = taskSectionService;

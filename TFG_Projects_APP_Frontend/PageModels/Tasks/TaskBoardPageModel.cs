@@ -9,8 +9,6 @@ using TFG_Projects_APP_Frontend.Entities.Dtos.TaskSections;
 using TFG_Projects_APP_Frontend.Entities.Models;
 using TFG_Projects_APP_Frontend.Properties;
 using TFG_Projects_APP_Frontend.Services.PrioritiesService;
-using TFG_Projects_APP_Frontend.Services.ProjectUsersService;
-using TFG_Projects_APP_Frontend.Services.TaskBoardsService;
 using TFG_Projects_APP_Frontend.Services.TaskDependeciesService;
 using TFG_Projects_APP_Frontend.Services.TaskProgressService;
 using TFG_Projects_APP_Frontend.Services.TaskSectionsService;
@@ -23,12 +21,10 @@ namespace TFG_Projects_APP_Frontend.PageModels.Tasks;
 [QueryProperty(nameof(TaskBoard), nameof(TaskBoard))]
 public partial class TaskBoardPageModel : ObservableObject
 {
-    private readonly ITaskBoardsService taskBoardsService;
     private readonly ITaskSectionsService taskSectionsService;
     private readonly ITaskProgressService taskProgressService;
     private readonly ITasksService tasksService;
     private readonly ITaskDependenciesService taskDependenciesService;
-    private readonly IProjectUsersService projectUsersService;
     private readonly IUsersService usersService;
     private readonly IPrioritiesService prioritiesService;
     private readonly UserSession userSession;
@@ -104,23 +100,19 @@ public partial class TaskBoardPageModel : ObservableObject
     private TaskDependency _editingTaskDependencyData;
 
     public TaskBoardPageModel(
-        ITaskBoardsService taskBoardsService,
         ITaskSectionsService taskSectionsService,
         ITaskProgressService taskProgressService,
         ITasksService tasksService,
         ITaskDependenciesService taskDependenciesService,
-        IProjectUsersService projectUsersService,
         IUsersService usersService,
         IPrioritiesService prioritiesService,
         UserSession userSesion,
         PermissionsUtils permissionsUtils)
     {
-        this.taskBoardsService = taskBoardsService;
         this.taskSectionsService = taskSectionsService;
         this.taskProgressService = taskProgressService;
         this.tasksService = tasksService;
         this.taskDependenciesService = taskDependenciesService;
-        this.projectUsersService = projectUsersService;
         this.usersService = usersService;
         this.prioritiesService = prioritiesService;
         this.userSession = userSesion;

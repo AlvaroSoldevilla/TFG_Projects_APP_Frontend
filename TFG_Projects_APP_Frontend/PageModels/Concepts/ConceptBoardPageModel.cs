@@ -11,7 +11,6 @@ using TFG_Projects_APP_Frontend.Properties;
 using TFG_Projects_APP_Frontend.Services.ComponentsService;
 using TFG_Projects_APP_Frontend.Services.ConceptBoardsService;
 using TFG_Projects_APP_Frontend.Services.TypesService;
-using TFG_Projects_APP_Frontend.Services.UsersService;
 using TFG_Projects_APP_Frontend.Utils;
 
 namespace TFG_Projects_APP_Frontend.PageModels.Concepts;
@@ -21,7 +20,6 @@ public partial class ConceptBoardPageModel : ObservableObject
     private readonly IConceptBoardsService conceptBoardsService;
     private readonly IComponentsService componentsService;
     private readonly ITypesService typesService;
-    private readonly UserSession userSession;
     private readonly PermissionsUtils permissionsUtils;
 
     public ConceptBoardPage? _page;
@@ -55,13 +53,11 @@ public partial class ConceptBoardPageModel : ObservableObject
         IConceptBoardsService conceptBoardsService, 
         IComponentsService componentsService, 
         ITypesService typesService, 
-        UserSession userSession,
         PermissionsUtils permissionsUtils)
     {
         this.conceptBoardsService = conceptBoardsService;
         this.componentsService = componentsService;
         this.typesService = typesService;
-        this.userSession = userSession;
         this.permissionsUtils = permissionsUtils;
     }
 

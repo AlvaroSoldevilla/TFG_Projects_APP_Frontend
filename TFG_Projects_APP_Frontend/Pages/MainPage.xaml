@@ -10,20 +10,36 @@
     x:DataType="pageModels:MainPageModel"
     NavigationPage.HasNavigationBar="False"
     Shell.NavBarIsVisible="False">
-    <ScrollView Padding="30">
-        <StackLayout Orientation="Horizontal" Spacing="25">
-            <VerticalStackLayout
-                Padding="30,0"
-                HorizontalOptions="StartAndExpand"
-                Spacing="25">
-                <Button
-                    BackgroundColor="{DynamicResource Create}"
-                    Command="{Binding CreateProjectCommand}"
-                    HeightRequest="40"
-                    HorizontalOptions="Start"
-                    Text="{x:Static properties:Resources.CreateProjectButton}"
-                    VerticalOptions="Start"
-                    WidthRequest="150" />
+
+    <Grid
+        Padding="30"
+        ColumnSpacing="25"
+        RowSpacing="25">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Button
+            Grid.Row="0"
+            Grid.Column="0"
+            BackgroundColor="{DynamicResource Create}"
+            Command="{Binding CreateProjectCommand}"
+            HeightRequest="40"
+            HorizontalOptions="Start"
+            Text="{x:Static properties:Resources.CreateProjectButton}"
+            VerticalOptions="Start"
+            WidthRequest="150" />
+        <ScrollView
+            Grid.Row="1"
+            Grid.Column="0"
+            Padding="5">
+            <StackLayout Padding="5">
                 <CollectionView
                     ItemsSource="{Binding Projects}"
                     SelectedItem="{Binding SelectedProject}"
@@ -57,38 +73,45 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
-                <ActivityIndicator
-                    HeightRequest="50"
-                    HorizontalOptions="Center"
-                    IsRunning="{Binding Isloading}"
-                    IsVisible="{Binding Isloading}"
-                    VerticalOptions="Center"
-                    WidthRequest="50"
-                    Color="{DynamicResource ActivityIndicator}" />
-            </VerticalStackLayout>
-            <VerticalStackLayout IsVisible="{Binding IsEditingProject}" Spacing="10">
-                <StackLayout Orientation="Horizontal">
-                    <Label FontSize="30" Text="{x:Static properties:Resources.EditProjectLabel}" />
-                    <Button
-                        BackgroundColor="{DynamicResource Transparent}"
-                        Command="{Binding CloseEditingCommand}"
-                        FontSize="20"
-                        Text="X"
-                        TextColor="{StaticResource Gray500}" />
-                </StackLayout>
+            </StackLayout>
+        </ScrollView>
 
-                <Label FontSize="20" Text="{x:Static properties:Resources.TitleLabel}" />
-                <Entry x:Name="ProjectTitle" Text="{Binding EditingProjectData.Title, Mode=TwoWay}" />
-                <Label FontSize="20" Text="{x:Static properties:Resources.DescriptionLabel}" />
-                <Editor
-                    x:Name="ProjectDescription"
-                    HeightRequest="100"
-                    Text="{Binding EditingProjectData.Description, Mode=TwoWay}" />
+        <ActivityIndicator
+            Grid.Row="1"
+            Grid.Column="0"
+            HeightRequest="50"
+            HorizontalOptions="Center"
+            IsRunning="{Binding Isloading}"
+            IsVisible="{Binding Isloading}"
+            VerticalOptions="Center"
+            WidthRequest="50"
+            Color="{DynamicResource ActivityIndicator}" />
+        <VerticalStackLayout
+            Grid.Column="1"
+            IsVisible="{Binding IsEditingProject}"
+            Spacing="10">
+
+            <StackLayout Orientation="Horizontal">
+                <Label FontSize="30" Text="{x:Static properties:Resources.EditProjectLabel}" />
                 <Button
-                    Background="{DynamicResource Save}"
-                    Command="{Binding SaveProjectCommand}"
-                    Text="{x:Static properties:Resources.SaveButton}" />
-            </VerticalStackLayout>
-        </StackLayout>
-    </ScrollView>
+                    BackgroundColor="{DynamicResource Transparent}"
+                    Command="{Binding CloseEditingCommand}"
+                    FontSize="20"
+                    Text="X"
+                    TextColor="{StaticResource Gray500}" />
+            </StackLayout>
+
+            <Label FontSize="20" Text="{x:Static properties:Resources.TitleLabel}" />
+            <Entry x:Name="ProjectTitle" Text="{Binding EditingProjectData.Title, Mode=TwoWay}" />
+            <Label FontSize="20" Text="{x:Static properties:Resources.DescriptionLabel}" />
+            <Editor
+                x:Name="ProjectDescription"
+                HeightRequest="100"
+                Text="{Binding EditingProjectData.Description, Mode=TwoWay}" />
+            <Button
+                Background="{DynamicResource Save}"
+                Command="{Binding SaveProjectCommand}"
+                Text="{x:Static properties:Resources.SaveButton}" />
+        </VerticalStackLayout>
+    </Grid>
 </ContentPage>

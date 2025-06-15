@@ -97,6 +97,8 @@ public partial class TaskComponent : ContentView
     /*Logic for when a task is grabbed*/
     private void OnTaskGrabbed(object sender, DragStartingEventArgs e)
     {
+        e.Data.Text = string.Empty;
+
         if (BindingContext is ProjectTask componentTask && TaskGrabbedCommand?.CanExecute(componentTask) == true)
         {
             TaskGrabbedCommand.Execute(componentTask);

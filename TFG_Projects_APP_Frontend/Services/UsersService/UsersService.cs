@@ -11,7 +11,7 @@ public class UsersService(RestClient restClient) : IUsersService
     private readonly string route = "users";
     public async Task<AppUser> AuthenticateUser(object data)
     {
-        HttpResponseMessage response = await restClient.AuthenticateUser($"{route}/auth/", data);
+        HttpResponseMessage response = await restClient.AuthenticateUser($"{route}/auth", data);
         if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
         {
             return null;
@@ -115,7 +115,7 @@ public class UsersService(RestClient restClient) : IUsersService
     public async Task<AppUser> GetUserByEmail(string email)
     {
         var userEmail = new UserEmail { Email = email };
-        HttpResponseMessage response = await restClient.PostAsync($"{route}/email/", userEmail);
+        HttpResponseMessage response = await restClient.PostAsync($"{route}/email", userEmail);
         if (response == null)
         {
             return null;

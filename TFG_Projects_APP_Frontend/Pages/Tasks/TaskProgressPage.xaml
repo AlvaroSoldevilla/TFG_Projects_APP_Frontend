@@ -28,7 +28,13 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <StackLayout Grid.Row="0" Orientation="Horizontal">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+
+            <StackLayout Orientation="Horizontal">
                 <Button
                     BackgroundColor="{DynamicResource Create}"
                     Command="{Binding CreateTaskProgressCommand}"
@@ -46,12 +52,17 @@
                     WidthRequest="50"
                     Color="{DynamicResource ActivityIndicator}" />
             </StackLayout>
-            <StackLayout
+
+            <ScrollView
                 Grid.Row="1"
-                Padding="5"
-                Orientation="Horizontal"
-                Spacing="20">
-                <ScrollView Orientation="Horizontal">
+                Grid.Column="0"
+                Padding="2"
+                Orientation="Horizontal">
+                <StackLayout
+                    Grid.Row="1"
+                    Padding="5"
+                    Orientation="Horizontal"
+                    Spacing="20">
                     <CollectionView HorizontalOptions="StartAndExpand" ItemsSource="{Binding TaskProgresses}">
                         <CollectionView.ItemsLayout>
                             <GridItemsLayout Orientation="Horizontal" Span="1" />
@@ -73,12 +84,8 @@
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
-                </ScrollView>
-
-
-
-
-            </StackLayout>
+                </StackLayout>
+            </ScrollView>
         </Grid>
 
 

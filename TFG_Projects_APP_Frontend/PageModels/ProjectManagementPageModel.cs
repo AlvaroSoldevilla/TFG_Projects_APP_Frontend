@@ -14,7 +14,6 @@ using TFG_Projects_APP_Frontend.Properties;
 using TFG_Projects_APP_Frontend.Services.ConceptBoardsService;
 using TFG_Projects_APP_Frontend.Services.ConceptsService;
 using TFG_Projects_APP_Frontend.Services.PermissionsService;
-using TFG_Projects_APP_Frontend.Services.ProjectsService;
 using TFG_Projects_APP_Frontend.Services.ProjectUsersService;
 using TFG_Projects_APP_Frontend.Services.RolesService;
 using TFG_Projects_APP_Frontend.Services.TaskBoardsService;
@@ -35,11 +34,9 @@ public partial class ProjectManagementPageModel : ObservableObject
     private readonly ITaskProgressService taskProgressService;
     private readonly IUserProjectPermissionsService userProjectPermissionsService;
     private readonly IPermissionsService permissionsService;
-    private readonly IProjectsService projectsService;
     private readonly IProjectUsersService projectUsersService;
     private readonly IUsersService usersService;
     private readonly IRolesService rolesService;
-    private readonly UserSession userSession;
     private readonly PermissionsUtils permissionsUtils;
 
     public Project Project { get; set; }
@@ -139,11 +136,9 @@ public partial class ProjectManagementPageModel : ObservableObject
         ITaskProgressService taskProgressService,
         IUserProjectPermissionsService userProjectPermissionsService,
         IPermissionsService permissionsService,
-        IProjectsService projectsService,
         IProjectUsersService projectUsersService,
         IUsersService usersService,
         IRolesService rolesService, 
-        UserSession userSession,
         PermissionsUtils permissionsUtils)
     {
         this.conceptsService = conceptsService;
@@ -153,11 +148,9 @@ public partial class ProjectManagementPageModel : ObservableObject
         this.taskProgressService = taskProgressService;
         this.userProjectPermissionsService = userProjectPermissionsService;
         this.permissionsService = permissionsService;
-        this.projectsService = projectsService;
         this.projectUsersService = projectUsersService;
         this.usersService = usersService;
         this.rolesService = rolesService;
-        this.userSession = userSession;
         this.permissionsUtils = permissionsUtils;
     }
 
@@ -532,6 +525,7 @@ public partial class ProjectManagementPageModel : ObservableObject
             if (Users.Any(user => user.Email == AdduserEmail))
             {
                 await Application.Current.MainPage.DisplayAlert(Resources.ErrorMessageTitle, Resources.UserAlreadyInProjectMessage, Resources.ConfirmButton);
+                IsLoadingUsers = false;
                 return;
             }
             else
@@ -643,7 +637,7 @@ public partial class ProjectManagementPageModel : ObservableObject
             IsLoadingUsers = true;
 
             bool confirmed = await Application.Current.MainPage.DisplayAlert(
-                Resources.ConfirmRemoveUserMessage,
+                Resources.ConfirmRemoveUserTitle,
                 Resources.ConfirmRemoveUserMessage,
                 Resources.RemoveButton,
                 Resources.CancelButton
